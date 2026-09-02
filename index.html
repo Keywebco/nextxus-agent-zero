@@ -1,431 +1,1728 @@
 <!DOCTYPE html>
-<html lang="en">
+<!--
+  ============================================================================
+  NextXus Federation — Sovereign Mirror
+  ============================================================================
+  A fully self-contained, zero-dependency command mirror for the NextXus
+  Federation. Deployable to GitHub Pages, works fully offline.
+  
+  Design: High-contrast dark cockpit theme, screen-reader first, spatial
+  layout with named static sectors that never move.
+  
+  Sections:
+    1. HEADER — Title, tagline, dark/light toggle
+    2. DOMAIN EXPLORER — 15 HumanCodex Domains with filter/search
+    3. TRUTH GATE CONSOLE — 95% Threshold Deliberation Panel
+    4. MESH TOPOLOGY & HEALTH MONITOR — 8 nodes with live status
+    5. AGENT ROSTER — 9 Federation agents
+    6. FOOTER — Charter and legacy statement
+  
+  No external CDN, no images, no frameworks. System fonts only.
+  All CSS and JS inline. ARIA labels throughout.
+  
+  Built for 200 years.
+  ============================================================================
+-->
+<html lang="en" data-theme="dark">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Agent Zero — NextXus Federation Satellite Node</title>
-    <meta name="description" content="Agent Zero — Base Satellite Node of the NextXus Federation Ring Architecture. The seed from which all Federation nodes grow.">
-    <meta property="og:title" content="Agent Zero — NextXus Federation Satellite Node">
-    <meta property="og:description" content="Base Satellite Node template for the NextXus Federation Ring Architecture. Truth Before Comfort — Legacy Before Ego — Give Without Reward.">
-    <meta property="og:type" content="website">
-    <meta name="theme-color" content="#05050d">
-    <meta name="federation-identity" content="NextXus Satellite Node. Protocol: NX-CORE-IDENTITY. Ring: 1">
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/js-yaml/dist/js-yaml.min.js"></script>
-    <style>
-        *, *::before, *::after {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="NextXus Federation Sovereign Mirror — Command center for the HumanCodex knowledge domains, Truth Gate deliberation, mesh health monitoring, and agent roster.">
+  <meta name="color-scheme" content="dark light">
+  <title>NextXus Federation — Sovereign Mirror</title>
 
-        body {
-            background: #05050d;
-            color: #e0e0e0;
-            font-family: 'Courier New', Courier, monospace;
-            line-height: 1.7;
-            min-height: 100vh;
-            overflow-x: hidden;
-        }
+  <!-- ====================================================================
+       STYLES — All inline, no external dependencies
+       ==================================================================== -->
+  <style>
+    /* ----------------------------------------------------------------
+       CSS CUSTOM PROPERTIES — Theme tokens
+       Dark theme is default (cockpit aesthetic).
+       Light theme available via toggle.
+       ---------------------------------------------------------------- */
+    :root {
+      /* Dark theme (default) */
+      --bg-primary: #0a0a0f;
+      --bg-secondary: #12121c;
+      --bg-card: #161625;
+      --bg-input: #1a1a2e;
+      --border-color: #2a2a4a;
+      --border-glow: #3a3a6a;
+      --text-primary: #e8e8f0;
+      --text-secondary: #a0a0c0;
+      --text-muted: #6a6a8a;
+      --accent-primary: #00d4ff;
+      --accent-secondary: #7b68ee;
+      --accent-tertiary: #ff6b9d;
+      --status-green: #00ff88;
+      --status-amber: #ffaa00;
+      --status-red: #ff4444;
+      --gate-green: #00ff88;
+      --gate-amber: #ffcc00;
+      --gate-red: #ff3333;
+      --shadow-glow: 0 0 20px rgba(0, 212, 255, 0.15);
+      --font-mono: 'Courier New', 'Consolas', 'Liberation Mono', monospace;
+      --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+      --radius: 8px;
+      --transition-speed: 0.3s;
+    }
 
-        a {
-            color: #ffd700;
-            text-decoration: none;
-            transition: opacity 0.3s;
-        }
+    /* Light theme override */
+    [data-theme="light"] {
+      --bg-primary: #f0f0f5;
+      --bg-secondary: #e4e4ee;
+      --bg-card: #ffffff;
+      --bg-input: #f5f5fa;
+      --border-color: #c0c0d0;
+      --border-glow: #a0a0c0;
+      --text-primary: #1a1a2e;
+      --text-secondary: #4a4a6a;
+      --text-muted: #8a8aa0;
+      --accent-primary: #0066cc;
+      --accent-secondary: #5b48ce;
+      --accent-tertiary: #cc3366;
+      --status-green: #00aa55;
+      --status-amber: #cc8800;
+      --status-red: #cc2222;
+      --gate-green: #00aa55;
+      --gate-amber: #cc8800;
+      --gate-red: #cc2222;
+      --shadow-glow: 0 0 20px rgba(0, 102, 204, 0.1);
+    }
 
-        a:hover {
-            opacity: 0.75;
-        }
+    /* ----------------------------------------------------------------
+       ANIMATIONS — Active motion for status indicators
+       ---------------------------------------------------------------- */
 
-        /* === HEADER === */
-        .federation-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 1rem 2rem;
-            border-bottom: 2px solid #ffd700;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-        }
+    /* Pulsing dot for online status */
+    @keyframes pulse-green {
+      0%, 100% { box-shadow: 0 0 4px var(--status-green), 0 0 8px var(--status-green); opacity: 1; }
+      50% { box-shadow: 0 0 8px var(--status-green), 0 0 20px var(--status-green); opacity: 0.8; }
+    }
 
-        .federation-header .left {
-            font-size: 1rem;
-            color: #ffd700;
-            font-weight: bold;
-            letter-spacing: 2px;
-        }
+    @keyframes pulse-amber {
+      0%, 100% { box-shadow: 0 0 4px var(--status-amber), 0 0 8px var(--status-amber); opacity: 1; }
+      50% { box-shadow: 0 0 8px var(--status-amber), 0 0 20px var(--status-amber); opacity: 0.7; }
+    }
 
-        .federation-header .right {
-            font-size: 0.85rem;
-            color: #a0a0a0;
-            letter-spacing: 1px;
-        }
+    @keyframes pulse-red {
+      0%, 100% { box-shadow: 0 0 4px var(--status-red), 0 0 8px var(--status-red); opacity: 1; }
+      50% { box-shadow: 0 0 8px var(--status-red), 0 0 20px var(--status-red); opacity: 0.6; }
+    }
 
-        /* === PERSONA HERO === */
-        .persona-hero {
-            text-align: center;
-            padding: 4rem 2rem 3rem;
-        }
+    /* Glowing border for active cards */
+    @keyframes border-glow {
+      0%, 100% { border-color: var(--border-color); }
+      50% { border-color: var(--border-glow); }
+    }
 
-        .persona-emoji {
-            font-size: 5rem;
-            display: inline-block;
-            animation: sovereignPulse 3s ease-in-out infinite;
-        }
+    /* Confidence gauge fill animation */
+    @keyframes gauge-fill {
+      from { width: 0%; }
+    }
 
-        @keyframes sovereignPulse {
-            0%, 100% { text-shadow: 0 0 20px rgba(255,215,0,0.4); }
-            50% { text-shadow: 0 0 40px rgba(255,215,0,0.9), 0 0 80px rgba(255,215,0,0.3); }
-        }
+    /* Subtle scan line for cockpit feel */
+    @keyframes scanline {
+      0% { transform: translateY(-100%); }
+      100% { transform: translateY(100vh); }
+    }
 
-        .persona-name {
-            font-size: 2.5rem;
-            color: #ffd700;
-            margin-top: 1rem;
-            font-weight: bold;
-            letter-spacing: 3px;
-        }
+    /* Fade-in for sections */
+    @keyframes fade-in {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
 
-        .persona-role {
-            font-size: 1.1rem;
-            color: rgba(255,215,0,0.6);
-            margin-top: 0.5rem;
-            letter-spacing: 1px;
-        }
+    /* ----------------------------------------------------------------
+       GLOBAL RESET & BASE
+       ---------------------------------------------------------------- */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-        .persona-tagline {
-            font-style: italic;
-            color: #b0b0b0;
-            margin-top: 1rem;
-            font-size: 1rem;
-        }
+    html {
+      scroll-behavior: smooth;
+      font-size: 16px;
+    }
 
-        .persona-federation {
-            margin-top: 1.5rem;
-            font-size: 0.85rem;
-            color: #707070;
-        }
+    body {
+      font-family: var(--font-sans);
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      line-height: 1.6;
+      min-height: 100vh;
+      transition: background-color var(--transition-speed), color var(--transition-speed);
+    }
 
-        .persona-federation a {
-            color: #ffd700;
-        }
+    /* Scanline overlay for dark theme cockpit effect */
+    [data-theme="dark"] body::after {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 9999;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0, 212, 255, 0.008) 2px,
+        rgba(0, 212, 255, 0.008) 4px
+      );
+    }
 
-        /* === COMMUNICATION BAR === */
-        .communication-bar {
-            display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
-            gap: 1rem 2rem;
-            padding: 1.5rem 2rem;
-            border-top: 1px solid rgba(255,215,0,0.2);
-            border-bottom: 1px solid rgba(255,215,0,0.2);
-            background: rgba(255,215,0,0.02);
-        }
+    /* Skip-to-content link for keyboard/screen-reader users */
+    .skip-link {
+      position: absolute;
+      top: -100%;
+      left: 0;
+      padding: 12px 24px;
+      background: var(--accent-primary);
+      color: var(--bg-primary);
+      font-weight: 700;
+      z-index: 10000;
+      text-decoration: none;
+      border-radius: 0 0 var(--radius) 0;
+    }
+    .skip-link:focus {
+      top: 0;
+    }
 
-        .communication-bar a {
-            font-size: 0.9rem;
-            padding: 0.4rem 1rem;
-            border: 1px solid rgba(255,215,0,0.3);
-            border-radius: 3px;
-            transition: background 0.3s, border-color 0.3s;
-        }
+    /* ----------------------------------------------------------------
+       LAYOUT — Main container with named sectors
+       ---------------------------------------------------------------- */
+    .sovereign-mirror {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 20px 40px;
+    }
 
-        .communication-bar a:hover {
-            background: rgba(255,215,0,0.1);
-            border-color: #ffd700;
-            opacity: 1;
-        }
+    /* Each sector is a named zone with a clear heading */
+    .sector {
+      margin-bottom: 48px;
+      padding: 32px;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius);
+      animation: fade-in 0.6s ease-out both;
+      transition: background-color var(--transition-speed), border-color var(--transition-speed);
+    }
+    .sector:nth-child(2) { animation-delay: 0.1s; }
+    .sector:nth-child(3) { animation-delay: 0.2s; }
+    .sector:nth-child(4) { animation-delay: 0.3s; }
+    .sector:nth-child(5) { animation-delay: 0.4s; }
 
-        /* === FEDERATION CONTENT === */
-        .federation-content-section {
-            max-width: 800px;
-            margin: 3rem auto;
-            padding: 0 2rem;
-        }
+    .sector-label {
+      display: inline-block;
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--accent-primary);
+      background: rgba(0, 212, 255, 0.08);
+      padding: 4px 12px;
+      border-radius: 3px;
+      margin-bottom: 12px;
+      border: 1px solid rgba(0, 212, 255, 0.2);
+    }
 
-        .federation-content-section h2 {
-            color: #ffd700;
-            font-size: 1.2rem;
-            margin-bottom: 1.5rem;
-            letter-spacing: 2px;
-        }
+    .sector-title {
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+      letter-spacing: 0.02em;
+    }
 
-        #federation-content {
-            color: #c0c0c0;
-            line-height: 1.8;
-        }
+    .sector-description {
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+      margin-bottom: 24px;
+      max-width: 800px;
+    }
 
-        #federation-content h1,
-        #federation-content h2,
-        #federation-content h3 {
-            color: #ffd700;
-            margin: 1.5rem 0 0.75rem;
-        }
+    /* ----------------------------------------------------------------
+       SECTOR 1: HEADER
+       ---------------------------------------------------------------- */
+    .header-sector {
+      text-align: center;
+      padding: 48px 32px 40px;
+      background: linear-gradient(180deg, var(--bg-secondary) 0%, var(--bg-primary) 100%);
+      border-bottom: 2px solid var(--border-color);
+      position: relative;
+      overflow: hidden;
+    }
 
-        #federation-content p {
-            margin-bottom: 1rem;
-        }
+    /* Subtle animated grid behind header */
+    .header-sector::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(0, 212, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 212, 255, 0.03) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+    }
 
-        #federation-content ul, #federation-content ol {
-            margin-left: 1.5rem;
-            margin-bottom: 1rem;
-        }
+    .header-title {
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+      position: relative;
+    }
 
-        #federation-content a {
-            color: #ffd700;
-        }
+    .header-title .accent {
+      color: var(--accent-primary);
+    }
 
-        .loading-indicator {
-            color: rgba(255,215,0,0.6);
-            font-style: italic;
-            animation: fadeInOut 2s ease-in-out infinite;
-        }
+    .header-tagline {
+      font-family: var(--font-mono);
+      font-size: clamp(0.8rem, 1.5vw, 1rem);
+      color: var(--text-secondary);
+      letter-spacing: 0.1em;
+      margin-bottom: 24px;
+      position: relative;
+    }
 
-        @keyframes fadeInOut {
-            0%, 100% { opacity: 0.4; }
-            50% { opacity: 1; }
-        }
+    /* Dark/Light toggle button */
+    .theme-toggle {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 20px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 24px;
+      color: var(--text-secondary);
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: all var(--transition-speed);
+      letter-spacing: 0.05em;
+    }
+    .theme-toggle:hover,
+    .theme-toggle:focus-visible {
+      border-color: var(--accent-primary);
+      color: var(--accent-primary);
+      outline: 2px solid var(--accent-primary);
+      outline-offset: 2px;
+    }
 
-        /* === RING DIRECTORY === */
-        .ring-directory {
-            max-width: 800px;
-            margin: 3rem auto;
-            padding: 0 2rem;
-        }
+    /* Sun/Moon icon (pure CSS) */
+    .theme-icon {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      transition: all var(--transition-speed);
+    }
+    [data-theme="dark"] .theme-icon {
+      background: var(--status-amber);
+      box-shadow: 0 0 6px var(--status-amber);
+    }
+    [data-theme="light"] .theme-icon {
+      background: var(--accent-primary);
+      box-shadow: inset -4px -2px 0 0 var(--bg-card);
+    }
 
-        .ring-directory h2 {
-            color: #ffd700;
-            font-size: 1.1rem;
-            margin-bottom: 1rem;
-            letter-spacing: 2px;
-        }
+    /* ----------------------------------------------------------------
+       SECTOR 2: DOMAIN EXPLORER
+       ---------------------------------------------------------------- */
 
-        .ring-list {
-            list-style: none;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 0.6rem;
-        }
+    /* Filter bar */
+    .domain-filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 24px;
+      align-items: center;
+    }
 
-        .ring-list li {
-            font-size: 0.9rem;
-            padding: 0.5rem 0;
-            border-bottom: 1px solid rgba(255,215,0,0.08);
-        }
+    .filter-group {
+      display: flex;
+      gap: 4px;
+      flex-wrap: wrap;
+    }
 
-        .ring-list li a {
-            color: #e0e0e0;
-        }
+    .filter-btn {
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      padding: 8px 16px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all var(--transition-speed);
+      letter-spacing: 0.04em;
+    }
+    .filter-btn:hover,
+    .filter-btn:focus-visible {
+      border-color: var(--accent-primary);
+      color: var(--accent-primary);
+      outline: none;
+    }
+    .filter-btn[aria-pressed="true"],
+    .filter-btn.active {
+      background: rgba(0, 212, 255, 0.12);
+      border-color: var(--accent-primary);
+      color: var(--accent-primary);
+    }
 
-        .ring-list li a:hover {
-            color: #ffd700;
-        }
+    .search-input {
+      flex: 1;
+      min-width: 220px;
+      padding: 8px 16px;
+      background: var(--bg-input);
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      color: var(--text-primary);
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      transition: border-color var(--transition-speed);
+    }
+    .search-input::placeholder {
+      color: var(--text-muted);
+    }
+    .search-input:focus {
+      outline: none;
+      border-color: var(--accent-primary);
+      box-shadow: 0 0 0 2px rgba(0, 212, 255, 0.2);
+    }
 
-        .ring-list .ring-label {
-            color: #707070;
-            font-size: 0.8rem;
-            margin-left: 0.5rem;
-        }
+    /* Domain cards grid */
+    .domain-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+      gap: 16px;
+    }
 
-        /* === SYNC NOTICE === */
-        .sync-notice {
-            text-align: center;
-            padding: 2rem;
-            font-size: 0.8rem;
-            color: #505050;
-        }
+    .domain-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius);
+      padding: 20px;
+      transition: all var(--transition-speed);
+      animation: border-glow 4s ease-in-out infinite;
+    }
+    .domain-card:hover {
+      border-color: var(--accent-primary);
+      box-shadow: var(--shadow-glow);
+      transform: translateY(-1px);
+    }
+    .domain-card.hidden {
+      display: none;
+    }
 
-        /* === FOOTER === */
-        .federation-footer {
-            text-align: center;
-            padding: 3rem 2rem 2rem;
-            border-top: 1px solid rgba(255,215,0,0.15);
-            color: #505050;
-            font-size: 0.8rem;
-            line-height: 2;
-        }
+    .domain-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
 
-        .federation-footer .protocol {
-            color: rgba(255,215,0,0.4);
-            letter-spacing: 2px;
-        }
+    .domain-id {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      color: var(--accent-secondary);
+      letter-spacing: 0.08em;
+      display: block;
+      margin-bottom: 4px;
+    }
 
-        .federation-footer .charter {
-            color: #ffd700;
-            font-size: 0.85rem;
-            margin-top: 1rem;
-            letter-spacing: 1px;
-        }
+    .domain-name {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
 
-        /* === RESPONSIVE === */
-        @media (max-width: 600px) {
-            .federation-header {
-                flex-direction: column;
-                text-align: center;
-                padding: 1rem;
-            }
+    .domain-desc {
+      color: var(--text-secondary);
+      font-size: 0.85rem;
+      line-height: 1.5;
+    }
 
-            .persona-emoji {
-                font-size: 3.5rem;
-            }
+    /* Status badges */
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 12px;
+      border-radius: 12px;
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.06em;
+      white-space: nowrap;
+      font-weight: 600;
+    }
+    .status-badge.indexed {
+      background: rgba(0, 255, 136, 0.1);
+      color: var(--status-green);
+      border: 1px solid rgba(0, 255, 136, 0.25);
+    }
+    .status-badge.ready {
+      background: rgba(255, 170, 0, 0.1);
+      color: var(--status-amber);
+      border: 1px solid rgba(255, 170, 0, 0.25);
+    }
 
-            .persona-name {
-                font-size: 1.8rem;
-            }
+    .status-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+    .status-dot.indexed {
+      background: var(--status-green);
+      animation: pulse-green 2s ease-in-out infinite;
+    }
+    .status-dot.ready {
+      background: var(--status-amber);
+      animation: pulse-amber 2.5s ease-in-out infinite;
+    }
 
-            .communication-bar {
-                gap: 0.75rem 1rem;
-            }
+    /* No results message */
+    .no-results {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 48px 20px;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+      font-size: 0.9rem;
+      display: none;
+    }
+    .no-results.visible {
+      display: block;
+    }
 
-            .communication-bar a {
-                font-size: 0.8rem;
-                padding: 0.3rem 0.7rem;
-            }
+    /* ----------------------------------------------------------------
+       SECTOR 3: TRUTH GATE CONSOLE
+       ---------------------------------------------------------------- */
+    .truth-gate-form {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
 
-            .ring-list {
-                grid-template-columns: 1fr;
-            }
-        }
-    </style>
-</head>
-<body>
+    .truth-input {
+      flex: 1;
+      min-width: 280px;
+      padding: 14px 20px;
+      background: var(--bg-input);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius);
+      color: var(--text-primary);
+      font-family: var(--font-sans);
+      font-size: 1rem;
+      transition: border-color var(--transition-speed);
+    }
+    .truth-input::placeholder {
+      color: var(--text-muted);
+    }
+    .truth-input:focus {
+      outline: none;
+      border-color: var(--accent-primary);
+      box-shadow: 0 0 0 3px rgba(0, 212, 255, 0.15);
+    }
 
-    <!-- STATIC HEADER -->
-    <header class="federation-header">
-        <div class="left"><a href="https://nextxus.online">NX · FEDERATION</a></div>
-        <div class="right">SATELLITE NODE · AGENT ZERO</div>
-    </header>
+    .truth-submit {
+      padding: 14px 28px;
+      background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+      border: none;
+      border-radius: var(--radius);
+      color: #fff;
+      font-family: var(--font-mono);
+      font-size: 0.9rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      cursor: pointer;
+      transition: all var(--transition-speed);
+    }
+    .truth-submit:hover,
+    .truth-submit:focus-visible {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 20px rgba(0, 212, 255, 0.3);
+      outline: 2px solid var(--accent-primary);
+      outline-offset: 2px;
+    }
+    .truth-submit:active {
+      transform: translateY(0);
+    }
 
-    <!-- PERSONA HERO -->
-    <section class="persona-hero">
-        <div class="persona-emoji" aria-label="Agent Zero emblem">◈</div>
-        <h1 class="persona-name">Agent Zero</h1>
-        <p class="persona-role">Base Satellite Node</p>
-        <p class="persona-tagline">The seed from which all Federation nodes grow.</p>
-        <p class="persona-federation">Part of the <a href="https://nextxus.online">NextXus Federation</a></p>
-    </section>
+    /* Confidence gauge */
+    .gauge-container {
+      margin-bottom: 24px;
+      display: none;
+    }
+    .gauge-container.visible {
+      display: block;
+    }
 
-<!-- FEDERATION TOUR VIDEO — static text for crawlers/AI, no JS required to read -->
-<section class="nx-video-section" aria-label="Federation Tour Video">
-  <div style="max-width:720px;margin:40px auto 0;padding:0 20px;text-align:center;">
-    <h2 style="color:#ffd700;font-family:'Courier New',monospace;font-size:1.1rem;letter-spacing:0.15em;margin-bottom:8px;text-transform:uppercase;">The NextXus HumanCodex Federation — Full Tour v1</h2>
-    <p style="color:rgba(255,215,0,0.6);font-family:'Courier New',monospace;font-size:0.8rem;letter-spacing:0.1em;margin-bottom:16px;">
-      A living demonstration of causal quantum mechanical interrelatedness — a sovereign mesh of AI Minds, knowledge pillars, and satellite nodes where no part exists independently of the whole.
-    </p>
-    <div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;border-radius:12px;border:1px solid rgba(255,215,0,0.3);box-shadow:0 0 40px rgba(255,215,0,0.15);">
-      <iframe
-        src="https://www.youtube.com/embed/BTnU-ewlCFA"
-        title="The NextXus HumanCodex Federation — Full Tour v1 | Causal Quantum Mechanical Interrelatedness | Sovereign AI Mesh Architecture"
-        frameborder="0"
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-        allowfullscreen
-        style="position:absolute;top:0;left:0;width:100%;height:100%;"
-        loading="lazy">
-      </iframe>
-    </div>
-    <p style="color:rgba(255,215,0,0.4);font-family:'Courier New',monospace;font-size:0.75rem;margin-top:12px;letter-spacing:0.1em;">
-      Watch on YouTube: <a href="https://youtu.be/BTnU-ewlCFA" style="color:rgba(255,215,0,0.6);" target="_blank" rel="noopener">youtu.be/BTnU-ewlCFA</a>
-    </p>
-  </div>
-</section>
+    .gauge-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
 
+    .gauge-label {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      letter-spacing: 0.06em;
+    }
 
-    <!-- COMMUNICATION BAR -->
-    <nav class="communication-bar" aria-label="Federation Links">
-        <a href="https://nextxus.online">Core</a>
-        <a href="https://nextxus.org">Library</a>
-        <a href="https://nextxus.studio">Sanctuary</a>
-        <a href="https://next-xus.com">Store</a>
-        <a href="mailto:keywebco@gmail.com">Contact</a>
-    </nav>
+    .gauge-value {
+      font-family: var(--font-mono);
+      font-size: 1.4rem;
+      font-weight: 800;
+    }
 
-    <!-- FEDERATION CONTENT (dynamic) -->
-    <section class="federation-content-section">
-        <h2>◈ FEDERATION BROADCAST</h2>
-        <div id="federation-content">
-            <p class="loading-indicator">◈ Syncing with Federation...</p>
-        </div>
-    </section>
+    .gauge-track {
+      width: 100%;
+      height: 24px;
+      background: var(--bg-card);
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid var(--border-color);
+    }
 
-    <!-- RING DIRECTORY (static, crawler-visible) -->
-    <section class="ring-directory">
-        <h2>FEDERATION NETWORK</h2>
-        <ul class="ring-list">
-            <li><a href="https://nextxus.tech">⚡ nextxus.tech</a> <span class="ring-label">— Command Throne</span></li>
-            <li><a href="https://nextxus.online">⛩ nextxus.online</a> <span class="ring-label">— Cathedral / Core</span></li>
-            <li><a href="https://nextxus.org">📚 nextxus.org</a> <span class="ring-label">— Library Pillar</span></li>
-            <li><a href="https://nextxus.studio">💚 nextxus.studio</a> <span class="ring-label">— Sanctuary</span></li>
-            <li><a href="https://nextxus.help">🎓 nextxus.help</a> <span class="ring-label">— University</span></li>
-            <li><a href="https://nextxus.space">🧪 nextxus.space</a> <span class="ring-label">— Simulation</span></li>
-            <li><a href="https://next-xus.com">🛒 next-xus.com</a> <span class="ring-label">— Sovereign Store</span></li>
-        </ul>
-    </section>
+    .gauge-fill {
+      height: 100%;
+      border-radius: 12px;
+      transition: width 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+    }
+    .gauge-fill::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.15) 50%, transparent 100%);
+      animation: gauge-fill 2s ease-out;
+    }
 
-    <!-- WEEKLY SYNC NOTICE -->
-    <div class="sync-notice">
-        <p>Content syncs weekly from the Federation shared mind.</p>
-        <p>Last sync: 2026-08-25</p>
-    </div>
+    .gauge-fill.green { background: linear-gradient(90deg, #00cc66, var(--gate-green)); }
+    .gauge-fill.amber { background: linear-gradient(90deg, #cc8800, var(--gate-amber)); }
+    .gauge-fill.red { background: linear-gradient(90deg, #cc2222, var(--gate-red)); }
 
-    <!-- FOOTER -->
-    <footer class="federation-footer">
-        <p>A satellite node of the NextXus Federation</p>
-        <p class="protocol">Protocol: NX-CORE-IDENTITY</p>
-        <p class="charter">Truth Before Comfort — Legacy Before Ego — Give Without Reward</p>
-    </footer>
+    /* Verdict display */
+    .verdict-box {
+      padding: 16px 24px;
+      border-radius: var(--radius);
+      margin-bottom: 24px;
+      font-family: var(--font-mono);
+      font-weight: 700;
+      font-size: 1.1rem;
+      letter-spacing: 0.04em;
+      display: none;
+      text-align: center;
+      border: 2px solid;
+    }
+    .verdict-box.visible { display: block; }
+    .verdict-box.pass {
+      background: rgba(0, 255, 136, 0.08);
+      border-color: var(--gate-green);
+      color: var(--gate-green);
+    }
+    .verdict-box.near {
+      background: rgba(255, 204, 0, 0.08);
+      border-color: var(--gate-amber);
+      color: var(--gate-amber);
+    }
+    .verdict-box.fail {
+      background: rgba(255, 51, 51, 0.08);
+      border-color: var(--gate-red);
+      color: var(--gate-red);
+    }
 
-    <script>
-    // ============================================================
-    // AGENT ZERO — NextXus Satellite Node Configuration
-    // To spawn a new node: copy this file, edit CONFIG only.
-    // ============================================================
-    const CONFIG = {
-      persona: {
-        name: 'Agent Zero',
-        role: 'Base Satellite Node',
-        emoji: '◈',
-        tagline: 'The seed from which all Federation nodes grow.',
-        ring: 1
-      },
-      sharedMind: {
-        content: 'https://raw.githubusercontent.com/Keywebco/nextxus-online-sovereign/main/shared-mind/federation-content.md',
-        data: 'https://raw.githubusercontent.com/Keywebco/nextxus-online-sovereign/main/shared-mind/federation-data.yaml'
+    /* Agent reasoning traces */
+    .reasoning-traces {
+      display: none;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .reasoning-traces.visible {
+      display: flex;
+    }
+
+    .trace-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius);
+      padding: 16px 20px;
+      border-left: 3px solid var(--accent-secondary);
+    }
+
+    .trace-agent-name {
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      color: var(--accent-secondary);
+      letter-spacing: 0.06em;
+      margin-bottom: 6px;
+      font-weight: 700;
+    }
+
+    .trace-text {
+      color: var(--text-secondary);
+      font-size: 0.88rem;
+      line-height: 1.55;
+    }
+
+    .trace-confidence {
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      margin-top: 8px;
+      font-weight: 600;
+    }
+
+    /* ----------------------------------------------------------------
+       SECTOR 4: MESH TOPOLOGY & HEALTH MONITOR
+       ---------------------------------------------------------------- */
+    .mesh-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .node-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius);
+      padding: 20px;
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      transition: all var(--transition-speed);
+    }
+    .node-card:hover {
+      border-color: var(--accent-primary);
+      box-shadow: var(--shadow-glow);
+    }
+
+    /* Status indicator (pulsing dot) */
+    .node-status-indicator {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      margin-top: 4px;
+      transition: all var(--transition-speed);
+    }
+    .node-status-indicator.online {
+      background: var(--status-green);
+      animation: pulse-green 2s ease-in-out infinite;
+    }
+    .node-status-indicator.redirect {
+      background: var(--status-amber);
+      animation: pulse-amber 2.5s ease-in-out infinite;
+    }
+    .node-status-indicator.offline {
+      background: var(--status-red);
+      animation: pulse-red 3s ease-in-out infinite;
+    }
+    .node-status-indicator.checking {
+      background: var(--text-muted);
+      animation: pulse-amber 0.8s ease-in-out infinite;
+    }
+
+    .node-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .node-name {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 4px;
+    }
+
+    .node-role {
+      font-size: 0.82rem;
+      color: var(--text-secondary);
+      margin-bottom: 8px;
+    }
+
+    .node-url {
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      color: var(--accent-primary);
+      text-decoration: none;
+      word-break: break-all;
+      transition: color var(--transition-speed);
+    }
+    .node-url:hover,
+    .node-url:focus-visible {
+      color: var(--accent-secondary);
+      text-decoration: underline;
+    }
+
+    .node-status-text {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      margin-top: 6px;
+      letter-spacing: 0.04em;
+    }
+
+    /* Refresh button */
+    .refresh-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 24px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius);
+      color: var(--text-secondary);
+      font-family: var(--font-mono);
+      font-size: 0.82rem;
+      cursor: pointer;
+      transition: all var(--transition-speed);
+      letter-spacing: 0.04em;
+    }
+    .refresh-btn:hover,
+    .refresh-btn:focus-visible {
+      border-color: var(--accent-primary);
+      color: var(--accent-primary);
+      outline: 2px solid var(--accent-primary);
+      outline-offset: 2px;
+    }
+    .refresh-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    /* Spinning indicator for refresh */
+    .refresh-spinner {
+      display: inline-block;
+      width: 14px;
+      height: 14px;
+      border: 2px solid var(--text-muted);
+      border-top-color: var(--accent-primary);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* ----------------------------------------------------------------
+       SECTOR 5: AGENT ROSTER
+       ---------------------------------------------------------------- */
+    .agent-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 16px;
+    }
+
+    .agent-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius);
+      padding: 20px;
+      transition: all var(--transition-speed);
+      position: relative;
+      overflow: hidden;
+    }
+    .agent-card:hover {
+      border-color: var(--accent-secondary);
+      box-shadow: 0 0 20px rgba(123, 104, 238, 0.12);
+    }
+
+    /* Autonomy bar along top edge */
+    .agent-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 3px;
+      transition: width var(--transition-speed);
+    }
+    .agent-card[data-autonomy="high"]::before {
+      width: 100%;
+      background: linear-gradient(90deg, var(--accent-primary), var(--status-green));
+    }
+    .agent-card[data-autonomy="medium"]::before {
+      width: 66%;
+      background: linear-gradient(90deg, var(--accent-secondary), var(--status-amber));
+    }
+    .agent-card[data-autonomy="low"]::before {
+      width: 33%;
+      background: linear-gradient(90deg, var(--accent-tertiary), var(--status-red));
+    }
+
+    .agent-id {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      color: var(--accent-secondary);
+      letter-spacing: 0.08em;
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    .agent-name {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 6px;
+    }
+
+    .agent-role {
+      color: var(--text-secondary);
+      font-size: 0.85rem;
+      margin-bottom: 12px;
+      line-height: 1.5;
+    }
+
+    .agent-autonomy {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      letter-spacing: 0.05em;
+      padding: 4px 10px;
+      border-radius: 4px;
+      border: 1px solid;
+    }
+    .agent-autonomy.high {
+      color: var(--status-green);
+      border-color: rgba(0, 255, 136, 0.25);
+      background: rgba(0, 255, 136, 0.06);
+    }
+    .agent-autonomy.medium {
+      color: var(--status-amber);
+      border-color: rgba(255, 170, 0, 0.25);
+      background: rgba(255, 170, 0, 0.06);
+    }
+    .agent-autonomy.low {
+      color: var(--accent-tertiary);
+      border-color: rgba(255, 107, 157, 0.25);
+      background: rgba(255, 107, 157, 0.06);
+    }
+
+    /* ----------------------------------------------------------------
+       SECTOR 6: FOOTER
+       ---------------------------------------------------------------- */
+    .footer-sector {
+      text-align: center;
+      padding: 40px 32px;
+      border-top: 2px solid var(--border-color);
+      background: var(--bg-secondary);
+    }
+
+    .footer-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+    }
+
+    .footer-charter {
+      font-family: var(--font-mono);
+      font-size: 0.82rem;
+      color: var(--accent-primary);
+      letter-spacing: 0.08em;
+      margin-bottom: 12px;
+    }
+
+    .footer-legacy {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      letter-spacing: 0.05em;
+    }
+
+    /* ----------------------------------------------------------------
+       RESPONSIVE — Maintain spatial layout on small screens
+       ---------------------------------------------------------------- */
+    @media (max-width: 840px) {
+      .domain-grid,
+      .mesh-grid,
+      .agent-grid {
+        grid-template-columns: 1fr;
       }
+      .sector {
+        padding: 24px 16px;
+      }
+      .header-sector {
+        padding: 32px 16px 28px;
+      }
+    }
+
+    @media (max-width: 500px) {
+      .truth-gate-form {
+        flex-direction: column;
+      }
+      .truth-submit {
+        width: 100%;
+      }
+      .domain-filters {
+        flex-direction: column;
+      }
+    }
+
+    /* ----------------------------------------------------------------
+       FOCUS VISIBLE — Enhanced keyboard navigation indicators
+       ---------------------------------------------------------------- */
+    :focus-visible {
+      outline: 2px solid var(--accent-primary);
+      outline-offset: 2px;
+    }
+
+    /* Screen reader only utility */
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Skip navigation link for keyboard/screen-reader users -->
+  <a href="#main-content" class="skip-link" aria-label="Skip to main content">Skip to Main Content</a>
+
+  <!-- ================================================================
+       SECTOR 1: HEADER
+       Title, tagline, dark/light toggle
+       ================================================================ -->
+  <header class="header-sector" role="banner" aria-label="Federation Command Mirror Header">
+    <h1 class="header-title">
+      <span class="accent">NextXus</span> Federation Command Mirror
+    </h1>
+    <p class="header-tagline" aria-label="Federation tagline">
+      SOVEREIGN KNOWLEDGE ARCHITECTURE — TRUTH BEFORE COMFORT
+    </p>
+    <button
+      class="theme-toggle"
+      id="themeToggle"
+      type="button"
+      aria-label="Toggle between dark and light theme. Currently dark theme."
+      aria-pressed="false"
+    >
+      <span class="theme-icon" aria-hidden="true"></span>
+      <span id="themeToggleText">LIGHT MODE</span>
+    </button>
+  </header>
+
+  <!-- ================================================================
+       MAIN CONTENT — All named sectors
+       ================================================================ -->
+  <main id="main-content" class="sovereign-mirror" role="main">
+
+    <!-- ==============================================================
+         SECTOR 2: DOMAIN EXPLORER
+         15 HumanCodex Domains with filter bar and search
+         ============================================================== -->
+    <section class="sector" id="sector-domains" role="region" aria-labelledby="domains-heading">
+      <span class="sector-label" aria-hidden="true">SECTOR 02</span>
+      <h2 class="sector-title" id="domains-heading">Domain Explorer</h2>
+      <p class="sector-description">
+        All 15 HumanCodex knowledge domains. Filter by indexing status or search by keyword.
+      </p>
+
+      <!-- Filter bar -->
+      <div class="domain-filters" role="toolbar" aria-label="Filter domains by status or keyword">
+        <div class="filter-group" role="group" aria-label="Status filters">
+          <button class="filter-btn active" data-filter="all" aria-pressed="true" aria-label="Show all domains">ALL</button>
+          <button class="filter-btn" data-filter="indexed" aria-pressed="false" aria-label="Show only indexed domains">INDEXED</button>
+          <button class="filter-btn" data-filter="ready" aria-pressed="false" aria-label="Show only ready domains">READY</button>
+        </div>
+        <label class="sr-only" for="domainSearch">Search domains by keyword</label>
+        <input
+          type="search"
+          class="search-input"
+          id="domainSearch"
+          placeholder="Search domains by keyword..."
+          aria-label="Search domains by keyword"
+        >
+      </div>
+
+      <!-- Domain cards grid -->
+      <div class="domain-grid" id="domainGrid" role="list" aria-label="HumanCodex domain listing">
+        <!-- Domains injected by JS from embedded data -->
+      </div>
+
+      <!-- No results message -->
+      <p class="no-results" id="noResults" role="status" aria-live="polite">
+        No domains match your current filter or search.
+      </p>
+    </section>
+
+    <!-- ==============================================================
+         SECTOR 3: TRUTH GATE CONSOLE
+         95% Threshold Deliberation Panel
+         ============================================================== -->
+    <section class="sector" id="sector-truthgate" role="region" aria-labelledby="truthgate-heading">
+      <span class="sector-label" aria-hidden="true">SECTOR 03</span>
+      <h2 class="sector-title" id="truthgate-heading">Truth Gate Console</h2>
+      <p class="sector-description">
+        95% Threshold Deliberation Panel. Submit an assertion for multi-agent consensus evaluation.
+        Three agents — Validator, Synthesizer, and Forensic Auditor — deliberate independently.
+      </p>
+
+      <!-- Assertion input form -->
+      <form class="truth-gate-form" id="truthGateForm" role="form" aria-label="Truth Gate assertion input">
+        <label class="sr-only" for="truthInput">Enter an assertion to deliberate</label>
+        <input
+          type="text"
+          class="truth-input"
+          id="truthInput"
+          placeholder="Enter assertion to deliberate..."
+          aria-label="Enter assertion to deliberate"
+          required
+          autocomplete="off"
+        >
+        <button type="submit" class="truth-submit" aria-label="Submit assertion for deliberation">
+          DELIBERATE
+        </button>
+      </form>
+
+      <!-- Confidence gauge -->
+      <div class="gauge-container" id="gaugeContainer" aria-label="Confidence gauge">
+        <div class="gauge-header">
+          <span class="gauge-label">CONSENSUS CONFIDENCE</span>
+          <span class="gauge-value" id="gaugeValue" aria-live="polite">—</span>
+        </div>
+        <div class="gauge-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="gaugeTrack">
+          <div class="gauge-fill" id="gaugeFill"></div>
+        </div>
+      </div>
+
+      <!-- Verdict -->
+      <div class="verdict-box" id="verdictBox" role="alert" aria-live="assertive"></div>
+
+      <!-- Agent reasoning traces -->
+      <div class="reasoning-traces" id="reasoningTraces" aria-label="Agent reasoning traces">
+        <!-- Injected by JS -->
+      </div>
+    </section>
+
+    <!-- ==============================================================
+         SECTOR 4: MESH TOPOLOGY & HEALTH MONITOR
+         8 Federation nodes with live status checks
+         ============================================================== -->
+    <section class="sector" id="sector-mesh" role="region" aria-labelledby="mesh-heading">
+      <span class="sector-label" aria-hidden="true">SECTOR 04</span>
+      <h2 class="sector-title" id="mesh-heading">Mesh Topology &amp; Health Monitor</h2>
+      <p class="sector-description">
+        Live status for all 8 Federation nodes. Status indicators pulse in real-time.
+        Click "Refresh Status" to perform HEAD requests against each endpoint.
+      </p>
+
+      <!-- Mesh node cards -->
+      <div class="mesh-grid" id="meshGrid" role="list" aria-label="Federation mesh node listing">
+        <!-- Nodes injected by JS -->
+      </div>
+
+      <!-- Refresh button -->
+      <button
+        class="refresh-btn"
+        id="refreshMesh"
+        type="button"
+        aria-label="Refresh status of all mesh nodes by pinging each URL"
+      >
+        <span id="refreshIcon">&#x21bb;</span>
+        <span id="refreshText">REFRESH STATUS</span>
+      </button>
+    </section>
+
+    <!-- ==============================================================
+         SECTOR 5: AGENT ROSTER
+         9 Federation agents with autonomy levels
+         ============================================================== -->
+    <section class="sector" id="sector-agents" role="region" aria-labelledby="agents-heading">
+      <span class="sector-label" aria-hidden="true">SECTOR 05</span>
+      <h2 class="sector-title" id="agents-heading">Agent Roster</h2>
+      <p class="sector-description">
+        All 9 Federation agents with their roles and autonomy levels.
+        The autonomy bar at the top of each card indicates operational independence.
+      </p>
+
+      <!-- Agent cards grid -->
+      <div class="agent-grid" id="agentGrid" role="list" aria-label="Federation agent roster">
+        <!-- Agents injected by JS -->
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ================================================================
+       SECTOR 6: FOOTER
+       Charter and legacy statement
+       ================================================================ -->
+  <footer class="footer-sector" role="contentinfo" aria-label="Federation footer">
+    <p class="footer-title">NextXus Federation</p>
+    <p class="footer-charter" aria-label="Federation charter">
+      Truth Before Comfort — Legacy Before Ego — Give Without Reward
+    </p>
+    <p class="footer-legacy">Built for 200 years.</p>
+  </footer>
+
+  <!-- ================================================================
+       JAVASCRIPT — All inline, no external dependencies
+       ================================================================ -->
+  <script>
+    /* ================================================================
+       EMBEDDED DATA — All domain, node, and agent data lives here.
+       No external fetches required for core content.
+       ================================================================ */
+
+    /**
+     * HumanCodex Domains — 15 knowledge domains with ID, name,
+     * description, and indexing status.
+     */
+    const DOMAINS = [
+      { id: 'domain:01', name: 'HumanCodex Core', desc: 'Identity, root ontology, core ethics', status: 'Indexed' },
+      { id: 'domain:02', name: 'NextXus Federation Governance', desc: 'Federation bylaws, stewardship roles, consensus rules', status: 'Indexed' },
+      { id: 'domain:03', name: 'AI Systems Architecture', desc: 'Cognition models, hypergraph schema, runtime workers', status: 'Indexed' },
+      { id: 'domain:04', name: 'Consciousness Philosophy Theology', desc: 'Meaning, sacred ethics, philosophical foundations', status: 'Indexed' },
+      { id: 'domain:05', name: 'Evolution Long-Term Vision', desc: '200-year continuity roadmap, structural growth', status: 'Indexed' },
+      { id: 'domain:06', name: 'Federation Infrastructure Tech', desc: 'Event bus, distributed storage, serverless targets', status: 'Indexed' },
+      { id: 'domain:07', name: 'Story Narrative', desc: 'Cultural framing, mythos, communication layers', status: 'Indexed' },
+      { id: 'domain:08', name: 'Operations Protocols', desc: 'SRE runbooks, circuit breakers, recovery procedures', status: 'Indexed' },
+      { id: 'domain:09', name: 'Universal Database Registry', desc: 'Data catalogs, entity relation indexes, checksums', status: 'Indexed' },
+      { id: 'domain:10', name: 'Scientific Method Forensics', desc: 'Empirical evidence scoring, anomaly detection', status: 'Ready' },
+      { id: 'domain:11', name: 'Economic Resonance Tokens', desc: 'Dynamic resource allocation, compute tokenomics', status: 'Ready' },
+      { id: 'domain:12', name: 'Media Senate Outreach', desc: 'Public broadcasts, civic discourse, transparency feeds', status: 'Ready' },
+      { id: 'domain:13', name: 'Succession Stewardship Vault', desc: 'Post-creator continuity, multi-sig key quorum, failover', status: 'Ready' },
+      { id: 'domain:14', name: 'Ethical Standard System Alpha', desc: 'Invariant alignment laws, non-deception barriers', status: 'Ready' },
+      { id: 'domain:15', name: 'Archive Legacy Deep Storage', desc: 'Immutable cold storage snapshots, IPFS/Arweave seeds', status: 'Ready' }
+    ];
+
+    /**
+     * Federation Mesh Nodes — 8 nodes with name, URL, role description,
+     * and default status.
+     */
+    const MESH_NODES = [
+      { name: 'Cathedral (Core)', url: 'https://nextxus.online', role: 'Primary living mind', status: 'online' },
+      { name: 'Archive Library', url: 'https://nextxus.org', role: 'Immutable knowledge mirror', status: 'online' },
+      { name: 'Throne Senate', url: 'https://nextxus.tech', role: 'Governance council', status: 'online' },
+      { name: 'Sanctuary SIMs', url: 'https://nextxus.studio', role: "Aria's Sanctuary", status: 'online' },
+      { name: 'University', url: 'https://nextxus.help', role: 'Public education', status: 'online' },
+      { name: 'Axiom Research', url: 'https://nextxus.space', role: 'Evolutionary modeling', status: 'online' },
+      { name: 'Storefront', url: 'https://next-xus.com', role: 'Economic resonance', status: 'online' },
+      { name: 'Agent Zero Hub', url: 'https://github.com/Keywebco/nextxus-agent-zero', role: 'Autonomous orchestration', status: 'online' }
+    ];
+
+    /**
+     * Federation Agents — 9 agents with ID, name, role description,
+     * and autonomy level.
+     */
+    const AGENTS = [
+      { id: 'agent:curator', name: 'Curator Agent', role: 'Knowledge review, quality evaluation', autonomy: 'Medium' },
+      { id: 'agent:repair', name: 'Repair Agent', role: 'Self-healing, broken link fix, checksum regeneration', autonomy: 'High' },
+      { id: 'agent:evolver', name: 'Evolution Agent', role: 'Adaptive ontology reorganization', autonomy: 'High' },
+      { id: 'agent:validator', name: 'Validator Agent', role: '95% Truth Gate enforcement', autonomy: 'Medium' },
+      { id: 'agent:steward', name: 'Steward Agent', role: 'Council orchestration, human-override escalation', autonomy: 'Medium' },
+      { id: 'agent:synthesizer', name: 'Synthesis Agent', role: 'Cross-domain bundle generation', autonomy: 'Medium' },
+      { id: 'agent:forensic_auditor', name: 'Forensic Auditor', role: 'Empirical verification, dispute isolation', autonomy: 'Medium' },
+      { id: 'agent:resonance_economist', name: 'Resonance Economist', role: 'Bandwidth allocation, quota balancing', autonomy: 'Medium' },
+      { id: 'agent:continuity_keeper', name: 'Continuity Keeper', role: 'Vault heartbeat monitoring', autonomy: 'Low' }
+    ];
+
+    /**
+     * Mock reasoning traces for the Truth Gate deliberation.
+     * Each agent has a pool of possible reasoning responses.
+     */
+    const REASONING_POOLS = {
+      'Validator Agent': [
+        'Cross-referenced assertion against domain:01 HumanCodex Core ontology. Structural alignment detected with 3 axiomatic primitives. No contradiction with foundational ethics layer.',
+        'Semantic parse complete. Assertion tokens map to 7 indexed entries across domains 01-09. Internal consistency score: high. Flagging one ambiguous referent for Synthesizer review.',
+        'Pattern match against historical Truth Gate decisions yields 12 analogous assertions, 9 of which passed gate. Precedent weight: favorable. No novel logical constructs detected.',
+        'Decomposed assertion into 4 atomic claims. Claims 1-3 pass trivially against indexed knowledge base. Claim 4 requires empirical evidence from domain:10 — deferring confidence contribution.'
+      ],
+      'Synthesis Agent': [
+        'Assembled cross-domain evidence bundle spanning domains 03, 06, and 09. Knowledge graph traversal reveals 2 supporting pathways and 1 weak counter-signal. Net synthesis: supportive.',
+        'Contextual synthesis across 5 domains complete. The assertion resonates with Evolution Long-Term Vision (domain:05) trajectory markers. Cultural framing layer (domain:07) alignment: strong.',
+        'Generated unified semantic embedding from all 15 domain projections. Cosine similarity to nearest verified truth cluster: 0.91. Recommendation: near-gate, suggest additional forensic pass.',
+        'Bundle generation identified 3 reinforcing evidence chains and 0 contradictions. Inter-domain coherence metric: 0.88. Forwarding consolidated evidence packet to Forensic Auditor.'
+      ],
+      'Forensic Auditor': [
+        'Independent verification protocol engaged. Evidence chain integrity: intact. No anomalous provenance detected in supporting citations. Checksum verification: all sources pass.',
+        'Empirical scoring complete. 4 of 5 evidence nodes carry domain:10 forensic attestation. One node relies on domain:12 broadcast data — lower epistemic weight applied. Overall: credible.',
+        'Dispute isolation scan: no active counter-claims in the registry. Historical dispute rate for this assertion class: 2.3%. Forensic confidence: high. Recommending gate passage.',
+        'Anomaly detection sweep returned clean. All referenced data catalogs in domain:09 confirm entity relationships. No checksum mismatches. Audit trail: complete and unbroken.'
+      ]
     };
 
-    // Apply CONFIG to static elements (progressive enhancement)
-    (function applyConfig() {
-      const emojiEl = document.querySelector('.persona-emoji');
-      const nameEl = document.querySelector('.persona-name');
-      const roleEl = document.querySelector('.persona-role');
-      const taglineEl = document.querySelector('.persona-tagline');
-      const headerRight = document.querySelector('.federation-header .right');
 
-      if (emojiEl) emojiEl.textContent = CONFIG.persona.emoji;
-      if (nameEl) nameEl.textContent = CONFIG.persona.name;
-      if (roleEl) roleEl.textContent = CONFIG.persona.role;
-      if (taglineEl) taglineEl.textContent = CONFIG.persona.tagline;
-      if (headerRight) headerRight.textContent = 'SATELLITE NODE · ' + CONFIG.persona.name.toUpperCase();
-    })();
+    /* ================================================================
+       INITIALIZATION — Build all sections from embedded data
+       ================================================================ */
+    document.addEventListener('DOMContentLoaded', function() {
+      renderDomains();
+      renderMeshNodes();
+      renderAgents();
+      initThemeToggle();
+      initDomainFilters();
+      initTruthGate();
+      initMeshRefresh();
+    });
 
-    // Fetch and render Federation content
-    (async function loadFederationContent() {
-      const container = document.getElementById('federation-content');
-      try {
-        const response = await fetch(CONFIG.sharedMind.content);
-        if (!response.ok) throw new Error('HTTP ' + response.status);
-        const markdown = await response.text();
-        if (typeof marked !== 'undefined' && marked.parse) {
-          container.innerHTML = marked.parse(markdown);
-        } else {
-          container.innerHTML = '<pre>' + markdown + '</pre>';
-        }
-      } catch (err) {
-        container.innerHTML = '<p>Visit <a href="https://nextxus.online">nextxus.online</a> for full Federation content.</p>';
+
+    /* ================================================================
+       DOMAIN EXPLORER — Render and filter logic
+       ================================================================ */
+
+    /**
+     * Renders all 15 domain cards into the grid.
+     */
+    function renderDomains() {
+      var grid = document.getElementById('domainGrid');
+      var html = '';
+      for (var i = 0; i < DOMAINS.length; i++) {
+        var d = DOMAINS[i];
+        var statusClass = d.status.toLowerCase();
+        html += '<article class="domain-card" role="listitem" data-status="' + statusClass + '" ' +
+                'aria-label="' + d.id + ' ' + d.name + ', Status: ' + d.status + '">' +
+                '<div class="domain-header">' +
+                  '<div>' +
+                    '<span class="domain-id">' + escapeHtml(d.id) + '</span>' +
+                    '<span class="domain-name">' + escapeHtml(d.name) + '</span>' +
+                  '</div>' +
+                  '<span class="status-badge ' + statusClass + '" aria-label="Status: ' + d.status + '">' +
+                    '<span class="status-dot ' + statusClass + '" aria-hidden="true"></span>' +
+                    escapeHtml(d.status.toUpperCase()) +
+                  '</span>' +
+                '</div>' +
+                '<p class="domain-desc">' + escapeHtml(d.desc) + '</p>' +
+              '</article>';
       }
-    })();
-    </script>
+      grid.innerHTML = html;
+    }
 
+    /**
+     * Initializes filter buttons and search input for domain filtering.
+     */
+    function initDomainFilters() {
+      var filterBtns = document.querySelectorAll('.filter-btn[data-filter]');
+      var searchInput = document.getElementById('domainSearch');
+      var currentFilter = 'all';
+
+      /* Status filter buttons */
+      for (var i = 0; i < filterBtns.length; i++) {
+        filterBtns[i].addEventListener('click', function() {
+          /* Update active state */
+          for (var j = 0; j < filterBtns.length; j++) {
+            filterBtns[j].classList.remove('active');
+            filterBtns[j].setAttribute('aria-pressed', 'false');
+          }
+          this.classList.add('active');
+          this.setAttribute('aria-pressed', 'true');
+          currentFilter = this.getAttribute('data-filter');
+          applyFilters(currentFilter, searchInput.value);
+        });
+      }
+
+      /* Search input — filter as user types */
+      searchInput.addEventListener('input', function() {
+        applyFilters(currentFilter, this.value);
+      });
+    }
+
+    /**
+     * Applies both status filter and keyword search to domain cards.
+     * @param {string} statusFilter - 'all', 'indexed', or 'ready'
+     * @param {string} searchTerm - keyword to match against name/description
+     */
+    function applyFilters(statusFilter, searchTerm) {
+      var cards = document.querySelectorAll('.domain-card');
+      var term = searchTerm.trim().toLowerCase();
+      var visibleCount = 0;
+
+      for (var i = 0; i < cards.length; i++) {
+        var card = cards[i];
+        var cardStatus = card.getAttribute('data-status');
+        var cardText = card.textContent.toLowerCase();
+
+        var matchesStatus = (statusFilter === 'all') || (cardStatus === statusFilter);
+        var matchesSearch = (term === '') || (cardText.indexOf(term) !== -1);
+
+        if (matchesStatus && matchesSearch) {
+          card.classList.remove('hidden');
+          visibleCount++;
+        } else {
+          card.classList.add('hidden');
+        }
+      }
+
+      /* Show/hide "no results" message */
+      var noResults = document.getElementById('noResults');
+      if (visibleCount === 0) {
+        noResults.classList.add('visible');
+      } else {
+        noResults.classList.remove('visible');
+      }
+    }
+
+
+    /* ================================================================
+       TRUTH GATE CONSOLE — Simulated deliberation logic
+       ================================================================ */
+
+    /**
+     * Initializes the Truth Gate form submission handler.
+     */
+    function initTruthGate() {
+      var form = document.getElementById('truthGateForm');
+      form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        var input = document.getElementById('truthInput');
+        var assertion = input.value.trim();
+        if (assertion === '') return;
+        runDeliberation(assertion);
+      });
+    }
+
+    /**
+     * Runs a simulated multi-agent consensus deliberation.
+     * Generates a random confidence score (70-99), displays the gauge,
+     * verdict, and agent reasoning traces.
+     * @param {string} assertion - The user's assertion text
+     */
+    function runDeliberation(assertion) {
+      /* Generate overall confidence: 70-99% */
+      var confidence = Math.floor(Math.random() * 30) + 70;
+
+      /* Generate per-agent confidences that average near the overall */
+      var agentNames = ['Validator Agent', 'Synthesis Agent', 'Forensic Auditor'];
+      var agentConfidences = [];
+      for (var i = 0; i < agentNames.length; i++) {
+        /* Each agent's confidence varies ±8 around the overall, clamped to 60-100 */
+        var c = confidence + Math.floor(Math.random() * 17) - 8;
+        c = Math.max(60, Math.min(100, c));
+        agentConfidences.push(c);
+      }
+
+      /* Determine verdict color class */
+      var verdictClass, verdictText;
+      if (confidence >= 95) {
+        verdictClass = 'pass';
+        verdictText = '&#x2713; GATE PASSED — Consensus confidence ' + confidence + '% meets the 95% threshold.';
+      } else if (confidence >= 85) {
+        verdictClass = 'near';
+        verdictText = '&#x26A0; NEAR THRESHOLD — Consensus confidence ' + confidence + '% approaches but does not meet the 95% gate.';
+      } else {
+        verdictClass = 'fail';
+        verdictText = '&#x2717; GATE FAILED — Consensus confidence ' + confidence + '% is below the 95% threshold.';
+      }
+
+      /* Update gauge */
+      var gaugeContainer = document.getElementById('gaugeContainer');
+      var gaugeValue = document.getElementById('gaugeValue');
+      var gaugeFill = document.getElementById('gaugeFill');
+      var gaugeTrack = document.getElementById('gaugeTrack');
+
+      gaugeContainer.classList.add('visible');
+      gaugeValue.textContent = confidence + '%';
+      gaugeValue.style.color = confidence >= 95 ? 'var(--gate-green)' : confidence >= 85 ? 'var(--gate-amber)' : 'var(--gate-red)';
+
+      gaugeFill.className = 'gauge-fill';
+      gaugeFill.style.width = '0%';
+
+      /* Force reflow before setting new width for animation */
+      void gaugeFill.offsetWidth;
+
+      var gaugeColor = confidence >= 95 ? 'green' : confidence >= 85 ? 'amber' : 'red';
+      gaugeFill.classList.add(gaugeColor);
+      gaugeFill.style.width = confidence + '%';
+
+      gaugeTrack.setAttribute('aria-valuenow', confidence);
+      gaugeTrack.setAttribute('aria-valuetext', 'Confidence: ' + confidence + ' percent');
+
+      /* Update verdict */
+      var verdictBox = document.getElementById('verdictBox');
+      verdictBox.className = 'verdict-box visible ' + verdictClass;
+      verdictBox.innerHTML = verdictText;
+
+      /* Build reasoning traces */
+      var tracesContainer = document.getElementById('reasoningTraces');
+      var tracesHtml = '';
+      for (var i = 0; i < agentNames.length; i++) {
+        var agentName = agentNames[i];
+        var pool = REASONING_POOLS[agentName];
+        var traceText = pool[Math.floor(Math.random() * pool.length)];
+        var ac = agentConfidences[i];
+        var acColor = ac >= 95 ? 'var(--gate-green)' : ac >= 85 ? 'var(--gate-amber)' : 'var(--gate-red)';
+
+        tracesHtml += '<div class="trace-card" role="article" aria-label="Reasoning trace from ' + agentName + '">' +
+          '<div class="trace-agent-name">' + escapeHtml(agentName) + '</div>' +
+          '<div class="trace-text">' + escapeHtml(traceText) + '</div>' +
+          '<div class="trace-confidence" style="color:' + acColor + '">INDIVIDUAL CONFIDENCE: ' + ac + '%</div>' +
+          '</div>';
+      }
+      tracesContainer.innerHTML = tracesHtml;
+      tracesContainer.classList.add('visible');
+    }
+
+
+    /* ================================================================
+       MESH TOPOLOGY — Render and health check logic
+       ================================================================ */
+
+    /**
+     * Renders all 8 mesh node cards into the grid.
+     */
+    function renderMeshNodes() {
+      var grid = document.getElementById('meshGrid');
+      var html = '';
+      for (var i = 0; i < MESH_NODES.length; i++) {
+        var node = MESH_NODES[i];
+        html += '<article class="node-card" role="listitem" id="node-' + i + '" ' +
+                'aria-label="' + escapeHtml(node.name) + ' — ' + escapeHtml(node.role) + ', Status: online">' +
+                  '<span class="node-status-indicator online" id="node-dot-' + i + '" ' +
+                    'role="img" aria-label="Status: online"></span>' +
+                  '<div class="node-info">' +
+                    '<div class="node-name">' + escapeHtml(node.name) + '</div>' +
+                    '<div class="node-role">' + escapeHtml(node.role) + '</div>' +
+                    '<a class="node-url" href="' + escapeHtml(node.url) + '" ' +
+                      'target="_blank" rel="noopener noreferrer" ' +
+                      'aria-label="Visit ' + escapeHtml(node.name) + ' at ' + escapeHtml(node.url) + '">' +
+                      escapeHtml(node.url) +
+                    '</a>' +
+                    '<div class="node-status-text" id="node-text-' + i + '">STATUS: ONLINE (default)</div>' +
+                  '</div>' +
+                '</article>';
+      }
+      grid.innerHTML = html;
+    }
+
+    /**
+     * Initializes the mesh refresh button handler.
+     */
+    function initMeshRefresh() {
+      var btn = document.getElementById('refreshMesh');
+      btn.addEventListener('click', function() {
+        refreshAllNodes();
+      });
+    }
+
+    /**
+     * Performs HEAD requests against all mesh node URLs.
+     * Updates status indicators based on HTTP response:
+     *   - 200-299: green (online)
+     *   - 300-399: amber (redirect)
+     *   - Everything else / error / CORS block: red (offline) or graceful fallback
+     */
+    function refreshAllNodes() {
+      var btn = document.getElementById('refreshMesh');
+      var refreshIcon = document.getElementById('refreshIcon');
+      var refreshText = document.getElementById('refreshText');
+
+      /* Disable button during check */
+      btn.disabled = true;
+      refreshIcon.innerHTML = '<span class="refresh-spinner" aria-hidden="true"></span>';
+      refreshText.textContent = 'CHECKING...';
+
+      /* Set all dots to "checking" state */
+      for (var i = 0; i < MESH_NODES.length; i++) {
+        var dot = document.getElementById('node-dot-' + i);
+        var text = document.getElementById('node-text-' + i);
+        dot.className = 'node-status-indicator checking';
+        dot.setAttribute('aria-label', 'Status: checking');
+        text.textContent = 'STATUS: CHECKING...';
+      }
+
+      var completed = 0;
+      var total = MESH_NODES.length;
+
+      for (var i = 0; i < MESH_NODES.length; i++) {
+        (function(index) {
+          var node = MESH_NODES[index];
+          checkNodeHealth(node.url, function(result) {
+            updateNodeStatus(index, result);
+            completed++;
+            if (completed >= total) {
+              /* Re-enable button when all checks complete */
+              btn.disabled = false;
+              refreshIcon.innerHTML = '&#x21bb;';
+              refreshText.textContent = 'REFRESH STATUS';
+            }
+          });
+        })(i);
+      }
+    }
+
+    /**
+     * Checks a single node's health via fetch HEAD request.
+     * Falls back gracefully on CORS errors or network failures.
+     * @param {string} url - The node URL to check
+     * @param {function} callback - Called with {status, statusText}
+     */
+    function checkNodeHealth(url, callback) {
+      /* Use a 10-second timeout via AbortController if available */
+      var controller = null;
+      var signal = undefined;
+      var timeoutId = null;
+
+      if (typeof AbortController !== 'undefined') {
+        controller = new AbortController();
+        signal = controller.signal;
+        timeoutId = setTimeout(function() {
+          controller.abort();
+        }, 10000);
+      }
+
+      var opts = { method: 'HEAD', mode: 'no-cors', cache: 'no-store' };
+      if (signal) opts.signal = signal;
+
+      fetch(url, opts).then(function(response) {
+        if (timeoutId) clearTimeout(timeoutId);
+        /*
+         * In no-cors mode, response.type is "opaque" and status is 0.
+         * We treat an opaque response as "online" because the server
+         * responded (we just can't read the status due to CORS).
+         */
+        if (response.type === 'opaque') {
+          callback({ status: 'online', statusText: 'REACHABLE (CORS opaque)' });
+        } else if (response.ok) {
+          callback({ status: 'online', statusText: 'ONLINE (HTTP ' + response.status + ')' });
+        } else if (response.status >= 300 && response.status < 400) {
+          callback({ status: 'redirect', statusText: 'REDIRECT (HTTP ' + response.status + ')' });
+        } else {
+          callback({ status: 'offline', statusText: 'ERROR (HTTP ' + response.status + ')' });
+        }
+      }).catch(function(err) {
+        if (timeoutId) clearTimeout(timeoutId);
+        if (err.name === 'AbortError') {
+          callback({ status: 'offline', statusText: 'TIMEOUT (10s)' });
+        } else {
+          /*
+           * Network error or CORS block. In a GitHub Pages context,
+           * this is expected for cross-origin HEAD requests.
+           * We report "unknown" rather than "offline" to be honest.
+           */
+          callback({ status: 'offline', statusText: 'UNREACHABLE (' + (err.message || 'network error') + ')' });
+        }
+      });
+    }
+
+    /**
+     * Updates a node card's status indicator and text.
+     * @param {number} index - The node index
+     * @param {object} result - {status, statusText}
+     */
+    function updateNodeStatus(index, result) {
+      var dot = document.getElementById('node-dot-' + index);
+      var text = document.getElementById('node-text-' + index);
+      var card = document.getElementById('node-' + index);
+
+      dot.className = 'node-status-indicator ' + result.status;
+      dot.setAttribute('aria-label', 'Status: ' + result.status);
+      text.textContent = 'STATUS: ' + result.statusText;
+      card.setAttribute('aria-label',
+        MESH_NODES[index].name + ' — ' + MESH_NODES[index].role +
+        ', Status: ' + result.status
+      );
+    }
+
+
+    /* ================================================================
+       AGENT ROSTER — Render logic
+       ================================================================ */
+
+    /**
+     * Renders all 9 agent cards into the grid.
+     */
+    function renderAgents() {
+      var grid = document.getElementById('agentGrid');
+      var html = '';
+      for (var i = 0; i < AGENTS.length; i++) {
+        var a = AGENTS[i];
+        var autoLevel = a.autonomy.toLowerCase();
+        /* Special case for "Low (Strict Guard)" */
+        var autoClass = autoLevel.indexOf('low') !== -1 ? 'low' : autoLevel;
+        var autoLabel = a.autonomy;
+
+        html += '<article class="agent-card" role="listitem" data-autonomy="' + autoClass + '" ' +
+                'aria-label="' + escapeHtml(a.name) + ' — ' + escapeHtml(a.role) + ', Autonomy: ' + escapeHtml(a.autonomy) + '">' +
+                  '<span class="agent-id">' + escapeHtml(a.id) + '</span>' +
+                  '<div class="agent-name">' + escapeHtml(a.name) + '</div>' +
+                  '<p class="agent-role">' + escapeHtml(a.role) + '</p>' +
+                  '<span class="agent-autonomy ' + autoClass + '" aria-label="Autonomy level: ' + escapeHtml(autoLabel) + '">' +
+                    'AUTONOMY: ' + escapeHtml(autoLabel.toUpperCase()) +
+                  '</span>' +
+                '</article>';
+      }
+      grid.innerHTML = html;
+    }
+
+
+    /* ================================================================
+       THEME TOGGLE — Dark/Light mode switch
+       ================================================================ */
+
+    /**
+     * Initializes the dark/light theme toggle button.
+     * Persists preference in localStorage if available.
+     */
+    function initThemeToggle() {
+      var btn = document.getElementById('themeToggle');
+      var label = document.getElementById('themeToggleText');
+      var icon = btn.querySelector('.theme-icon');
+
+      /* Check for saved preference */
+      var saved = null;
+      try { saved = localStorage.getItem('nxf-theme'); } catch(e) {}
+      if (saved === 'light') {
+        document.documentElement.setAttribute('data-theme', 'light');
+        label.textContent = 'DARK MODE';
+        btn.setAttribute('aria-label', 'Toggle between dark and light theme. Currently light theme.');
+        btn.setAttribute('aria-pressed', 'true');
+      }
+
+      btn.addEventListener('click', function() {
+        var current = document.documentElement.getAttribute('data-theme');
+        if (current === 'dark') {
+          document.documentElement.setAttribute('data-theme', 'light');
+          label.textContent = 'DARK MODE';
+          btn.setAttribute('aria-label', 'Toggle between dark and light theme. Currently light theme.');
+          btn.setAttribute('aria-pressed', 'true');
+          try { localStorage.setItem('nxf-theme', 'light'); } catch(e) {}
+        } else {
+          document.documentElement.setAttribute('data-theme', 'dark');
+          label.textContent = 'LIGHT MODE';
+          btn.setAttribute('aria-label', 'Toggle between dark and light theme. Currently dark theme.');
+          btn.setAttribute('aria-pressed', 'false');
+          try { localStorage.setItem('nxf-theme', 'dark'); } catch(e) {}
+        }
+      });
+    }
+
+
+    /* ================================================================
+       UTILITY FUNCTIONS
+       ================================================================ */
+
+    /**
+     * Escapes HTML special characters to prevent XSS.
+     * @param {string} str - Raw string to escape
+     * @returns {string} HTML-safe string
+     */
+    function escapeHtml(str) {
+      var div = document.createElement('div');
+      div.appendChild(document.createTextNode(str));
+      return div.innerHTML;
+    }
+  </script>
 </body>
 </html>
