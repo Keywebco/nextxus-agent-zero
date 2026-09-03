@@ -490,6 +490,140 @@ body{
   .console-dials{display:none}
   .settings-panel{width:100vw}
 }
+
+/* ========== MODULE: COUNCIL SEARCH PANEL ========== */
+.search-panel-wrap{
+  position:relative;z-index:10;
+  max-width:900px;margin:0 auto;
+  padding:0 1rem;
+}
+.search-toggle-btn{
+  display:flex;align-items:center;gap:0.4rem;
+  margin:0 auto;padding:0.35rem 1rem;
+  background:rgba(12,10,24,0.9);
+  border:1px solid rgba(0,212,255,0.2);
+  border-radius:8px;
+  color:#00d4ff;font-size:0.72rem;font-weight:600;
+  cursor:pointer;font-family:'Inter',sans-serif;
+  letter-spacing:0.06em;
+  transition:all 0.25s;
+  box-shadow:0 0 12px rgba(0,212,255,0.05);
+}
+.search-toggle-btn:hover{border-color:rgba(0,212,255,0.45);background:rgba(0,212,255,0.08)}
+.search-toggle-btn.panel-open{border-radius:8px 8px 0 0;border-bottom-color:transparent}
+.search-panel{
+  display:none;
+  background:rgba(12,10,24,0.94);
+  border:1px solid rgba(0,212,255,0.2);
+  border-top:none;
+  border-radius:0 0 10px 10px;
+  padding:0.8rem 1rem;
+  backdrop-filter:blur(8px);
+  box-shadow:0 4px 30px rgba(0,212,255,0.06);
+  margin-bottom:0.3rem;
+}
+.search-panel.open{display:block}
+.search-input-row{display:flex;gap:0.4rem;margin-bottom:0.5rem}
+.search-input-row input{
+  flex:1;padding:0.45rem 0.65rem;
+  background:#0e0c1a;border:1px solid rgba(0,212,255,0.15);border-radius:6px;
+  color:#e8e8f0;font-family:'Inter',sans-serif;font-size:0.8rem;
+}
+.search-input-row input:focus{outline:none;border-color:rgba(0,212,255,0.4);box-shadow:0 0 10px rgba(0,212,255,0.08)}
+.search-input-row input::placeholder{color:#2a2840}
+.search-exec-btn{
+  padding:0.45rem 0.9rem;
+  background:linear-gradient(135deg,#00d4ff,#00a0cc);
+  color:#07060e;border:none;border-radius:6px;
+  font-weight:700;font-size:0.75rem;cursor:pointer;
+  font-family:'Inter',sans-serif;transition:all 0.2s;
+  box-shadow:0 0 10px rgba(0,212,255,0.15);
+}
+.search-exec-btn:hover{background:linear-gradient(135deg,#33dfff,#00c0ee)}
+.search-exec-btn:disabled{opacity:0.35;cursor:not-allowed}
+.search-results{
+  max-height:200px;overflow-y:auto;
+  scrollbar-width:thin;scrollbar-color:rgba(0,212,255,0.2) transparent;
+}
+.search-results::-webkit-scrollbar{width:4px}
+.search-results::-webkit-scrollbar-track{background:transparent}
+.search-results::-webkit-scrollbar-thumb{background:rgba(0,212,255,0.25);border-radius:2px}
+.search-result-item{
+  padding:0.5rem 0.6rem;margin-bottom:0.3rem;
+  background:rgba(255,255,255,0.02);
+  border:1px solid rgba(255,255,255,0.05);
+  border-radius:6px;transition:border-color 0.2s;
+}
+.search-result-item:hover{border-color:rgba(0,212,255,0.15)}
+.search-result-item .sr-title{font-size:0.72rem;font-weight:600;color:#00d4ff;margin-bottom:0.15rem}
+.search-result-item .sr-title a{color:#00d4ff;text-decoration:none}
+.search-result-item .sr-title a:hover{text-decoration:underline}
+.search-result-item .sr-snippet{font-size:0.66rem;color:#b8b0d0;line-height:1.45}
+.search-result-item .sr-url{font-size:0.56rem;color:#4a4565;margin-top:0.15rem;word-break:break-all}
+.search-bottom-row{display:flex;align-items:center;gap:0.6rem;margin-top:0.5rem;flex-wrap:wrap}
+.search-broadcast-btn{
+  padding:0.35rem 0.8rem;
+  background:rgba(255,215,0,0.12);
+  border:1px solid rgba(255,215,0,0.3);
+  border-radius:6px;
+  color:#ffd700;font-size:0.68rem;font-weight:600;
+  cursor:pointer;font-family:'Inter',sans-serif;transition:all 0.2s;
+}
+.search-broadcast-btn:hover{background:rgba(255,215,0,0.22);border-color:#ffd700}
+.search-broadcast-btn:disabled{opacity:0.35;cursor:not-allowed}
+.search-status{font-size:0.62rem;color:#4a4565;font-style:italic}
+
+/* ========== MODULE: FILE BROADCAST ========== */
+.file-broadcast-wrap{display:flex;align-items:center;flex-shrink:0}
+.file-broadcast-label{
+  display:flex;align-items:center;justify-content:center;
+  padding:0.45rem 0.55rem;
+  background:rgba(139,92,246,0.08);
+  border:1px solid rgba(139,92,246,0.2);
+  border-radius:8px;
+  color:#9a8ec0;font-size:0.85rem;
+  cursor:pointer;transition:all 0.2s;
+  white-space:nowrap;
+}
+.file-broadcast-label:hover{border-color:rgba(139,92,246,0.5);color:#c4b5fd;background:rgba(139,92,246,0.14)}
+.file-broadcast-label input[type="file"]{display:none}
+.file-drop-zone{
+  display:none;position:fixed;inset:0;z-index:999;
+  background:rgba(7,6,14,0.88);
+  backdrop-filter:blur(10px);
+  flex-direction:column;align-items:center;justify-content:center;
+}
+.file-drop-zone.active{display:flex}
+.file-drop-inner{
+  padding:3rem 4rem;
+  border:2px dashed rgba(139,92,246,0.45);
+  border-radius:16px;text-align:center;
+  background:rgba(139,92,246,0.04);
+  transition:border-color 0.2s;
+}
+.file-drop-zone.active .file-drop-inner{animation:drop-pulse 1.5s ease-in-out infinite alternate}
+@keyframes drop-pulse{0%{border-color:rgba(139,92,246,0.3)}100%{border-color:rgba(139,92,246,0.7)}}
+.file-drop-inner .drop-icon{font-size:2.5rem;margin-bottom:0.6rem}
+.file-drop-inner .drop-text{font-size:0.9rem;color:#c4b5fd;font-weight:500}
+.file-drop-inner .drop-sub{font-size:0.68rem;color:#4a4565;margin-top:0.4rem}
+.file-confirm-toast{
+  position:fixed;bottom:5rem;left:50%;transform:translateX(-50%);z-index:500;
+  padding:0.5rem 1.2rem;
+  background:rgba(139,92,246,0.18);
+  border:1px solid rgba(139,92,246,0.35);
+  border-radius:8px;
+  color:#e8e8f0;font-size:0.75rem;font-weight:500;
+  backdrop-filter:blur(8px);
+  animation:fct-in 0.3s ease,fct-out 0.3s ease 2.7s forwards;
+  pointer-events:none;
+}
+@keyframes fct-in{from{opacity:0;transform:translateX(-50%) translateY(10px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+@keyframes fct-out{from{opacity:1}to{opacity:0}}
+.file-preview-thumb{
+  max-width:140px;max-height:90px;border-radius:5px;
+  border:1px solid rgba(139,92,246,0.25);margin-top:0.4rem;display:block;
+}
+
 </style>
 </head>
 <body>
@@ -572,6 +706,23 @@ body{
     <div class="cards-row" id="cardsRow"></div>
   </section>
 
+
+  <!-- MODULE: COUNCIL SEARCH PANEL -->
+  <section class="search-panel-wrap">
+    <button class="search-toggle-btn" id="searchToggleBtn">🔍 COUNCIL SEARCH</button>
+    <div class="search-panel" id="searchPanel">
+      <div class="search-input-row">
+        <input type="text" id="searchInput" placeholder="Search the web for the Council…">
+        <button class="search-exec-btn" id="searchExecBtn">SEARCH</button>
+      </div>
+      <div class="search-results" id="searchResults"></div>
+      <div class="search-bottom-row">
+        <button class="search-broadcast-btn" id="searchBroadcastBtn" disabled>📡 BROADCAST TO COUNCIL</button>
+        <span class="search-status" id="searchStatus"></span>
+      </div>
+    </div>
+  </section>
+
   <!-- LAYER 3: CONTROL CONSOLE -->
   <section class="console-layer">
     <div class="console-outer">
@@ -592,12 +743,28 @@ body{
         </div>
         <div class="input-row">
           <textarea id="userInput" placeholder="Address the Council…" rows="2"></textarea>
+          <div class="file-broadcast-wrap">
+            <label class="file-broadcast-label" title="Broadcast file to all seats">
+              📎
+              <input type="file" id="fileBroadcastInput" accept=".txt,.md,.html,.json,.csv,.pdf,.png,.jpg,.jpeg,.gif,.webp">
+            </label>
+          </div>
           <button class="send-btn" id="sendBtn">SEND</button>
         </div>
       </div>
     </div>
   </section>
 
+</div>
+
+
+<!-- MODULE: FILE DROP ZONE OVERLAY -->
+<div class="file-drop-zone" id="fileDropZone">
+  <div class="file-drop-inner">
+    <div class="drop-icon">📎</div>
+    <div class="drop-text">Drop file to broadcast to all seats</div>
+    <div class="drop-sub">.txt · .md · .html · .json · .csv · .pdf · .png · .jpg · .gif · .webp</div>
+  </div>
 </div>
 
 <script>
@@ -1002,6 +1169,246 @@ window.speakPanel=function(seatId){
   if(msgs.length===0) return;
   speakText(msgs[msgs.length-1].textContent);
 };
+
+
+/* ==========================================================
+   MODULE: COUNCIL SEARCH PANEL
+   ========================================================== */
+(function(){
+  var toggleBtn = document.getElementById('searchToggleBtn');
+  var panel = document.getElementById('searchPanel');
+  var input = document.getElementById('searchInput');
+  var execBtn = document.getElementById('searchExecBtn');
+  var resultsDiv = document.getElementById('searchResults');
+  var broadcastBtn = document.getElementById('searchBroadcastBtn');
+  var statusDiv = document.getElementById('searchStatus');
+  var lastSearchResults = [];
+
+  toggleBtn.addEventListener('click', function(){
+    var isOpen = panel.classList.toggle('open');
+    toggleBtn.classList.toggle('panel-open', isOpen);
+  });
+
+  input.addEventListener('keydown', function(e){
+    if(e.key==='Enter'){e.preventDefault();doSearch();}
+  });
+  execBtn.addEventListener('click', doSearch);
+
+  function escHtml(s){
+    var d=document.createElement('div');d.textContent=s;return d.innerHTML;
+  }
+
+  async function doSearch(){
+    var q=input.value.trim();
+    if(!q) return;
+    execBtn.disabled=true;
+    statusDiv.textContent='Searching…';
+    resultsDiv.innerHTML='';
+    lastSearchResults=[];
+    broadcastBtn.disabled=true;
+
+    try{
+      var apiUrl='https://api.duckduckgo.com/?q='+encodeURIComponent(q)+'&format=json&no_html=1&skip_disambig=1';
+      var proxyUrl='https://api.allorigins.win/raw?url='+encodeURIComponent(apiUrl);
+      var resp=await fetch(proxyUrl);
+      if(!resp.ok) throw new Error('Search request failed ('+resp.status+')');
+      var data=await resp.json();
+
+      var items=[];
+
+      /* Abstract — main instant answer */
+      if(data.AbstractText){
+        items.push({title:data.Heading||q,snippet:data.AbstractText,url:data.AbstractURL||''});
+      }
+
+      /* Related Topics */
+      if(data.RelatedTopics){
+        for(var i=0;i<data.RelatedTopics.length&&items.length<5;i++){
+          var rt=data.RelatedTopics[i];
+          if(rt.Text&&rt.FirstURL){
+            items.push({title:rt.Text.split(' - ')[0]||rt.Text.slice(0,80),snippet:rt.Text,url:rt.FirstURL});
+          }
+          if(rt.Topics){
+            for(var j=0;j<rt.Topics.length&&items.length<5;j++){
+              var sub=rt.Topics[j];
+              if(sub.Text&&sub.FirstURL){
+                items.push({title:sub.Text.split(' - ')[0]||sub.Text.slice(0,80),snippet:sub.Text,url:sub.FirstURL});
+              }
+            }
+          }
+        }
+      }
+
+      /* Direct Answer fallback */
+      if(items.length===0&&data.Answer){
+        items.push({title:'Answer: '+q,snippet:data.Answer,url:data.AnswerURL||''});
+      }
+
+      /* Definition fallback */
+      if(items.length===0&&data.Definition){
+        items.push({title:'Definition: '+q,snippet:data.Definition,url:data.DefinitionURL||''});
+      }
+
+      if(items.length===0){
+        statusDiv.textContent='No instant answers found. Try a more specific query.';
+        execBtn.disabled=false;
+        return;
+      }
+
+      lastSearchResults=items;
+      items.forEach(function(item){
+        var div=document.createElement('div');
+        div.className='search-result-item';
+        var titleHtml=item.url
+          ?'<a href="'+escHtml(item.url)+'" target="_blank" rel="noopener">'+escHtml(item.title)+'</a>'
+          :escHtml(item.title);
+        div.innerHTML='<div class="sr-title">'+titleHtml+'</div>'
+          +'<div class="sr-snippet">'+escHtml(item.snippet)+'</div>'
+          +(item.url?'<div class="sr-url">'+escHtml(item.url)+'</div>':'');
+        resultsDiv.appendChild(div);
+      });
+
+      statusDiv.textContent=items.length+' result(s) found.';
+      broadcastBtn.disabled=false;
+
+    }catch(err){
+      statusDiv.textContent='⚠ Search error: '+err.message;
+    }
+    execBtn.disabled=false;
+  }
+
+  broadcastBtn.addEventListener('click', function(){
+    if(lastSearchResults.length===0) return;
+    var text='🔍 COUNCIL SEARCH RESULTS:\n'+lastSearchResults.map(function(r,i){
+      return (i+1)+'. '+r.title+'\n   '+r.snippet+(r.url?'\n   '+r.url:'');
+    }).join('\n\n');
+
+    SEATS.forEach(function(seat){
+      panelMessages[seat.id].push({role:'system',content:text});
+      appendMsg(seat.id,'system-msg','🔍 Search results broadcast to this seat');
+    });
+    statusDiv.textContent='✓ Results broadcast to all '+SEATS.length+' seats.';
+    broadcastBtn.disabled=true;
+  });
+})();
+
+/* ==========================================================
+   MODULE: FILE BROADCAST
+   ========================================================== */
+(function(){
+  var fileInput=document.getElementById('fileBroadcastInput');
+  var dropZone=document.getElementById('fileDropZone');
+  var MAX_CHARS=8000;
+  var TEXT_EXTS=['.txt','.md','.html','.json','.csv'];
+  var IMAGE_EXTS=['.png','.jpg','.jpeg','.gif','.webp'];
+
+  fileInput.addEventListener('change',function(e){
+    if(e.target.files.length>0) processFile(e.target.files[0]);
+    e.target.value='';
+  });
+
+  /* Drag-and-drop support */
+  var dragCounter=0;
+  document.addEventListener('dragenter',function(e){
+    e.preventDefault();dragCounter++;
+    if(e.dataTransfer&&e.dataTransfer.types&&e.dataTransfer.types.indexOf('Files')!==-1){
+      dropZone.classList.add('active');
+    }
+  });
+  document.addEventListener('dragleave',function(e){
+    e.preventDefault();dragCounter--;
+    if(dragCounter<=0){dragCounter=0;dropZone.classList.remove('active');}
+  });
+  document.addEventListener('dragover',function(e){e.preventDefault();});
+  document.addEventListener('drop',function(e){
+    e.preventDefault();dragCounter=0;
+    dropZone.classList.remove('active');
+    if(e.dataTransfer&&e.dataTransfer.files.length>0) processFile(e.dataTransfer.files[0]);
+  });
+
+  function getExt(name){
+    var parts=name.split('.');
+    return parts.length>1?'.'+parts.pop().toLowerCase():'';
+  }
+
+  function processFile(file){
+    var name=file.name;
+    var ext=getExt(name);
+    var sizeKB=(file.size/1024).toFixed(1);
+
+    /* Validate extension */
+    var allAllowed=TEXT_EXTS.concat(IMAGE_EXTS).concat(['.pdf']);
+    if(allAllowed.indexOf(ext)===-1){
+      showConfirmation('⚠ Unsupported file type: '+ext);
+      return;
+    }
+
+    if(IMAGE_EXTS.indexOf(ext)!==-1){
+      /* Image file — show thumbnail + broadcast metadata */
+      var reader=new FileReader();
+      reader.onload=function(e){
+        /* Show thumbnail in search results area */
+        var resultsDiv=document.getElementById('searchResults');
+        var thumb=document.createElement('div');
+        thumb.className='search-result-item';
+        thumb.innerHTML='<div class="sr-title">📷 '+escHtml(name)+' ('+sizeKB+' KB)</div>'
+          +'<img class="file-preview-thumb" src="'+e.target.result+'" alt="'+escHtml(name)+'">';
+        resultsDiv.prepend(thumb);
+        /* Open search panel to show thumbnail */
+        document.getElementById('searchPanel').classList.add('open');
+        document.getElementById('searchToggleBtn').classList.add('panel-open');
+
+        var msg='[Image shared: '+name+', '+sizeKB+' KB]';
+        broadcastToAll(msg,name);
+      };
+      reader.readAsDataURL(file);
+
+    }else if(ext==='.pdf'){
+      /* PDF — filename + size only */
+      var msg='[PDF shared: '+name+', '+sizeKB+' KB]';
+      broadcastToAll(msg,name);
+
+    }else if(TEXT_EXTS.indexOf(ext)!==-1){
+      /* Text-based file — read full content */
+      var reader=new FileReader();
+      reader.onload=function(e){
+        var content=e.target.result;
+        var truncated=false;
+        if(content.length>MAX_CHARS){
+          content=content.slice(0,MAX_CHARS);
+          truncated=true;
+        }
+        var msg='📄 FILE: '+name+' ('+sizeKB+' KB)\n\n'+content
+          +(truncated?'\n\n[…truncated at '+MAX_CHARS+' chars]':'');
+        broadcastToAll(msg,name);
+      };
+      reader.readAsText(file);
+    }
+  }
+
+  function broadcastToAll(msg,filename){
+    SEATS.forEach(function(seat){
+      panelMessages[seat.id].push({role:'system',content:msg});
+      appendMsg(seat.id,'system-msg','📎 File broadcast: '+filename);
+    });
+    showConfirmation('FILE BROADCAST TO ALL SEATS: '+filename);
+  }
+
+  function showConfirmation(text){
+    var existing=document.querySelector('.file-confirm-toast');
+    if(existing) existing.remove();
+    var div=document.createElement('div');
+    div.className='file-confirm-toast';
+    div.textContent=text;
+    document.body.appendChild(div);
+    setTimeout(function(){if(div.parentNode)div.remove();},3000);
+  }
+
+  function escHtml(s){
+    var d=document.createElement('div');d.textContent=s;return d.innerHTML;
+  }
+})();
+
 </script>
 </body>
 </html>
