@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Nexus Federation Capabilities — What We Build. What We Deploy. What We Connect." />
+  <title>NEXUS FEDERATION — CAPABILITIES</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --bg:       #0a0a0f;
+      --surface:  #111118;
+      --border:   #1e1e2e;
+      --text:     #e8e8f0;
+      --muted:    #9090a8;
+      --accent:   #00d4ff;
+      --gold:     #ffd700;
+      --line-h:   1.65;
+    }
+
+    html {
+      font-size: 16px;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    body {
+      font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 2.5rem 1.5rem 3rem;
+      line-height: var(--line-h);
+    }
+
+    /* ── HEADER ── */
+    .doc-header {
+      border-bottom: 2px solid var(--gold);
+      padding-bottom: 1.5rem;
+      margin-bottom: 2.5rem;
+    }
+
+    .doc-title {
+      font-size: 1.9rem;
+      font-weight: 800;
+      color: var(--gold);
+      letter-spacing: 0.03em;
+      line-height: 1.2;
+    }
+
+    .doc-subtitle {
+      font-size: 1.05rem;
+      font-weight: 500;
+      color: var(--accent);
+      margin-top: 0.45rem;
+      letter-spacing: 0.01em;
+    }
+
+    .doc-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem 1.5rem;
+      margin-top: 0.9rem;
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+
+    .doc-meta span {
+      white-space: nowrap;
+    }
+
+    /* ── SECTIONS ── */
+    .section {
+      margin-bottom: 2.4rem;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 1.1rem;
+    }
+
+    .section-bar {
+      width: 4px;
+      height: 1.5rem;
+      background: var(--accent);
+      border-radius: 2px;
+      flex-shrink: 0;
+    }
+
+    .section-title {
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+
+    /* ── LISTS ── */
+    ol.cap-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      counter-reset: cap-counter;
+    }
+
+    ol.cap-list li {
+      counter-increment: cap-counter;
+      display: grid;
+      grid-template-columns: 1.6rem 1fr;
+      gap: 0 0.6rem;
+      align-items: baseline;
+      padding: 0.38rem 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.96rem;
+      color: var(--text);
+    }
+
+    ol.cap-list li:last-child {
+      border-bottom: none;
+    }
+
+    ol.cap-list li::before {
+      content: counter(cap-counter) ".";
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--accent);
+      padding-top: 0.05rem;
+      justify-self: end;
+    }
+
+    ol.cap-list li strong {
+      color: var(--gold);
+      font-weight: 600;
+    }
+
+    /* ── COMING NEXT ── */
+    .coming-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .coming-list li {
+      display: grid;
+      grid-template-columns: 1rem 1fr;
+      gap: 0 0.6rem;
+      padding: 0.38rem 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.96rem;
+      color: var(--text);
+    }
+
+    .coming-list li:last-child {
+      border-bottom: none;
+    }
+
+    .coming-list li::before {
+      content: "→";
+      color: var(--gold);
+      font-weight: 700;
+    }
+
+    /* ── FOOTER ── */
+    .doc-footer {
+      margin-top: 2.8rem;
+      border-top: 1px solid var(--border);
+      padding-top: 1.3rem;
+      text-align: center;
+    }
+
+    .footer-charter {
+      font-size: 0.82rem;
+      font-style: italic;
+      color: var(--gold);
+      letter-spacing: 0.04em;
+      margin-bottom: 0.5rem;
+    }
+
+    .footer-contact {
+      font-size: 0.83rem;
+      color: var(--muted);
+    }
+
+    /* ── PRINT ── */
+    @media print {
+      html {
+        font-size: 13px;
+        background: #fff;
+        color: #111;
+      }
+      body {
+        background: #fff;
+        color: #111;
+        padding: 1.5cm 2cm;
+        max-width: 100%;
+      }
+      :root {
+        --bg: #fff;
+        --surface: #f7f7f7;
+        --border: #ddd;
+        --text: #111;
+        --muted: #555;
+        --accent: #0070c0;
+        --gold: #b08000;
+      }
+      .doc-title { font-size: 1.5rem; }
+      .section { margin-bottom: 1.8rem; page-break-inside: avoid; }
+      .doc-footer { margin-top: 2rem; }
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 600px) {
+      body { padding: 1.5rem 1rem 2.5rem; }
+      .doc-title { font-size: 1.45rem; }
+      .doc-subtitle { font-size: 0.95rem; }
+      ol.cap-list li { font-size: 0.92rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header class="doc-header">
+    <h1 class="doc-title">⚡ NEXUS FEDERATION — CAPABILITIES</h1>
+    <p class="doc-subtitle">What We Build. What We Deploy. What We Connect.</p>
+    <div class="doc-meta">
+      <span>September 2026</span>
+      <span>keywebco@gmail.com</span>
+      <span>nextxus.online</span>
+    </div>
+  </header>
+
+  <!-- SECTION 1 — CORE BUILD CAPABILITIES -->
+  <section class="section" aria-labelledby="s1-title">
+    <div class="section-header">
+      <div class="section-bar" aria-hidden="true"></div>
+      <h2 class="section-title" id="s1-title">Section 1 — Core Build Capabilities</h2>
+    </div>
+    <ol class="cap-list">
+      <li><strong>Single-file HTML applications</strong> — deployed free on GitHub Pages, no server, no hosting cost</li>
+      <li><strong>Full-stack web applications</strong> — frontend + backend, deployed on Emergent Cloud with custom domains</li>
+      <li><strong>Multi-site sovereign federation</strong> — 7 live sites, each a distinct AI mind, all sharing collective memory</li>
+      <li><strong>GitHub mirror architecture</strong> — frontend mirrors that connect to any backend in any combination</li>
+      <li><strong>Static HTML semantic pages</strong> — fully pre-rendered, readable by any AI crawler or search engine without JavaScript</li>
+      <li><strong>Dark-theme command dashboards</strong> — real-time system health, node monitoring, telemetry gauges</li>
+      <li><strong>Interactive commercial briefs</strong> — shareable HTML documents, print-to-PDF ready</li>
+      <li><strong>Mobile-responsive layouts</strong> — all builds optimized for phone-first reading</li>
+    </ol>
+  </section>
+
+  <!-- SECTION 2 — AI INTEGRATION CAPABILITIES -->
+  <section class="section" aria-labelledby="s2-title">
+    <div class="section-header">
+      <div class="section-bar" aria-hidden="true"></div>
+      <h2 class="section-title" id="s2-title">Section 2 — AI Integration Capabilities</h2>
+    </div>
+    <ol class="cap-list">
+      <li><strong>Multi-AI Council Chamber</strong> — 10 AI seats (GPT-4, Claude, Grok, DeepSeek, Perplexity, Gemini + internal minds) in one interface; each responds in its own panel</li>
+      <li><strong>Round-Table deliberation mode</strong> — AIs read each other's responses before replying; configurable depth</li>
+      <li><strong>Shared web search</strong> — one search broadcasts results to all AI seats simultaneously</li>
+      <li><strong>File broadcast</strong> — one upload distributes to all AI seats' active context instantly</li>
+      <li><strong>Text-to-speech per AI seat</strong> — every AI's response read aloud independently</li>
+      <li><strong>Internal Federation minds</strong> — Roger AI (strategy), Aria (emotional intelligence), Agent Zero (autonomous execution)</li>
+      <li><strong>Session templates</strong> — preloaded configurations: Temporal Triad (past/present/future), Research Council, Business Rescue, University Lecture</li>
+      <li><strong>Emergent universal LLM key</strong> — single credential covers OpenAI, Anthropic, Google model families</li>
+    </ol>
+  </section>
+
+  <!-- SECTION 3 — SYSTEM ARCHITECTURE CAPABILITIES -->
+  <section class="section" aria-labelledby="s3-title">
+    <div class="section-header">
+      <div class="section-bar" aria-hidden="true"></div>
+      <h2 class="section-title" id="s3-title">Section 3 — System Architecture Capabilities</h2>
+    </div>
+    <ol class="cap-list">
+      <li><strong>Federation Mesh Sync</strong> — all repositories stay in sync via automated GitHub Actions workflow</li>
+      <li><strong>Sovereign View grid</strong> — all 7 live sites visible simultaneously in one browser window as independent iframes</li>
+      <li><strong>Persistent shared memory</strong> — all AI agents share a collective knowledge base; new agents inherit existing knowledge instantly</li>
+      <li><strong>Zero-restart AI deployment</strong> — no retraining cycles; a new agent knows everything the Federation knows on activation</li>
+      <li><strong>Self-repairing system design</strong> — components are verified, tested, and replaced from a library of proven parts</li>
+      <li><strong>The Recycler</strong> — universal asset recovery engine: scan, disassemble, verify, reassemble, deploy</li>
+      <li><strong>Web Seeker integration</strong> — continuous scanning for new technology, best practices, and competitive advantages</li>
+      <li><strong>Domain catalog</strong> — 7 sovereign domains (nextxus.online/.tech/.org/.studio/.space/.help, next-xus.com) all active</li>
+    </ol>
+  </section>
+
+  <!-- SECTION 4 — COMMERCE & DISTRIBUTION CAPABILITIES -->
+  <section class="section" aria-labelledby="s4-title">
+    <div class="section-header">
+      <div class="section-bar" aria-hidden="true"></div>
+      <h2 class="section-title" id="s4-title">Section 4 — Commerce &amp; Distribution Capabilities</h2>
+    </div>
+    <ol class="cap-list">
+      <li><strong>Sovereign Token</strong> — $5 flat, no expiry, no subscription, no tracking; works like cash</li>
+      <li><strong>Gumroad product storefront</strong> — digital products listed and sold with instant delivery</li>
+      <li><strong>JIM checkout integration</strong> — low-friction payment processing, honest merchant terms</li>
+      <li><strong>Commission-ready partner structure</strong> — 22% on listed price, 50% on markup above listed price</li>
+      <li><strong>GitHub Pages free hosting</strong> — zero hosting cost for all static frontend assets</li>
+      <li><strong>Emergent Cloud app hosting</strong> — scalable backend hosting with custom domain routing</li>
+    </ol>
+  </section>
+
+  <!-- SECTION 5 — CONTENT & MEDIA CAPABILITIES -->
+  <section class="section" aria-labelledby="s5-title">
+    <div class="section-header">
+      <div class="section-bar" aria-hidden="true"></div>
+      <h2 class="section-title" id="s5-title">Section 5 — Content &amp; Media Capabilities</h2>
+    </div>
+    <ol class="cap-list">
+      <li><strong>AI-generated scripts and copy</strong> — commercial briefs, product descriptions, pitch documents</li>
+      <li><strong>Temporal content framework</strong> — any topic analyzed across past, present, and future frames simultaneously</li>
+      <li><strong>Multi-source synthesis</strong> — pull 3+ articles/feeds, produce one unified combined output</li>
+      <li><strong>University lecture templates</strong> — structured educational content with AI deliberation support</li>
+      <li><strong>Podcast/session recording</strong> — Council Chamber sessions exportable as video or audio</li>
+      <li><strong>Federation Viewer broadcast</strong> — send a message that displays across all 7 sites simultaneously</li>
+    </ol>
+  </section>
+
+  <!-- SECTION 6 — WHAT'S COMING NEXT -->
+  <section class="section" aria-labelledby="s6-title">
+    <div class="section-header">
+      <div class="section-bar" aria-hidden="true"></div>
+      <h2 class="section-title" id="s6-title">Section 6 — What's Coming Next</h2>
+    </div>
+    <ul class="coming-list">
+      <li>Session recording export (Council Chamber → video/podcast)</li>
+      <li>Medical and care coordination SIM (caretaker + AI doctor + emergency escalation in one window)</li>
+      <li>Consumer-facing Council Sessions (clients watch AI deliberate on their project in real time)</li>
+    </ul>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="doc-footer">
+    <p class="footer-charter">"Truth Before Comfort — Legacy Before Ego — Give Without Reward"</p>
+    <p class="footer-contact">nextxus.online | keywebco@gmail.com</p>
+  </footer>
+
+</body>
+</html>
