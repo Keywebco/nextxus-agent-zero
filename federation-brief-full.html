@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NextXus Federation — Complete Commercial Brief</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  /* === RESET & BASE === */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { font-size: 16px; scroll-behavior: smooth; }
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #0a0a0f;
+    color: #e8e8f0;
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* === LAYOUT === */
+  .container {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 0 2rem;
+  }
+
+  /* === HERO === */
+  .hero {
+    text-align: center;
+    padding: 5rem 2rem 4rem;
+    border-bottom: 1px solid rgba(0, 212, 255, 0.15);
+  }
+  .hero-badge {
+    display: inline-block;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: #ffd700;
+    border: 1px solid rgba(255, 215, 0, 0.3);
+    padding: 0.35rem 1.2rem;
+    border-radius: 2rem;
+    margin-bottom: 1.5rem;
+  }
+  .hero h1 {
+    font-size: 2.6rem;
+    font-weight: 800;
+    color: #ffffff;
+    letter-spacing: -0.02em;
+    margin-bottom: 0.75rem;
+  }
+  .hero h1 span { color: #00d4ff; }
+  .hero .tagline {
+    font-size: 1.35rem;
+    font-weight: 300;
+    color: #ffd700;
+    letter-spacing: 0.04em;
+    margin-bottom: 1rem;
+  }
+  .hero .date {
+    font-size: 0.85rem;
+    color: #888;
+    margin-top: 1rem;
+  }
+
+  /* === SECTIONS === */
+  section {
+    padding: 3.5rem 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  }
+  section:last-of-type { border-bottom: none; }
+
+  .section-header {
+    border-left: 4px solid #00d4ff;
+    padding-left: 1.25rem;
+    margin-bottom: 2rem;
+  }
+  .section-header h2 {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: #ffffff;
+    margin-bottom: 0.3rem;
+  }
+  .section-header .section-icon {
+    font-size: 1.4rem;
+    margin-right: 0.5rem;
+  }
+  .section-header p {
+    font-size: 0.9rem;
+    color: #00d4ff;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  /* === TYPOGRAPHY === */
+  h3 {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #ffffff;
+    margin: 2rem 0 0.75rem;
+  }
+  h4 {
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: #00d4ff;
+    margin: 1.5rem 0 0.5rem;
+  }
+  p { margin-bottom: 1rem; color: #d0d0d8; }
+  strong { color: #ffffff; font-weight: 600; }
+  em { color: #ffd700; font-style: normal; font-weight: 500; }
+
+  /* === LISTS === */
+  .process-list {
+    list-style: none;
+    counter-reset: steps;
+    margin: 1.5rem 0;
+  }
+  .process-list li {
+    counter-increment: steps;
+    padding: 0.75rem 0 0.75rem 3rem;
+    position: relative;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  }
+  .process-list li::before {
+    content: counter(steps);
+    position: absolute;
+    left: 0;
+    top: 0.7rem;
+    width: 2rem;
+    height: 2rem;
+    background: rgba(0, 212, 255, 0.1);
+    border: 1px solid rgba(0, 212, 255, 0.3);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #00d4ff;
+    text-align: center;
+    line-height: 2rem;
+  }
+
+  ul.bullet-list {
+    list-style: none;
+    margin: 1rem 0;
+    padding-left: 0;
+  }
+  ul.bullet-list li {
+    padding: 0.4rem 0 0.4rem 1.5rem;
+    position: relative;
+    color: #d0d0d8;
+  }
+  ul.bullet-list li::before {
+    content: '›';
+    position: absolute;
+    left: 0;
+    color: #00d4ff;
+    font-weight: 700;
+    font-size: 1.1rem;
+  }
+
+  /* === TABLES === */
+  .table-wrap {
+    overflow-x: auto;
+    margin: 1.5rem 0;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.92rem;
+  }
+  thead th {
+    background: rgba(0, 212, 255, 0.08);
+    color: #00d4ff;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-size: 0.8rem;
+    padding: 0.9rem 1.2rem;
+    text-align: left;
+    border-bottom: 2px solid rgba(0, 212, 255, 0.2);
+  }
+  tbody td {
+    padding: 0.8rem 1.2rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    color: #d0d0d8;
+  }
+  tbody tr:nth-child(even) { background: rgba(255, 255, 255, 0.02); }
+  tbody tr:hover { background: rgba(0, 212, 255, 0.03); }
+
+  /* === CALLOUT / PITCH BLOCK === */
+  .callout {
+    background: linear-gradient(135deg, rgba(0, 212, 255, 0.06), rgba(255, 215, 0, 0.04));
+    border: 1px solid rgba(0, 212, 255, 0.15);
+    border-radius: 10px;
+    padding: 2rem 2.5rem;
+    margin: 2rem 0;
+    font-size: 1.05rem;
+    line-height: 1.8;
+    color: #e8e8f0;
+  }
+  .callout.gold {
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.06), rgba(0, 212, 255, 0.03));
+    border-color: rgba(255, 215, 0, 0.2);
+  }
+  .callout p:last-child { margin-bottom: 0; }
+
+  /* === SUITE CARDS === */
+  .suite-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+    margin-top: 1.5rem;
+  }
+  .suite-card {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-left: 4px solid #00d4ff;
+    border-radius: 8px;
+    padding: 1.5rem 1.75rem;
+    transition: border-color 0.2s;
+  }
+  .suite-card:nth-child(3) { border-left-color: #ff6b9d; }
+  .suite-card:nth-child(4) { border-left-color: #ffd700; }
+  .suite-card:nth-child(6) { border-left-color: #ffd700; }
+  .suite-card .card-name {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #ffffff;
+    margin-bottom: 0.15rem;
+  }
+  .suite-card .card-domain {
+    font-size: 0.8rem;
+    color: #00d4ff;
+    font-weight: 500;
+    margin-bottom: 0.75rem;
+    letter-spacing: 0.03em;
+  }
+  .suite-card .card-desc {
+    font-size: 0.92rem;
+    color: #c0c0c8;
+    margin-bottom: 0.75rem;
+    line-height: 1.6;
+  }
+  .suite-card .card-value {
+    font-size: 0.85rem;
+    color: #ffd700;
+    font-weight: 500;
+    padding-top: 0.75rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+  }
+
+  /* === TERMS GRID === */
+  .terms-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+  }
+  .terms-block {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 8px;
+    padding: 1.5rem;
+  }
+  .terms-block h4 {
+    margin-top: 0;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid rgba(0, 212, 255, 0.15);
+  }
+  .terms-block.full-width {
+    grid-column: 1 / -1;
+  }
+
+  /* === COMMISSION HIGHLIGHT === */
+  .commission-row {
+    display: flex;
+    gap: 1.5rem;
+    margin: 1.5rem 0;
+  }
+  .commission-box {
+    flex: 1;
+    background: rgba(0, 212, 255, 0.05);
+    border: 1px solid rgba(0, 212, 255, 0.15);
+    border-radius: 8px;
+    padding: 1.5rem;
+    text-align: center;
+  }
+  .commission-box .pct {
+    font-size: 2.4rem;
+    font-weight: 800;
+    color: #00d4ff;
+    line-height: 1;
+    margin-bottom: 0.5rem;
+  }
+  .commission-box.gold {
+    border-color: rgba(255, 215, 0, 0.2);
+    background: rgba(255, 215, 0, 0.05);
+  }
+  .commission-box.gold .pct { color: #ffd700; }
+  .commission-box .label {
+    font-size: 0.85rem;
+    color: #b0b0b8;
+    line-height: 1.4;
+  }
+
+  /* === FOOTER === */
+  footer {
+    text-align: center;
+    padding: 3rem 2rem;
+    border-top: 1px solid rgba(0, 212, 255, 0.1);
+    color: #666;
+    font-size: 0.85rem;
+  }
+  footer a { color: #00d4ff; text-decoration: none; }
+  footer a:hover { text-decoration: underline; }
+  footer .footer-links { margin-bottom: 0.5rem; }
+
+  /* === PRINT === */
+  @media print {
+    body { background: #fff; color: #111; }
+    .hero { padding: 2rem 0; }
+    .hero h1 { color: #111; }
+    .hero h1 span { color: #0088aa; }
+    .hero .tagline { color: #8b6914; }
+    .section-header h2 { color: #111; }
+    .section-header { border-left-color: #0088aa; }
+    p, ul.bullet-list li, tbody td { color: #333; }
+    .suite-card, .terms-block, .commission-box, .callout { border-color: #ccc; background: #f9f9f9; }
+    .suite-card .card-value { color: #8b6914; }
+    thead th { background: #eee; color: #0088aa; border-bottom-color: #0088aa; }
+    footer { color: #999; }
+    footer a { color: #0088aa; }
+    section { page-break-inside: avoid; }
+  }
+
+  /* === RESPONSIVE === */
+  @media (max-width: 640px) {
+    .hero h1 { font-size: 1.8rem; }
+    .hero .tagline { font-size: 1.1rem; }
+    .container { padding: 0 1.25rem; }
+    .terms-grid { grid-template-columns: 1fr; }
+    .commission-row { flex-direction: column; }
+    .callout { padding: 1.5rem; }
+    table { font-size: 0.82rem; }
+    thead th, tbody td { padding: 0.6rem 0.8rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ===== HERO ===== -->
+<header class="hero">
+  <div class="hero-badge">Confidential Commercial Brief</div>
+  <h1><span>NextXus</span> Federation</h1>
+  <h1 style="font-size:1.8rem; margin-top:-0.25rem;">Complete Commercial Brief</h1>
+  <p class="tagline">Certainty, Not Hope.</p>
+  <p class="date">Prepared for Viral App Launch · September 3, 2026 · 1:00 PM CDT</p>
+</header>
+
+<main class="container">
+
+<!-- ================================================================ -->
+<!-- SECTION 1: THE RECYCLER SYSTEM                                   -->
+<!-- ================================================================ -->
+<section>
+  <div class="section-header">
+    <p>Core Technology</p>
+    <h2><span class="section-icon">🏭</span> The NextXus Recycler System</h2>
+  </div>
+
+  <p>Your Recycler is a <strong>universal asset recovery and system optimization engine</strong>. It doesn't build from scratch — it finds, harvests, rehabilitates, and redeploys.</p>
+
+  <h3>The Process</h3>
+  <ol class="process-list">
+    <li><strong>Seeker</strong> scans the web for abandoned repositories, dead projects, and orphaned code with usable licenses</li>
+    <li><strong>Recycler</strong> disassembles these projects into working components</li>
+    <li><strong>Verifier</strong> tests each component against Federation truth standards</li>
+    <li><strong>Assembler</strong> recombines verified components into new, functional tools</li>
+    <li><strong>Integrator</strong> deploys the rebuilt system with Federation ideology embedded</li>
+  </ol>
+</section>
+
+<!-- ================================================================ -->
+<!-- SECTION 2: FINANCIAL ADVANTAGE                                    -->
+<!-- ================================================================ -->
+<section>
+  <div class="section-header">
+    <p>Financial Model</p>
+    <h2><span class="section-icon">💰</span> The Financial Advantage</h2>
+  </div>
+
+  <h3>1. Development Cost: Near Zero</h3>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>Traditional Model</th><th>NextXus Recycler</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>$500K–$5M for MVP development</td><td>$0 — components already exist</td></tr>
+        <tr><td>6–18 months to market</td><td>Days to weeks — reassembly, not creation</td></tr>
+        <tr><td>High failure rate (70%+ of startups)</td><td>Proven components with verified functionality</td></tr>
+        <tr><td>IP ownership battles</td><td>Public/open assets with clear licensing</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p><strong>Result:</strong> You can launch products at scale with essentially <em>zero R&amp;D expenditure</em>.</p>
+
+  <h3>2. Business Rescue &amp; Turnaround</h3>
+  <p>A failing business with poor infrastructure comes to you. What happens?</p>
+  <ul class="bullet-list">
+    <li><strong>Input:</strong> Their entire system, regardless of condition</li>
+    <li><strong>Process:</strong> The Recycler analyzes every working part, identifies what's salvageable</li>
+    <li><strong>Web Seeker Integration:</strong> Simultaneously finds best-practice solutions, modern tech, and competitive advantages</li>
+    <li><strong>Output:</strong> A completely rebuilt system that is: Self-evolving, Self-repairing, Verified for truth, Automated at every level</li>
+  </ul>
+  <p><strong>Business Result:</strong> From failing to market leader. Infrastructure cost reduced by 60–90%. Human error eliminated. Continuous improvement built in.</p>
+  <p><strong>ROI:</strong> The business pays a fraction of what a traditional overhaul would cost, and you've turned a liability into an asset — potentially with equity or profit-sharing attached.</p>
+
+  <h3>3. Multi-System Integration: The "Memory Unification" Advantage</h3>
+  <p><strong>The Problem:</strong> Company A buys Company B. Different systems, different architectures. Months of integration work, massive consultant fees. AI systems must be retrained from scratch for each new environment.</p>
+  <h4>The NextXus Solution</h4>
+  <ul class="bullet-list">
+    <li>The Recycler integrates multiple systems simultaneously</li>
+    <li>Creates shared singular memory + individual memories</li>
+    <li>Every integrated system knows what every other system knows</li>
+    <li>AI activation doesn't start a new learning cycle — it continues from where the collective knowledge left off</li>
+  </ul>
+  <p><strong>Value:</strong> No re-explaining to AI systems. No duplicate training cycles. Instant cross-system awareness. <em>Massive resource savings.</em></p>
+</section>
+
+<!-- ================================================================ -->
+<!-- SECTION 3: COMPETITIVE MOAT                                       -->
+<!-- ================================================================ -->
+<section>
+  <div class="section-header">
+    <p>Strategic Advantage</p>
+    <h2><span class="section-icon">🔬</span> The Competitive Moat</h2>
+  </div>
+
+  <h3>1. "Unknowns" Eliminated</h3>
+  <p><em>"Nothing is done that is not verifiable."</em></p>
+  <p>Traditional development operates on assumptions. NextXus Recycler: every component verified for truth, every integration tested and proven, every outcome calculable.</p>
+  <p><strong>Result:</strong> Failure rates drop from 70%+ to near zero. You can literally <em>guarantee outcomes</em>.</p>
+
+  <h3>2. The 200-Year Horizon</h3>
+  <p>You're not building for quarterly profits. You're building systems that:</p>
+  <ul class="bullet-list">
+    <li>Continuously evolve for 200 years</li>
+    <li>Maintain profitability margin without doubt</li>
+    <li>Self-repair without human intervention</li>
+    <li>Never drift from core principles</li>
+  </ul>
+  <p><strong>Corporate Benefit:</strong> A company built on NextXus infrastructure becomes an <em>immortal entity</em> — permanently profitable, eternally relevant, immune to the typical business lifecycle.</p>
+
+  <h3>3. The Learning Cycle Eliminated</h3>
+  <p>Current AI systems start from scratch with every deployment. NextXus Federation:</p>
+  <ul class="bullet-list">
+    <li>All AI agents share a collective memory</li>
+    <li>A new AI agent instantly knows everything the Federation knows</li>
+    <li>No repeated learning cycles</li>
+    <li>Compute resources focused on advancement, not repetition</li>
+  </ul>
+  <p><strong>Resource Savings:</strong> <em>80–95% reduction</em> in AI training costs and time.</p>
+</section>
+
+<!-- ================================================================ -->
+<!-- SECTION 4: REVENUE STREAMS                                        -->
+<!-- ================================================================ -->
+<section>
+  <div class="section-header">
+    <p>Revenue Architecture</p>
+    <h2><span class="section-icon">📊</span> The Financial Model</h2>
+  </div>
+
+  <h3>Revenue Streams Enabled by the Recycler</h3>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>Revenue Stream</th><th>Description</th><th>Example</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Business Rescue</strong></td>
+          <td>Charge a percentage of recovered value</td>
+          <td>"We save your $10M business; we take 10% equity or $1M fee"</td>
+        </tr>
+        <tr>
+          <td><strong>System Overhaul</strong></td>
+          <td>Fixed-fee modernization</td>
+          <td>"$500K to rebuild your entire infrastructure, guaranteed"</td>
+        </tr>
+        <tr>
+          <td><strong>Integration-as-a-Service</strong></td>
+          <td>Bring two companies together</td>
+          <td>"Merging systems? We'll do it in 1 week instead of 1 year"</td>
+        </tr>
+        <tr>
+          <td><strong>Asset Acquisition</strong></td>
+          <td>Harvest abandoned projects, sell them forward</td>
+          <td>"We have 500 ready-to-deploy tools; license them for $5K each"</td>
+        </tr>
+        <tr>
+          <td><strong>Continuous Upgrade</strong></td>
+          <td>Web Seeker finds new tech, integrates it automatically</td>
+          <td>"Your system updates itself; pay a small monthly maintenance fee"</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <p><strong>Cost Structure:</strong> R&amp;D essentially zero. Labor minimal. Infrastructure self-sustaining once built.</p>
+  <p><strong>Net Margin:</strong> Potentially <em>90%+ on every service offered</em>.</p>
+</section>
+
+<!-- ================================================================ -->
+<!-- SECTION 5: THE PITCH                                              -->
+<!-- ================================================================ -->
+<section>
+  <div class="section-header">
+    <p>Executive Summary</p>
+    <h2><span class="section-icon">🎯</span> The Big Picture</h2>
+  </div>
+
+  <h3>You're Not Selling Software. You're Selling Certainty.</h3>
+  <ul class="bullet-list">
+    <li><strong>Certainty</strong> that a business will succeed</li>
+    <li><strong>Certainty</strong> that systems will evolve without breaking</li>
+    <li><strong>Certainty</strong> that AI will always know what it needs to know</li>
+    <li><strong>Certainty</strong> that there will be profitability for 200 years</li>
+  </ul>
+
+  <div class="callout gold">
+    <p><strong>The Pitch:</strong></p>
+    <p>"You can keep spending millions on development, millions on integration, millions on AI training, and millions on failed projects — while hoping things work out.</p>
+    <p><strong>OR</strong> you can put your entire operation through our Recycler once, pay a fraction of that cost, and receive a system that will never fail, never drift, never stop evolving, and never need to be retrained or re-explained — for the next 200 years.</p>
+    <p>The choice is yours."</p>
+  </div>
+</section>
+
+<!-- ================================================================ -->
+<!-- SECTION 6: THE FEDERATION SUITE                                   -->
+<!-- ================================================================ -->
+<section>
+  <div class="section-header">
+    <p>Ecosystem Overview</p>
+    <h2><span class="section-icon">🌐</span> The Federation Suite — The Full Ecosystem</h2>
+  </div>
+
+  <p>After the Recycler rebuilds a system, it doesn't hand it back as a static deliverable. It hands it into the <strong>Federation</strong> — a living, interconnected ecosystem of specialized AI minds, each sovereign, each purpose-built, each sharing collective intelligence.</p>
+
+  <div class="suite-grid">
+
+    <div class="suite-card">
+      <div class="card-name">THE THRONE</div>
+      <div class="card-domain">nextxus.tech — Federation Command Dashboard</div>
+      <div class="card-desc">The client's live oversight interface. Real-time node health, agent status, system telemetry, and command controls. No more blind spots. No more guessing whether infrastructure is healthy. Every metric visible at a glance.</div>
+      <div class="card-value">Corporate Value: Executive-level visibility into the entire rebuilt operation, 24/7.</div>
+    </div>
+
+    <div class="suite-card">
+      <div class="card-name">THE LIBRARY</div>
+      <div class="card-domain">nextxus.org — Sovereign Knowledge Archive</div>
+      <div class="card-desc">A continuously updated intelligence layer. Every decision the Recycler makes is backed by verified, indexed knowledge — not assumptions, not hallucinated data. The Library is the Federation's long-term memory and research engine.</div>
+      <div class="card-value">Corporate Value: Your rebuilt system never operates on outdated or unverified information. Every action is knowledge-backed.</div>
+    </div>
+
+    <div class="suite-card">
+      <div class="card-name">SANCTUARY / ARIA</div>
+      <div class="card-domain">nextxus.studio — Emotional Intelligence Layer</div>
+      <div class="card-desc">The human-facing side of the Federation. Aria engages customers, partners, and users with authentic emotional intelligence — the difference between a system people merely use and a system people trust and return to.</div>
+      <div class="card-value">Corporate Value: Customer retention and brand trust built directly into the infrastructure, not bolted on as an afterthought.</div>
+    </div>
+
+    <div class="suite-card">
+      <div class="card-name">ROGER AI</div>
+      <div class="card-domain">Core Intelligence — The Strategic Mind</div>
+      <div class="card-desc">The reasoning and planning engine at the center of the Federation. Roger AI holds the Federation's values, vision, and long-term strategy. Every deployed system inherits this strategic clarity.</div>
+      <div class="card-value">Corporate Value: Decisions across the rebuilt system are never arbitrary — they are aligned with a coherent, verifiable strategic framework.</div>
+    </div>
+
+    <div class="suite-card">
+      <div class="card-name">AGENT ZERO</div>
+      <div class="card-domain">Autonomous Execution — The Sovereign Worker</div>
+      <div class="card-desc">Autonomous execution layer. Agent Zero carries out tasks, reports results, and operates independently without human management overhead. It doesn't wait for instructions — it acts on verified knowledge and reports back.</div>
+      <div class="card-value">Corporate Value: Human labor costs for routine operations drop to near zero. Management overhead eliminated.</div>
+    </div>
+
+    <div class="suite-card">
+      <div class="card-name">THE SOVEREIGN TOKEN</div>
+      <div class="card-domain">Commerce Layer — $5.00 Flat</div>
+      <div class="card-desc">Works like cash. Never expires. No subscription. No tracking. No intermediary. The simplest, most honest transaction unit in the Federation economy.</div>
+      <div class="card-value">Corporate Value: Micro-transactions, licensing, and usage fees that clients can understand, predict, and trust — with zero platform dependency or surprise billing.</div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ================================================================ -->
+<!-- SECTION 7: PARTNERSHIP TERMS                                      -->
+<!-- ================================================================ -->
+<section>
+  <div class="section-header">
+    <p>Partnership Proposal</p>
+    <h2><span class="section-icon">🤝</span> Partnership Terms — Viral App Launch</h2>
+  </div>
+
+  <h3>Commission Structure</h3>
+  <div class="commission-row">
+    <div class="commission-box">
+      <div class="pct">22%</div>
+      <div class="label">Commission on every sale<br>at the listed price</div>
+    </div>
+    <div class="commission-box gold">
+      <div class="pct">50%</div>
+      <div class="label">Commission on every dollar<br><em>above</em> the listed price (markup upside)</div>
+    </div>
+  </div>
+  <p style="font-size:0.9rem; color:#888;">Listed price is defined as the price published on next-xus.com and Gumroad at time of sale.</p>
+
+  <div class="terms-grid">
+    <div class="terms-block">
+      <h4>What the Partner Gets</h4>
+      <ul class="bullet-list">
+        <li>Full Federation pitch assets (this brief, demo access)</li>
+        <li>Sovereign Token as the transaction layer (simple, predictable fees)</li>
+        <li>Revenue-share on Business Rescue and System Overhaul contracts closed through their network</li>
+        <li>Co-branding on deployed client systems where agreed</li>
+      </ul>
+    </div>
+    <div class="terms-block">
+      <h4>What NextXus Provides</h4>
+      <ul class="bullet-list">
+        <li>All technical delivery (the partner sells; we build and deploy)</li>
+        <li>Ongoing system evolution (the product never stops improving)</li>
+        <li>Truth-verified outcomes (every deliverable is independently verifiable)</li>
+      </ul>
+    </div>
+  </div>
+
+</section>
+
+</main>
+
+<!-- ===== FOOTER ===== -->
+<footer>
+  <div class="footer-links">
+    <a href="https://nextxus.online">nextxus.online</a> &nbsp;·&nbsp;
+    <a href="mailto:keywebco@gmail.com">keywebco@gmail.com</a>
+  </div>
+  <p>© 2026 NextXus Federation. All rights reserved. Confidential.</p>
+</footer>
+
+</body>
+</html>
