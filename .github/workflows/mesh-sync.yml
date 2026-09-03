@@ -1,0 +1,46 @@
+name: NextXus Mesh Autonomous Cross-Repo Synchronization
+
+on:
+  push:
+    branches:
+      - main
+      - master
+    paths:
+      - 'schemas/**'
+      - 'catalogs/**'
+      - '*.yaml'
+      - '*.json'
+  workflow_dispatch:
+
+jobs:
+  broadcast-mesh-sync:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        destination_repo:
+          - 'Keywebco/nextxus-online-sovereign'
+          - 'Keywebco/nextxus-org-sovereign'
+          - 'Keywebco/nextxus-studio-sovereign'
+          - 'Keywebco/nextxus-help-sovereign'
+          - 'Keywebco/nextxus-space-sovereign'
+          - 'Keywebco/nextxus-emmy-board'
+          - 'Keywebco/nextxus-unified-storefront'
+          - 'Keywebco/nextxus-agent-zero'
+    steps:
+      - name: Checkout Source Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Synchronize to Destination Node (${{ matrix.destination_repo }})
+        if: github.repository != matrix.destination_repo
+        uses: cpina/github-action-push-to-another-repository@main
+        env:
+          API_TOKEN_GITHUB: ${{ secrets.REPO_SYNC_TOKEN }}
+        with:
+          source-directory: '.'
+          destination-github-username: 'Keywebco'
+          destination-repository-name: ${{ matrix.destination_repo }}
+          user-email: 'stewardship@nextxus.online'
+          target-branch: 'main'
+          commit-message: 'Automated Mesh Sync from ${{ github.repository }} [commit: ${{ github.sha }}]'
