@@ -1,0 +1,4 @@
+# NextXus Sovereign Mirror — GitHub Pages config
+# Disables default Jekyll theme; serves raw HTML
+theme: ~
+plugins: []
