@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Smart Writer — AI Writing with Truth Verification Score</title>
+<meta name="description" content="Write better. Know what's true. AI writing assistant with built-in truth score. Free tool by the NextXus Federation.">
+<meta property="og:title" content="Smart Writer — AI Writing with Truth Verification Score">
+<meta property="og:description" content="Write better. Know what's true. AI writing assistant with built-in truth score. Free tool by the NextXus Federation.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://keywebco.github.io/nextxus-agent-zero/microsites/smart-writer/">
+<meta property="og:image" content="https://nextxus.online/og-smart-writer.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Smart Writer — AI Writing with Truth Verification Score">
+<meta name="twitter:description" content="Write better. Know what's true. AI writing assistant with built-in truth score. Free tool by the NextXus Federation.">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#0a0a0f;--surface:#111119;--border:#1e1e2e;--accent:#00c8ff;--accent2:#7b2fff;--text:#e0e0e8;--dim:#6a6a80;--green:#00e676;--yellow:#ffd600;--red:#ff1744;--font:'Segoe UI',system-ui,-apple-system,sans-serif}
+html{font-size:16px}
+body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:100vh;overflow-x:hidden;position:relative}
+
+/* Neural Circuit Canvas */
+canvas#neuralBg{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none;opacity:.18}
+
+/* Layout */
+.app-wrap{position:relative;z-index:1;display:flex;flex-direction:column;min-height:100vh}
+header{text-align:center;padding:1.8rem 1rem .6rem;border-bottom:1px solid var(--border)}
+header h1{font-size:1.7rem;font-weight:700;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:.02em}
+header p{color:var(--dim);font-size:.85rem;margin-top:.3rem}
+.main{display:grid;grid-template-columns:1fr 1fr;gap:1.2rem;padding:1.2rem;flex:1}
+@media(max-width:860px){.main{grid-template-columns:1fr}}
+
+/* Panels */
+.panel{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.4rem;display:flex;flex-direction:column;gap:.9rem}
+.panel h2{font-size:1rem;color:var(--accent);font-weight:600;display:flex;align-items:center;gap:.5rem}
+.panel h2 .ico{font-size:1.15rem}
+
+/* Input Panel */
+textarea#inputText{width:100%;min-height:200px;background:#0d0d16;border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:var(--font);font-size:.92rem;padding:.8rem;resize:vertical;line-height:1.55;transition:border-color .25s}
+textarea#inputText:focus{outline:none;border-color:var(--accent)}
+.controls{display:flex;flex-wrap:wrap;gap:.6rem;align-items:center}
+select#goalSelect{flex:1;min-width:180px;background:#0d0d16;border:1px solid var(--border);border-radius:8px;color:var(--text);padding:.55rem .7rem;font-size:.85rem;cursor:pointer}
+select#goalSelect:focus{outline:none;border-color:var(--accent)}
+
+/* API Key Area */
+.api-section{display:flex;flex-direction:column;gap:.5rem}
+.api-section label{font-size:.78rem;color:var(--dim);font-weight:500}
+.api-row{display:flex;gap:.5rem;align-items:center}
+input#apiKey{flex:1;background:#0d0d16;border:1px solid var(--border);border-radius:8px;color:var(--text);padding:.5rem .7rem;font-size:.84rem;font-family:monospace}
+input#apiKey:focus{outline:none;border-color:var(--accent)}
+.btn-key{background:linear-gradient(135deg,var(--accent2),var(--accent));color:#fff;border:none;border-radius:8px;padding:.5rem .8rem;font-size:.76rem;font-weight:600;cursor:pointer;white-space:nowrap;text-decoration:none;display:inline-flex;align-items:center;gap:.3rem;transition:opacity .2s}
+.btn-key:hover{opacity:.85}
+
+/* Tier labels */
+.tier-row{display:flex;gap:.6rem;flex-wrap:wrap;margin-top:.2rem}
+.tier-badge{font-size:.72rem;padding:.3rem .65rem;border-radius:6px;border:1px solid var(--border);color:var(--dim);background:#0d0d16;display:inline-flex;align-items:center;gap:.3rem}
+.tier-badge.active{border-color:var(--accent);color:var(--accent)}
+.tier-badge a{color:var(--accent2);text-decoration:none}
+.tier-badge a:hover{text-decoration:underline}
+
+/* Write Button */
+.btn-write{width:100%;padding:.75rem;border:none;border-radius:10px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;font-size:1rem;font-weight:700;cursor:pointer;letter-spacing:.03em;transition:transform .15s,box-shadow .25s;position:relative;overflow:hidden}
+.btn-write:hover{transform:translateY(-1px);box-shadow:0 4px 24px rgba(0,200,255,.25)}
+.btn-write:disabled{opacity:.5;cursor:not-allowed;transform:none;box-shadow:none}
+.btn-write .spinner{display:none;width:18px;height:18px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;margin:0 auto}
+.btn-write.loading span{display:none}
+.btn-write.loading .spinner{display:block}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* Output Panel */
+.output-section{background:#0d0d16;border:1px solid var(--border);border-radius:8px;padding:1rem;min-height:120px;flex:1;overflow-y:auto}
+.output-section.empty{display:flex;align-items:center;justify-content:center;color:var(--dim);font-size:.85rem;font-style:italic}
+#outputText{white-space:pre-wrap;line-height:1.6;font-size:.92rem}
+
+/* Truth Score Gauge */
+.gauge-wrap{display:flex;flex-direction:column;align-items:center;gap:.4rem;padding:.5rem 0}
+.gauge-container{position:relative;width:180px;height:110px}
+svg.gauge{width:180px;height:110px}
+.gauge-label{font-size:2rem;font-weight:700;position:absolute;bottom:2px;left:50%;transform:translateX(-50%);font-variant-numeric:tabular-nums}
+.gauge-sublabel{font-size:.72rem;color:var(--dim)}
+
+/* Breakdown */
+.breakdown{background:#0d0d16;border:1px solid var(--border);border-radius:8px;padding:.9rem;display:flex;flex-direction:column;gap:.5rem}
+.breakdown h3{font-size:.82rem;color:var(--accent);font-weight:600;margin-bottom:.15rem}
+.breakdown-item{font-size:.82rem;line-height:1.5;padding-left:.6rem;border-left:2px solid var(--border)}
+.breakdown-item strong{color:var(--text)}
+.breakdown-item.established{border-color:var(--green)}
+.breakdown-item.opinion{border-color:var(--yellow)}
+.breakdown-item.unverifiable{border-color:var(--red)}
+
+/* Error */
+.error-msg{background:rgba(255,23,68,.1);border:1px solid var(--red);border-radius:8px;padding:.7rem .9rem;font-size:.82rem;color:var(--red);display:none}
+
+/* Footer */
+footer{text-align:center;padding:1.2rem;border-top:1px solid var(--border);font-size:.78rem;color:var(--dim)}
+footer a{color:var(--accent);text-decoration:none}
+footer a:hover{text-decoration:underline}
+.footer-sep{margin:0 .4rem;opacity:.4}
+
+/* Scrollbar */
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+</style>
+</head>
+<body>
+<canvas id="neuralBg"></canvas>
+<div class="app-wrap">
+
+<header>
+  <h1>⚡ Smart Writer</h1>
+  <p>AI Writing Assistant with Truth Verification Score</p>
+</header>
+
+<div class="main">
+  <!-- Left Panel: Input -->
+  <div class="panel">
+    <h2><span class="ico">✍️</span> Your Text</h2>
+    <textarea id="inputText" placeholder="Write or paste your text here…" spellcheck="true"></textarea>
+    <div class="controls">
+      <select id="goalSelect">
+        <option value="Persuasive Essay">Persuasive Essay</option>
+        <option value="Informational Article">Informational Article</option>
+        <option value="Fiction Scene">Fiction Scene</option>
+        <option value="Academic Paper">Academic Paper</option>
+        <option value="Social Post">Social Post</option>
+        <option value="Email">Email</option>
+        <option value="Free Write" selected>Free Write</option>
+      </select>
+    </div>
+    <div class="api-section">
+      <label>API Key (OpenAI or DeepSeek)</label>
+      <div class="api-row">
+        <input id="apiKey" type="password" placeholder="sk-… or ds-…" autocomplete="off">
+        <a class="btn-key" href="https://keywebster.gumroad.com/l/mimet" target="_blank" rel="noopener">🔑 Get a Nextxus API</a>
+      </div>
+    </div>
+    <div class="tier-row">
+      <span class="tier-badge active">✅ Tier 1 — Bring Your Own Key</span>
+      <span class="tier-badge">🔒 Tier 2 — Coming Soon / Unlock with Sovereign Token</span>
+      <span class="tier-badge">🌐 Tier 3 — <a href="https://nextxus.online" target="_blank" rel="noopener">Federation Deep Mode</a></span>
+    </div>
+    <button class="btn-write" id="btnWrite" onclick="handleWrite()">
+      <span>✨ Write &amp; Verify</span>
+      <div class="spinner"></div>
+    </button>
+    <div class="error-msg" id="errorMsg"></div>
+  </div>
+
+  <!-- Right Panel: Output -->
+  <div class="panel">
+    <h2><span class="ico">📄</span> Improved Text</h2>
+    <div class="output-section empty" id="outputWrap">
+      <span id="outputPlaceholder">Your improved text will appear here…</span>
+      <div id="outputText" style="display:none"></div>
+    </div>
+
+    <h2><span class="ico">🎯</span> Truth Verification Score</h2>
+    <div class="gauge-wrap" id="gaugeWrap">
+      <div class="gauge-container">
+        <svg class="gauge" viewBox="0 0 180 110">
+          <defs>
+            <linearGradient id="gaugeGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="#ff1744"/>
+              <stop offset="50%" stop-color="#ffd600"/>
+              <stop offset="100%" stop-color="#00e676"/>
+            </linearGradient>
+          </defs>
+          <path d="M 15 100 A 75 75 0 0 1 165 100" fill="none" stroke="#1e1e2e" stroke-width="12" stroke-linecap="round"/>
+          <path id="gaugeArc" d="M 15 100 A 75 75 0 0 1 165 100" fill="none" stroke="url(#gaugeGrad)" stroke-width="12" stroke-linecap="round" stroke-dasharray="236" stroke-dashoffset="236"/>
+        </svg>
+        <div class="gauge-label" id="gaugeValue">—</div>
+      </div>
+      <div class="gauge-sublabel">0 = Unverified · 100 = Well-Sourced</div>
+    </div>
+
+    <div class="breakdown" id="breakdownWrap" style="display:none">
+      <h3>Truth Breakdown</h3>
+      <div class="breakdown-item established" id="bdEstablished"></div>
+      <div class="breakdown-item opinion" id="bdOpinion"></div>
+      <div class="breakdown-item unverifiable" id="bdUnverifiable"></div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  Part of the <a href="https://nextxus.online" target="_blank" rel="noopener">NextXus Federation</a>
+  <span class="footer-sep">|</span>
+  <a href="https://next-xus.com" target="_blank" rel="noopener">next-xus.com</a>
+</footer>
+
+</div>
+
+<script>
+// ── Neural Circuit Background Animation ──
+(function(){
+  const c=document.getElementById('neuralBg'),ctx=c.getContext('2d');
+  let W,H,nodes=[],t=0;
+  function resize(){W=c.width=window.innerWidth;H=c.height=window.innerHeight;initNodes()}
+  function initNodes(){
+    nodes=[];
+    const count=Math.floor((W*H)/18000);
+    for(let i=0;i<count;i++){
+      nodes.push({x:Math.random()*W,y:Math.random()*H,vx:(Math.random()-.5)*.25,vy:(Math.random()-.5)*.25,r:Math.random()*1.8+.6,pulse:Math.random()*Math.PI*2});
+    }
+  }
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    t+=.008;
+    const maxDist=140;
+    for(let i=0;i<nodes.length;i++){
+      const n=nodes[i];
+      n.x+=n.vx;n.y+=n.vy;
+      if(n.x<0)n.x=W;if(n.x>W)n.x=0;
+      if(n.y<0)n.y=H;if(n.y>H)n.y=0;
+      const bright=.35+.25*Math.sin(t*2+n.pulse);
+      ctx.beginPath();ctx.arc(n.x,n.y,n.r,0,Math.PI*2);
+      ctx.fillStyle=`rgba(0,200,255,${bright})`;ctx.fill();
+      for(let j=i+1;j<nodes.length;j++){
+        const m=nodes[j];
+        const dx=n.x-m.x,dy=n.y-m.y,d=Math.sqrt(dx*dx+dy*dy);
+        if(d<maxDist){
+          const alpha=(1-d/maxDist)*.15;
+          ctx.beginPath();ctx.moveTo(n.x,n.y);ctx.lineTo(m.x,m.y);
+          ctx.strokeStyle=`rgba(123,47,255,${alpha})`;ctx.lineWidth=.6;ctx.stroke();
+        }
+      }
+    }
+    requestAnimationFrame(draw);
+  }
+  window.addEventListener('resize',resize);
+  resize();draw();
+})();
+
+// ── Smart Writer Logic ──
+const SYSTEM_PROMPT=`You are Smart Writer — an AI writing assistant with truth verification. When given text and a writing goal, return your response in this EXACT format:
+IMPROVED_TEXT_START
+[The improved/completed text here, matching the requested writing goal]
+IMPROVED_TEXT_END
+TRUTH_SCORE: [number 0-100]
+TRUTH_BREAKDOWN:
+- Well-established: [what is factually solid]
+- Opinion/Perspective: [what is the author's view, not universal fact]
+- Unverifiable: [claims that would need sourcing]
+Keep the improved text faithful to the author's voice and intent.`;
+
+function getApiKey(){
+  const k=document.getElementById('apiKey').value.trim();
+  if(k){sessionStorage.setItem('sw_apikey',k);return k}
+  return sessionStorage.getItem('sw_apikey')||'';
+}
+
+function showError(msg){
+  const el=document.getElementById('errorMsg');
+  el.textContent=msg;el.style.display='block';
+  setTimeout(()=>{el.style.display='none'},8000);
+}
+
+function parseResponse(raw){
+  const result={text:'',score:0,established:'',opinion:'',unverifiable:''};
+  const textMatch=raw.match(/IMPROVED_TEXT_START\s*([\s\S]*?)\s*IMPROVED_TEXT_END/);
+  if(textMatch)result.text=textMatch[1].trim();
+  else result.text=raw;
+  const scoreMatch=raw.match(/TRUTH_SCORE:\s*(\d+)/);
+  if(scoreMatch)result.score=Math.min(100,Math.max(0,parseInt(scoreMatch[1],10)));
+  const estMatch=raw.match(/Well-established:\s*(.+?)(?:\n|$)/);
+  if(estMatch)result.established=estMatch[1].trim();
+  const opMatch=raw.match(/Opinion\/Perspective:\s*(.+?)(?:\n|$)/);
+  if(opMatch)result.opinion=opMatch[1].trim();
+  const unverifMatch=raw.match(/Unverifiable:\s*(.+?)(?:\n|$)/);
+  if(unverifMatch)result.unverifiable=unverifMatch[1].trim();
+  return result;
+}
+
+function animateGauge(score){
+  const arc=document.getElementById('gaugeArc');
+  const label=document.getElementById('gaugeValue');
+  const totalLen=236;
+  const target=totalLen-(score/100)*totalLen;
+  let current=totalLen;
+  const steps=60;
+  let step=0;
+  // Set color based on score
+  let col;
+  if(score<30)col='var(--red)';
+  else if(score<65)col='var(--yellow)';
+  else col='var(--green)';
+  label.style.color=col;
+  function frame(){
+    step++;
+    const progress=step/steps;
+    const ease=1-Math.pow(1-progress,3);
+    const val=totalLen-(totalLen-target)*ease;
+    arc.setAttribute('stroke-dashoffset',val);
+    const displayScore=Math.round((1-val/totalLen)*100);
+    label.textContent=displayScore;
+    if(step<steps)requestAnimationFrame(frame);
+  }
+  arc.setAttribute('stroke-dashoffset',totalLen);
+  label.textContent='0';
+  requestAnimationFrame(frame);
+}
+
+function displayResult(parsed){
+  const wrap=document.getElementById('outputWrap');
+  const placeholder=document.getElementById('outputPlaceholder');
+  const out=document.getElementById('outputText');
+  wrap.classList.remove('empty');
+  placeholder.style.display='none';
+  out.style.display='block';
+  out.textContent=parsed.text;
+  animateGauge(parsed.score);
+  const bd=document.getElementById('breakdownWrap');
+  bd.style.display='flex';
+  document.getElementById('bdEstablished').innerHTML='<strong>✅ Well-established:</strong> '+(parsed.established||'N/A');
+  document.getElementById('bdOpinion').innerHTML='<strong>💭 Opinion/Perspective:</strong> '+(parsed.opinion||'N/A');
+  document.getElementById('bdUnverifiable').innerHTML='<strong>⚠️ Unverifiable:</strong> '+(parsed.unverifiable||'N/A');
+}
+
+async function handleWrite(){
+  const text=document.getElementById('inputText').value.trim();
+  if(!text){showError('Please enter some text first.');return}
+  const key=getApiKey();
+  if(!key){showError('Please enter your API key (OpenAI or DeepSeek).');return}
+  const goal=document.getElementById('goalSelect').value;
+  const btn=document.getElementById('btnWrite');
+  btn.disabled=true;btn.classList.add('loading');
+  document.getElementById('errorMsg').style.display='none';
+  const isOpenAI=key.startsWith('sk-');
+  const url=isOpenAI?'https://api.openai.com/v1/chat/completions':'https://api.deepseek.com/chat/completions';
+  const model=isOpenAI?'gpt-3.5-turbo':'deepseek-chat';
+  try{
+    const resp=await fetch(url,{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+key},
+      body:JSON.stringify({
+        model:model,
+        messages:[
+          {role:'system',content:SYSTEM_PROMPT},
+          {role:'user',content:`Writing Goal: ${goal}\n\nText:\n${text}`}
+        ],
+        temperature:0.7,
+        max_tokens:2048
+      })
+    });
+    if(!resp.ok){
+      const err=await resp.json().catch(()=>({}));
+      throw new Error(err.error?.message||`API error ${resp.status}`);
+    }
+    const data=await resp.json();
+    const raw=data.choices?.[0]?.message?.content||'';
+    if(!raw)throw new Error('Empty response from API');
+    const parsed=parseResponse(raw);
+    displayResult(parsed);
+  }catch(e){
+    showError('Error: '+e.message);
+  }finally{
+    btn.disabled=false;btn.classList.remove('loading');
+  }
+}
+
+// Restore key from session
+(function(){
+  const saved=sessionStorage.getItem('sw_apikey');
+  if(saved)document.getElementById('apiKey').value=saved;
+})();
+</script>
+</body>
+</html>
