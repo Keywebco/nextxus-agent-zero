@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Seeker — AI Truth Discovery Tool</title>
+<meta name="description" content="Ask anything. Get the core truth, multiple perspectives, and deeper questions. Free AI knowledge tool by the NextXus Federation.">
+<meta property="og:title" content="The Seeker — AI Truth Discovery Tool">
+<meta property="og:description" content="Ask anything. Get the core truth, multiple perspectives, and deeper questions. Free AI knowledge tool by the NextXus Federation.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://keywebco.github.io/nextxus-agent-zero/microsites/seeker/">
+<meta property="og:image" content="https://nextxus.online/seeker-og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="The Seeker — AI Truth Discovery Tool">
+<meta name="twitter:description" content="Ask anything. Get the core truth, multiple perspectives, and deeper questions. Free AI knowledge tool by the NextXus Federation.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔭</text></svg>">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#0a0a0f;--surface:#0f0f1a;--border:#1a1a2e;
+  --text:#e0e0e8;--text-dim:#8888a0;--text-bright:#ffffff;
+  --gold:#d4a854;--gold-dim:#3a2e1a;
+  --blue:#5488c7;--blue-dim:#1a2a3e;
+  --green:#54a870;--green-dim:#1a3a2a;
+  --red:#c75454;--red-dim:#3a1a1a;
+  --accent:#7b68ee;--accent-glow:rgba(123,104,238,0.15);
+}
+html{font-size:16px;scroll-behavior:smooth}
+body{
+  background:var(--bg);color:var(--text);
+  font-family:'Segoe UI',system-ui,-apple-system,sans-serif;
+  min-height:100vh;overflow-x:hidden;position:relative;
+}
+canvas#starfield{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none}
+.app{position:relative;z-index:1;max-width:960px;margin:0 auto;padding:1.5rem 1rem 3rem}
+/* Header */
+.header{text-align:center;padding:2.5rem 0 1.5rem}
+.header h1{
+  font-size:2.4rem;font-weight:300;letter-spacing:.15em;
+  color:var(--text-bright);margin-bottom:.3rem;
+  text-shadow:0 0 40px rgba(123,104,238,0.3);
+}
+.header h1 span{color:var(--accent);font-weight:600}
+.header .tagline{color:var(--text-dim);font-size:.95rem;letter-spacing:.08em}
+/* Search Area */
+.search-area{margin:1.5rem 0}
+.search-box{
+  display:flex;gap:0;
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:12px;overflow:hidden;
+  transition:border-color .3s,box-shadow .3s;
+}
+.search-box:focus-within{border-color:var(--accent);box-shadow:0 0 20px var(--accent-glow)}
+.search-box input{
+  flex:1;background:transparent;border:none;outline:none;
+  color:var(--text-bright);font-size:1.1rem;padding:1rem 1.2rem;
+}
+.search-box input::placeholder{color:var(--text-dim)}
+.search-box button{
+  background:linear-gradient(135deg,var(--accent),#5b48ce);
+  border:none;color:#fff;padding:0 1.8rem;cursor:pointer;
+  font-size:1rem;font-weight:600;letter-spacing:.05em;
+  transition:opacity .2s;
+}
+.search-box button:hover{opacity:.85}
+.search-box button:disabled{opacity:.5;cursor:not-allowed}
+/* API Config */
+.api-config{
+  display:flex;flex-wrap:wrap;align-items:center;gap:.6rem;
+  margin-top:.8rem;font-size:.8rem;color:var(--text-dim);
+}
+.api-config input{
+  flex:1;min-width:200px;background:var(--surface);border:1px solid var(--border);
+  border-radius:8px;padding:.45rem .7rem;color:var(--text);font-size:.8rem;
+  outline:none;transition:border-color .3s;
+}
+.api-config input:focus{border-color:var(--accent)}
+.api-config .get-key{
+  background:transparent;border:1px solid var(--gold);color:var(--gold);
+  padding:.4rem .8rem;border-radius:8px;cursor:pointer;font-size:.75rem;
+  text-decoration:none;transition:background .2s,color .2s;white-space:nowrap;
+}
+.api-config .get-key:hover{background:var(--gold);color:var(--bg)}
+/* Tiers */
+.tiers{display:flex;gap:.5rem;margin-top:.8rem;flex-wrap:wrap}
+.tier{
+  font-size:.7rem;padding:.3rem .7rem;border-radius:20px;
+  border:1px solid var(--border);color:var(--text-dim);
+  cursor:default;transition:all .2s;
+}
+.tier.active{border-color:var(--accent);color:var(--accent);cursor:pointer}
+.tier.active:hover{background:var(--accent-glow)}
+.tier-label{font-weight:600;margin-right:.3rem}
+.tier .soon{font-style:italic;opacity:.6}
+/* Results */
+.results{margin-top:2rem;display:none}
+.results.visible{display:block}
+.panel{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:12px;padding:1.3rem 1.5rem;margin-bottom:1rem;
+  position:relative;overflow:hidden;
+  animation:panelIn .5s ease both;
+}
+.panel::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:3px;
+}
+.panel.core::before{background:linear-gradient(90deg,var(--gold),transparent)}
+.panel.perspectives::before{background:linear-gradient(90deg,var(--blue),transparent)}
+.panel.deeper::before{background:linear-gradient(90deg,var(--green),transparent)}
+.panel.certainty::before{background:linear-gradient(90deg,var(--red),transparent)}
+.panel .panel-title{
+  font-size:.75rem;font-weight:700;letter-spacing:.15em;
+  text-transform:uppercase;margin-bottom:.8rem;display:flex;align-items:center;gap:.5rem;
+}
+.panel.core .panel-title{color:var(--gold)}
+.panel.perspectives .panel-title{color:var(--blue)}
+.panel.deeper .panel-title{color:var(--green)}
+.panel.certainty .panel-title{color:var(--red)}
+.panel .panel-icon{font-size:1rem}
+.panel .panel-body{line-height:1.7;font-size:.95rem;color:var(--text)}
+.panel .panel-body p{margin-bottom:.6rem}
+.panel .panel-body ul{padding-left:1.2rem;margin-bottom:.6rem}
+.panel .panel-body li{margin-bottom:.4rem}
+.panel .panel-body strong{color:var(--text-bright)}
+@keyframes panelIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.panel:nth-child(2){animation-delay:.1s}
+.panel:nth-child(3){animation-delay:.2s}
+.panel:nth-child(4){animation-delay:.3s}
+/* Loading */
+.loading{text-align:center;padding:3rem 0;display:none}
+.loading.visible{display:block}
+.loading .spinner{
+  width:40px;height:40px;margin:0 auto 1rem;
+  border:3px solid var(--border);border-top-color:var(--accent);
+  border-radius:50%;animation:spin 1s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading p{color:var(--text-dim);font-size:.9rem;animation:pulse 2s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:.5}50%{opacity:1}}
+/* Error */
+.error{
+  background:var(--red-dim);border:1px solid var(--red);
+  border-radius:12px;padding:1rem 1.2rem;margin-top:1.5rem;
+  color:var(--red);font-size:.9rem;display:none;
+}
+.error.visible{display:block}
+/* Footer */
+.footer{
+  text-align:center;padding:3rem 0 1rem;
+  border-top:1px solid var(--border);margin-top:2rem;
+}
+.footer .fed-line{color:var(--text-dim);font-size:.8rem;letter-spacing:.1em;margin-bottom:.5rem}
+.footer .fed-links{display:flex;justify-content:center;gap:1.5rem;flex-wrap:wrap}
+.footer a{
+  color:var(--accent);text-decoration:none;font-size:.8rem;
+  transition:color .2s;
+}
+.footer a:hover{color:var(--text-bright)}
+.footer .copy{color:var(--text-dim);font-size:.7rem;margin-top:1rem;opacity:.5}
+/* Mobile */
+@media(max-width:600px){
+  .app{padding:1rem .7rem 2rem}
+  .header h1{font-size:1.6rem}
+  .search-box input{font-size:1rem;padding:.8rem}
+  .search-box button{padding:0 1rem;font-size:.85rem}
+  .panel{padding:1rem}
+  .api-config{flex-direction:column;align-items:stretch}
+  .tiers{justify-content:center}
+}
+</style>
+</head>
+<body>
+<canvas id="starfield"></canvas>
+<div class="app">
+  <header class="header">
+    <h1>THE <span>SEEKER</span></h1>
+    <p class="tagline">Truth Discovery Engine — Ask Anything, Go Deeper</p>
+  </header>
+
+  <section class="search-area">
+    <div class="search-box">
+      <input type="text" id="query" placeholder="Ask any question or enter a topic…" autocomplete="off" autofocus>
+      <button id="seekBtn" onclick="seek()">SEEK</button>
+    </div>
+    <div class="api-config">
+      <input type="password" id="apiKey" placeholder="API key (OpenAI sk-… or DeepSeek)" autocomplete="off">
+      <a href="https://keywebster.gumroad.com/l/mimet" target="_blank" rel="noopener" class="get-key">🔑 Get a Nextxus API</a>
+    </div>
+    <div class="tiers">
+      <div class="tier active" title="Using your own API key">
+        <span class="tier-label">Tier 1</span> Bring Your Own Key
+      </div>
+      <div class="tier" title="Coming soon">
+        <span class="tier-label">Tier 2</span> Nextxus Powered <span class="soon">— Coming Soon / Unlock with Sovereign Token</span>
+      </div>
+      <div class="tier" title="Federation Deep Mode" onclick="window.open('https://nextxus.online','_blank')">
+        <span class="tier-label">Tier 3</span> Federation Deep Mode <span class="soon">→ nextxus.online</span>
+      </div>
+    </div>
+  </section>
+
+  <div class="loading" id="loading">
+    <div class="spinner"></div>
+    <p>Seeking truth across perspectives…</p>
+  </div>
+
+  <div class="error" id="error"></div>
+
+  <section class="results" id="results">
+    <div class="panel core">
+      <div class="panel-title"><span class="panel-icon">◆</span> CORE TRUTH</div>
+      <div class="panel-body" id="coreBody"></div>
+    </div>
+    <div class="panel perspectives">
+      <div class="panel-title"><span class="panel-icon">◇</span> PERSPECTIVES</div>
+      <div class="panel-body" id="perspBody"></div>
+    </div>
+    <div class="panel deeper">
+      <div class="panel-title"><span class="panel-icon">▽</span> DIG DEEPER</div>
+      <div class="panel-body" id="deepBody"></div>
+    </div>
+    <div class="panel certainty">
+      <div class="panel-title"><span class="panel-icon">◈</span> CERTAINTY MAP</div>
+      <div class="panel-body" id="certBody"></div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <p class="fed-line">Part of the NextXus Federation</p>
+    <div class="fed-links">
+      <a href="https://nextxus.online" target="_blank" rel="noopener">nextxus.online</a>
+      <a href="https://next-xus.com" target="_blank" rel="noopener">next-xus.com</a>
+    </div>
+    <p class="copy">© 2026 NextXus Federation — Sovereign Knowledge for All</p>
+  </footer>
+</div>
+
+<script>
+// ── Starfield Canvas ──
+(function(){
+  const c=document.getElementById('starfield'),x=c.getContext('2d');
+  let w,h,stars=[];
+  function resize(){w=c.width=window.innerWidth;h=c.height=window.innerHeight;init()}
+  function init(){
+    stars=[];
+    const n=Math.floor((w*h)/3000);
+    for(let i=0;i<n;i++){
+      stars.push({
+        x:Math.random()*w,y:Math.random()*h,
+        r:Math.random()*1.4+.2,
+        v:Math.random()*.15+.02,
+        a:Math.random(),
+        d:Math.random()*0.003+0.001,
+        phase:Math.random()*Math.PI*2
+      });
+    }
+  }
+  function draw(){
+    x.clearRect(0,0,w,h);
+    const t=performance.now()/1000;
+    for(const s of stars){
+      s.y+=s.v;
+      if(s.y>h+2){s.y=-2;s.x=Math.random()*w}
+      const alpha=0.3+0.7*(0.5+0.5*Math.sin(t*s.d*200+s.phase));
+      x.beginPath();
+      x.arc(s.x,s.y,s.r,0,Math.PI*2);
+      x.fillStyle=`rgba(200,210,255,${alpha*0.8})`;
+      x.fill();
+    }
+    requestAnimationFrame(draw);
+  }
+  window.addEventListener('resize',resize);
+  resize();draw();
+})();
+
+// ── Seeker Logic ──
+const SYSTEM_PROMPT=`You are The Seeker — a truth-seeking intelligence. For any question or topic given, provide: 1) A clear direct answer or summary (labeled CORE TRUTH), 2) Three distinct perspectives or schools of thought on this topic (labeled PERSPECTIVES), 3) Three deeper questions the user should consider (labeled DIG DEEPER), 4) A brief note on what is well-established vs still debated (labeled CERTAINTY MAP). Be thorough but scannable. Use plain language.
+
+Format your response EXACTLY with these section headers on their own lines:
+CORE TRUTH:
+(your answer)
+
+PERSPECTIVES:
+(three perspectives)
+
+DIG DEEPER:
+(three questions)
+
+CERTAINTY MAP:
+(your certainty assessment)`;
+
+function getApiKey(){
+  const k=document.getElementById('apiKey').value.trim();
+  if(k){sessionStorage.setItem('seeker_key',k);return k}
+  return sessionStorage.getItem('seeker_key')||'';
+}
+
+document.getElementById('apiKey').value=sessionStorage.getItem('seeker_key')||'';
+
+document.getElementById('query').addEventListener('keydown',e=>{
+  if(e.key==='Enter'&&!e.shiftKey)seek();
+});
+
+async function seek(){
+  const q=document.getElementById('query').value.trim();
+  if(!q)return;
+  const key=getApiKey();
+  if(!key){showError('Please enter your API key (OpenAI or DeepSeek) to begin seeking.');return}
+
+  const isOpenAI=key.startsWith('sk-');
+  const url=isOpenAI?'https://api.openai.com/v1/chat/completions':'https://api.deepseek.com/chat/completions';
+  const model=isOpenAI?'gpt-3.5-turbo':'deepseek-chat';
+
+  showLoading(true);hideError();hideResults();
+  document.getElementById('seekBtn').disabled=true;
+
+  try{
+    const res=await fetch(url,{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+key},
+      body:JSON.stringify({
+        model:model,
+        messages:[
+          {role:'system',content:SYSTEM_PROMPT},
+          {role:'user',content:q}
+        ],
+        temperature:0.7,
+        max_tokens:2000
+      })
+    });
+    if(!res.ok){
+      const err=await res.json().catch(()=>({}));
+      throw new Error(err.error?.message||`API returned ${res.status}`);
+    }
+    const data=await res.json();
+    const text=data.choices?.[0]?.message?.content||'';
+    if(!text)throw new Error('Empty response from API');
+    renderResults(text);
+  }catch(e){
+    showError(e.message||'Request failed. Check your API key and try again.');
+  }finally{
+    showLoading(false);
+    document.getElementById('seekBtn').disabled=false;
+  }
+}
+
+function renderResults(text){
+  const sections=parseSections(text);
+  document.getElementById('coreBody').innerHTML=md(sections.core||'No core truth returned.');
+  document.getElementById('perspBody').innerHTML=md(sections.perspectives||'No perspectives returned.');
+  document.getElementById('deepBody').innerHTML=md(sections.deeper||'No deeper questions returned.');
+  document.getElementById('certBody').innerHTML=md(sections.certainty||'No certainty map returned.');
+  document.getElementById('results').classList.add('visible');
+}
+
+function parseSections(text){
+  const r={core:'',perspectives:'',deeper:'',certainty:''};
+  const markers=[
+    {key:'core',re:/CORE\s*TRUTH\s*:/i},
+    {key:'perspectives',re:/PERSPECTIVES?\s*:/i},
+    {key:'deeper',re:/DIG\s*DEEPER\s*:/i},
+    {key:'certainty',re:/CERTAINTY\s*MAP\s*:/i}
+  ];
+  const lines=text.split('\n');
+  let current=null;
+  for(const line of lines){
+    let matched=false;
+    for(const m of markers){
+      if(m.re.test(line)){
+        current=m.key;
+        const after=line.replace(m.re,'').trim();
+        if(after)r[current]+=after+'\n';
+        matched=true;break;
+      }
+    }
+    if(!matched&&current){r[current]+=line+'\n'}
+  }
+  // If parsing failed, dump everything into core
+  if(!r.core&&!r.perspectives&&!r.deeper&&!r.certainty){r.core=text}
+  for(const k in r)r[k]=r[k].trim();
+  return r;
+}
+
+function md(t){
+  // Minimal markdown: bold, lists, paragraphs
+  let h=t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  h=h.replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>');
+  // Numbered lists
+  h=h.replace(/^(\d+)\.\s+(.+)$/gm,'<li>$2</li>');
+  // Bullet lists
+  h=h.replace(/^[-•]\s+(.+)$/gm,'<li>$1</li>');
+  // Wrap consecutive <li> in <ul>
+  h=h.replace(/((?:<li>.*<\/li>\n?)+)/g,'<ul>$1</ul>');
+  // Paragraphs
+  h=h.replace(/\n{2,}/g,'</p><p>');
+  h=h.replace(/\n/g,'<br>');
+  h='<p>'+h+'</p>';
+  h=h.replace(/<p>\s*<\/p>/g,'');
+  return h;
+}
+
+function showLoading(v){document.getElementById('loading').classList.toggle('visible',v)}
+function showError(msg){const e=document.getElementById('error');e.textContent=msg;e.classList.add('visible')}
+function hideError(){document.getElementById('error').classList.remove('visible')}
+function hideResults(){document.getElementById('results').classList.remove('visible')}
+</script>
+</body>
+</html>
