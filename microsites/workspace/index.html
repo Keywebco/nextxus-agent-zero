@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NextXus Workspace Builder — Your Personal AI Tool Grid</title>
+<meta name="description" content="Pick up to 6 AI tools and launch them all at once in your own custom workspace. Free. No login. No subscriptions.">
+<meta property="og:title" content="NextXus Workspace Builder — Your Personal AI Tool Grid">
+<meta property="og:description" content="Pick up to 6 AI tools and launch them all at once in your own custom workspace. Free. No login. No subscriptions.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://keywebco.github.io/nextxus-agent-zero/microsites/workspace/">
+<meta property="og:image" content="https://keywebco.github.io/nextxus-agent-zero/microsites/workspace/og-workspace.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="NextXus Workspace Builder — Your Personal AI Tool Grid">
+<meta name="twitter:description" content="Pick up to 6 AI tools and launch them all at once in your own custom workspace. Free. No login. No subscriptions.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#0a0a0f;--bg2:#111119;--surface:#16161f;--surface2:#1c1c2a;
+  --border:#2a2a3a;--border-glow:#4a6cf7;
+  --text:#e0e0e8;--text-dim:#8888a0;--text-bright:#ffffff;
+  --accent:#4a6cf7;--accent2:#7c3aed;--accent-glow:rgba(74,108,247,0.3);
+  --green:#22c55e;--red:#ef4444;--orange:#f59e0b;
+  --radius:12px;--transition:0.3s cubic-bezier(0.4,0,0.2,1);
+}
+html{scroll-behavior:smooth}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+  background:var(--bg);color:var(--text);min-height:100vh;
+  overflow-x:hidden;line-height:1.6;
+}
+
+/* Animated constellation background */
+#constellation-canvas{
+  position:fixed;top:0;left:0;width:100%;height:100%;
+  z-index:0;pointer-events:none;opacity:0.4;
+}
+
+/* Layout */
+.page-wrapper{position:relative;z-index:1;min-height:100vh;display:flex;flex-direction:column}
+.main-content{flex:1;max-width:1400px;margin:0 auto;padding:20px;width:100%}
+
+/* Header */
+.site-header{
+  text-align:center;padding:50px 20px 30px;
+  background:linear-gradient(180deg,rgba(74,108,247,0.08) 0%,transparent 100%);
+}
+.site-header h1{
+  font-size:clamp(1.8rem,4vw,3rem);font-weight:800;
+  background:linear-gradient(135deg,#4a6cf7,#7c3aed,#06b6d4);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-clip:text;margin-bottom:8px;letter-spacing:-0.5px;
+}
+.site-header .tagline{
+  font-size:clamp(1rem,2vw,1.3rem);color:var(--text-dim);font-weight:300;
+}
+.counter-bar{
+  display:flex;align-items:center;justify-content:center;gap:16px;
+  margin-top:24px;flex-wrap:wrap;
+}
+.counter-pill{
+  background:var(--surface);border:1px solid var(--border);
+  padding:8px 20px;border-radius:50px;font-size:0.95rem;
+  color:var(--text);display:flex;align-items:center;gap:8px;
+  transition:var(--transition);
+}
+.counter-pill .count{
+  font-weight:700;color:var(--accent);font-size:1.1rem;
+  min-width:20px;text-align:center;
+}
+.counter-pill.at-max{border-color:var(--orange);background:rgba(245,158,11,0.1)}
+.counter-pill.at-max .count{color:var(--orange)}
+
+/* Mobile notice */
+.mobile-notice{
+  display:none;text-align:center;padding:12px 20px;
+  background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.3);
+  border-radius:var(--radius);margin:0 20px 20px;color:var(--orange);font-size:0.9rem;
+}
+@media(max-width:768px){.mobile-notice{display:block}}
+
+/* Tool Cards Grid */
+.tools-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(300px,1fr));
+  gap:16px;padding:10px 0 30px;
+}
+.tool-card{
+  position:relative;background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--radius);padding:24px;cursor:pointer;
+  transition:var(--transition);overflow:hidden;
+}
+.tool-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,var(--accent),var(--accent2));
+  opacity:0;transition:var(--transition);
+}
+.tool-card:hover{border-color:var(--border-glow);transform:translateY(-2px);
+  box-shadow:0 8px 30px rgba(74,108,247,0.1)}
+.tool-card:hover::before{opacity:1}
+.tool-card.selected{
+  border-color:var(--accent);background:rgba(74,108,247,0.06);
+  box-shadow:0 0 20px var(--accent-glow);
+}
+.tool-card.selected::before{opacity:1}
+.tool-card.coming-soon{
+  opacity:0.45;cursor:default;filter:grayscale(0.5);
+}
+.tool-card.coming-soon:hover{
+  transform:none;border-color:var(--border);box-shadow:none;
+}
+.tool-card.coming-soon:hover::before{opacity:0}
+
+/* Checkbox */
+.card-check{
+  position:absolute;top:14px;right:14px;width:26px;height:26px;
+  border:2px solid var(--border);border-radius:6px;
+  display:flex;align-items:center;justify-content:center;
+  transition:var(--transition);background:var(--bg);
+}
+.tool-card.selected .card-check{
+  border-color:var(--accent);background:var(--accent);
+}
+.card-check svg{width:14px;height:14px;opacity:0;transition:var(--transition);stroke:#fff;fill:none;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+.tool-card.selected .card-check svg{opacity:1}
+
+/* Card content */
+.card-icon{font-size:2rem;margin-bottom:10px;display:block}
+.card-title{font-size:1.15rem;font-weight:700;color:var(--text-bright);margin-bottom:6px}
+.card-desc{font-size:0.9rem;color:var(--text-dim);line-height:1.5;margin-bottom:12px}
+.card-badge{
+  display:inline-block;padding:3px 10px;border-radius:50px;font-size:0.75rem;
+  font-weight:600;text-transform:uppercase;letter-spacing:0.5px;
+}
+.badge-live{background:rgba(34,197,94,0.15);color:var(--green);border:1px solid rgba(34,197,94,0.3)}
+.badge-soon{background:rgba(136,136,160,0.15);color:var(--text-dim);border:1px solid rgba(136,136,160,0.3)}
+
+.card-actions{display:flex;align-items:center;gap:10px;margin-top:10px}
+.open-tab-link{
+  font-size:0.8rem;color:var(--accent);text-decoration:none;
+  opacity:0.7;transition:var(--transition);
+}
+.open-tab-link:hover{opacity:1;text-decoration:underline}
+
+/* Federation Control special card */
+.tool-card.federation-special{border-color:rgba(124,58,237,0.4)}
+.tool-card.federation-special::before{
+  background:linear-gradient(90deg,#7c3aed,#f59e0b);
+}
+.tool-card.federation-special .card-badge{
+  background:rgba(124,58,237,0.15);color:#a78bfa;border:1px solid rgba(124,58,237,0.3);
+}
+
+/* Launch Button */
+.launch-section{text-align:center;padding:20px 0 40px}
+.launch-btn{
+  display:inline-flex;align-items:center;gap:10px;
+  padding:16px 48px;font-size:1.15rem;font-weight:700;
+  border:none;border-radius:50px;cursor:pointer;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  color:#fff;transition:var(--transition);
+  box-shadow:0 4px 20px var(--accent-glow);
+  text-transform:uppercase;letter-spacing:1px;
+}
+.launch-btn:hover:not(:disabled){
+  transform:translateY(-2px);box-shadow:0 8px 30px rgba(74,108,247,0.4);
+}
+.launch-btn:disabled{opacity:0.35;cursor:not-allowed;transform:none}
+.launch-btn svg{width:20px;height:20px}
+
+/* Workspace View */
+.workspace-view{display:none;flex-direction:column;min-height:calc(100vh - 80px)}
+.workspace-view.active{display:flex}
+.selection-view.hidden{display:none}
+
+.workspace-toolbar{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:12px 20px;background:var(--surface);border-bottom:1px solid var(--border);
+  flex-wrap:wrap;gap:10px;
+}
+.back-btn{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:8px 18px;font-size:0.9rem;font-weight:600;
+  border:1px solid var(--border);border-radius:50px;
+  background:transparent;color:var(--text);cursor:pointer;
+  transition:var(--transition);
+}
+.back-btn:hover{border-color:var(--accent);color:var(--accent)}
+.workspace-title{font-size:1rem;color:var(--text-dim);font-weight:400}
+.workspace-title span{color:var(--accent);font-weight:600}
+
+/* Iframe Grid */
+.iframe-grid{
+  flex:1;display:grid;gap:2px;background:var(--border);
+  min-height:600px;
+}
+.iframe-grid.cols-1{grid-template-columns:1fr}
+.iframe-grid.cols-2{grid-template-columns:1fr 1fr}
+.iframe-grid.cols-3{grid-template-columns:1fr 1fr 1fr}
+.iframe-grid.cols-2x2{grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr}
+.iframe-grid.cols-3x2{grid-template-columns:1fr 1fr 1fr;grid-template-rows:1fr 1fr}
+
+.iframe-panel{
+  display:flex;flex-direction:column;background:var(--bg);
+  min-height:300px;
+}
+.panel-header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:6px 12px;background:var(--surface2);border-bottom:1px solid var(--border);
+  min-height:32px;
+}
+.panel-name{font-size:0.8rem;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.panel-close{
+  background:none;border:none;color:var(--text-dim);cursor:pointer;
+  padding:2px 6px;border-radius:4px;font-size:1rem;line-height:1;
+  transition:var(--transition);flex-shrink:0;
+}
+.panel-close:hover{color:var(--red);background:rgba(239,68,68,0.1)}
+.iframe-panel iframe{flex:1;width:100%;border:none;background:#fff}
+
+/* Footer */
+.site-footer{
+  text-align:center;padding:30px 20px;
+  border-top:1px solid var(--border);color:var(--text-dim);
+  font-size:0.85rem;position:relative;z-index:1;
+}
+.site-footer a{color:var(--accent);text-decoration:none}
+.site-footer a:hover{text-decoration:underline}
+.footer-brand{font-weight:600;color:var(--text);margin-bottom:4px}
+
+/* View transitions */
+.fade-enter{animation:fadeIn 0.4s ease forwards}
+.fade-exit{animation:fadeOut 0.3s ease forwards}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeOut{from{opacity:1;transform:translateY(0)}to{opacity:0;transform:translateY(-10px)}}
+
+/* Responsive */
+@media(max-width:900px){
+  .tools-grid{grid-template-columns:repeat(auto-fill,minmax(260px,1fr))}
+  .iframe-grid.cols-3,.iframe-grid.cols-3x2{grid-template-columns:1fr 1fr}
+}
+@media(max-width:600px){
+  .tools-grid{grid-template-columns:1fr}
+  .iframe-grid,.iframe-grid.cols-2,.iframe-grid.cols-3,.iframe-grid.cols-2x2,.iframe-grid.cols-3x2{
+    grid-template-columns:1fr;
+  }
+  .site-header{padding:30px 16px 20px}
+  .launch-btn{padding:14px 32px;font-size:1rem}
+}
+
+/* Scrollbar */
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:var(--text-dim)}
+</style>
+</head>
+<body>
+<canvas id="constellation-canvas"></canvas>
+
+<div class="page-wrapper">
+
+  <!-- SELECTION VIEW -->
+  <div class="selection-view" id="selectionView">
+    <header class="site-header">
+      <h1>Build Your Workspace</h1>
+      <p class="tagline">Pick your tools. Launch your world.</p>
+      <div class="counter-bar">
+        <div class="counter-pill" id="counterPill">
+          <span class="count" id="selectedCount">0</span> of 6 selected
+        </div>
+      </div>
+    </header>
+
+    <div class="mobile-notice">
+      📱 Best experienced on desktop or tablet — but you can still launch individual tools below.
+    </div>
+
+    <div class="main-content">
+      <div class="tools-grid" id="toolsGrid"></div>
+
+      <div class="launch-section">
+        <button class="launch-btn" id="launchBtn" disabled>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+          Launch My Workspace
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- WORKSPACE VIEW -->
+  <div class="workspace-view" id="workspaceView">
+    <div class="workspace-toolbar">
+      <button class="back-btn" id="backBtn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+        Back to Tool Selection
+      </button>
+      <div class="workspace-title">Running <span id="runningCount">0</span> tools</div>
+    </div>
+    <div class="iframe-grid" id="iframeGrid"></div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="site-footer">
+    <div class="footer-brand">Part of the NextXus Federation</div>
+    <div>
+      <a href="https://nextxus.online" target="_blank" rel="noopener">nextxus.online</a>
+      &nbsp;·&nbsp;
+      <a href="https://next-xus.com" target="_blank" rel="noopener">next-xus.com</a>
+    </div>
+  </footer>
+
+</div>
+
+<script>
+// ── Tool Data ──
+const TOOLS = [
+  {
+    id:'recycler', name:'The Recycler', icon:'♻️',
+    desc:'Transform any content into something new — remix, reformat, reinvent.',
+    url:'https://keywebco.github.io/nextxus-agent-zero/microsites/recycler/',
+    live:true
+  },
+  {
+    id:'seeker', name:'The Seeker', icon:'🔍',
+    desc:'Ask anything. Get core truth plus multiple perspectives, side by side.',
+    url:'https://keywebco.github.io/nextxus-agent-zero/microsites/seeker/',
+    live:true
+  },
+  {
+    id:'smart-writer', name:'Smart Writer', icon:'✍️',
+    desc:'AI writing with a built-in Truth Verification Score. Write with integrity.',
+    url:'https://keywebco.github.io/nextxus-agent-zero/microsites/smart-writer/',
+    live:true
+  },
+  {
+    id:'rebuilder', name:'The Rebuilder', icon:'🔧',
+    desc:'Interactive step-by-step training — learn by building, not by reading.',
+    url:null, live:false
+  },
+  {
+    id:'nova', name:'Nova Smart Bot', icon:'🤖',
+    desc:'Conversational AI with personality — your thinking partner.',
+    url:null, live:false
+  },
+  {
+    id:'cosmic', name:'Cosmic Traveler', icon:'🌌',
+    desc:'Navigate the cosmos with real NASA data. Explore the universe interactively.',
+    url:null, live:false
+  },
+  {
+    id:'authors', name:'Authors Suite', icon:'📚',
+    desc:'Everything a writer needs — outlining, drafting, editing, publishing.',
+    url:null, live:false
+  },
+  {
+    id:'lawyers', name:'Lawyers Suite', icon:'⚖️',
+    desc:'Legal tools for everyone — contracts, research, plain-language analysis.',
+    url:null, live:false
+  },
+  {
+    id:'medical', name:'Medical SIM', icon:'🏥',
+    desc:'Clinical simulation and training — practice scenarios safely.',
+    url:null, live:false
+  },
+  {
+    id:'educators', name:'Educators Hub', icon:'🎓',
+    desc:'Teaching and curriculum tools — lesson plans, assessments, resources.',
+    url:null, live:false
+  },
+  {
+    id:'federation-control', name:'Federation Control', icon:'👑',
+    desc:'The Omega Throne — full Federation command and oversight dashboard.',
+    url:'https://keywebco.github.io/nextxus-emmy-board/',
+    live:true, special:true
+  }
+];
+
+const MAX_SELECTED = 6;
+let selected = new Set();
+
+// ── DOM Refs ──
+const toolsGrid = document.getElementById('toolsGrid');
+const selectedCount = document.getElementById('selectedCount');
+const counterPill = document.getElementById('counterPill');
+const launchBtn = document.getElementById('launchBtn');
+const selectionView = document.getElementById('selectionView');
+const workspaceView = document.getElementById('workspaceView');
+const iframeGrid = document.getElementById('iframeGrid');
+const runningCount = document.getElementById('runningCount');
+const backBtn = document.getElementById('backBtn');
+
+// ── Render Tool Cards ──
+function renderCards() {
+  toolsGrid.innerHTML = '';
+  TOOLS.forEach(tool => {
+    const card = document.createElement('div');
+    card.className = 'tool-card' +
+      (!tool.live ? ' coming-soon' : '') +
+      (selected.has(tool.id) ? ' selected' : '') +
+      (tool.special ? ' federation-special' : '');
+    card.dataset.id = tool.id;
+
+    const checkboxHTML = tool.live ? `
+      <div class="card-check">
+        <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+      </div>` : '';
+
+    const badgeHTML = tool.live
+      ? '<span class="card-badge badge-live">● Live</span>'
+      : '<span class="card-badge badge-soon">Coming Soon</span>';
+
+    const actionsHTML = tool.live && tool.url ? `
+      <div class="card-actions">
+        <a class="open-tab-link" href="${tool.url}" target="_blank" rel="noopener" onclick="event.stopPropagation()">Open as Tab ↗</a>
+      </div>` : '';
+
+    card.innerHTML = `
+      ${checkboxHTML}
+      <span class="card-icon">${tool.icon}</span>
+      <div class="card-title">${tool.name}</div>
+      <div class="card-desc">${tool.desc}</div>
+      ${badgeHTML}
+      ${actionsHTML}
+    `;
+
+    if (tool.live) {
+      card.addEventListener('click', () => toggleSelect(tool.id));
+    }
+
+    toolsGrid.appendChild(card);
+  });
+}
+
+// ── Toggle Selection ──
+function toggleSelect(id) {
+  if (selected.has(id)) {
+    selected.delete(id);
+  } else {
+    if (selected.size >= MAX_SELECTED) return;
+    selected.add(id);
+  }
+  updateUI();
+}
+
+function updateUI() {
+  selectedCount.textContent = selected.size;
+  counterPill.classList.toggle('at-max', selected.size >= MAX_SELECTED);
+  launchBtn.disabled = selected.size === 0;
+
+  document.querySelectorAll('.tool-card').forEach(card => {
+    const id = card.dataset.id;
+    const tool = TOOLS.find(t => t.id === id);
+    if (!tool || !tool.live) return;
+    card.classList.toggle('selected', selected.has(id));
+    // Dim unselected live cards when at max
+    if (selected.size >= MAX_SELECTED && !selected.has(id)) {
+      card.style.opacity = '0.5';
+      card.style.pointerEvents = 'none';
+    } else {
+      card.style.opacity = '';
+      card.style.pointerEvents = '';
+    }
+  });
+}
+
+// ── Launch Workspace ──
+function launchWorkspace() {
+  if (selected.size === 0) return;
+
+  const tools = TOOLS.filter(t => selected.has(t.id) && t.url);
+  if (tools.length === 0) return;
+
+  // Determine grid class
+  const n = tools.length;
+  let gridClass = 'cols-1';
+  if (n === 2) gridClass = 'cols-2';
+  else if (n === 3) gridClass = 'cols-3';
+  else if (n === 4) gridClass = 'cols-2x2';
+  else if (n >= 5) gridClass = 'cols-3x2';
+
+  iframeGrid.className = 'iframe-grid ' + gridClass;
+  iframeGrid.innerHTML = '';
+
+  tools.forEach(tool => {
+    const panel = document.createElement('div');
+    panel.className = 'iframe-panel';
+    panel.dataset.id = tool.id;
+    panel.innerHTML = `
+      <div class="panel-header">
+        <span class="panel-name">${tool.icon} ${tool.name}</span>
+        <button class="panel-close" title="Close ${tool.name}" onclick="removePanel('${tool.id}')">&times;</button>
+      </div>
+      <iframe src="${tool.url}" loading="lazy" sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox" title="${tool.name}"></iframe>
+    `;
+    iframeGrid.appendChild(panel);
+  });
+
+  runningCount.textContent = tools.length;
+
+  // Transition
+  selectionView.classList.add('fade-exit');
+  setTimeout(() => {
+    selectionView.classList.add('hidden');
+    selectionView.classList.remove('fade-exit');
+    workspaceView.classList.add('active','fade-enter');
+    setTimeout(() => workspaceView.classList.remove('fade-enter'), 400);
+  }, 300);
+}
+
+// ── Remove Panel ──
+window.removePanel = function(id) {
+  const panel = iframeGrid.querySelector(`.iframe-panel[data-id="${id}"]`);
+  if (panel) {
+    panel.style.opacity = '0';
+    panel.style.transform = 'scale(0.95)';
+    panel.style.transition = '0.2s ease';
+    setTimeout(() => {
+      panel.remove();
+      selected.delete(id);
+      const remaining = iframeGrid.querySelectorAll('.iframe-panel').length;
+      runningCount.textContent = remaining;
+      if (remaining === 0) goBack();
+      else reflow();
+    }, 200);
+  }
+};
+
+function reflow() {
+  const n = iframeGrid.querySelectorAll('.iframe-panel').length;
+  let gridClass = 'cols-1';
+  if (n === 2) gridClass = 'cols-2';
+  else if (n === 3) gridClass = 'cols-3';
+  else if (n === 4) gridClass = 'cols-2x2';
+  else if (n >= 5) gridClass = 'cols-3x2';
+  iframeGrid.className = 'iframe-grid ' + gridClass;
+}
+
+// ── Back to Selection ──
+function goBack() {
+  workspaceView.classList.remove('active');
+  selectionView.classList.remove('hidden');
+  selectionView.classList.add('fade-enter');
+  setTimeout(() => selectionView.classList.remove('fade-enter'), 400);
+  updateUI();
+}
+
+launchBtn.addEventListener('click', launchWorkspace);
+backBtn.addEventListener('click', goBack);
+
+// ── Constellation Background ──
+(function() {
+  const canvas = document.getElementById('constellation-canvas');
+  const ctx = canvas.getContext('2d');
+  let w, h, particles = [], mouse = {x:-1000,y:-1000};
+  const PARTICLE_COUNT = 80;
+  const CONNECTION_DIST = 150;
+  let rotation = 0;
+
+  function resize() {
+    w = canvas.width = window.innerWidth;
+    h = canvas.height = window.innerHeight;
+  }
+
+  function createParticles() {
+    particles = [];
+    for (let i = 0; i < PARTICLE_COUNT; i++) {
+      particles.push({
+        x: Math.random() * w,
+        y: Math.random() * h,
+        vx: (Math.random() - 0.5) * 0.3,
+        vy: (Math.random() - 0.5) * 0.3,
+        r: Math.random() * 1.5 + 0.5,
+        alpha: Math.random() * 0.5 + 0.3
+      });
+    }
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, w, h);
+    rotation += 0.0001;
+
+    // Draw connections
+    for (let i = 0; i < particles.length; i++) {
+      for (let j = i + 1; j < particles.length; j++) {
+        const dx = particles[i].x - particles[j].x;
+        const dy = particles[i].y - particles[j].y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < CONNECTION_DIST) {
+          const alpha = (1 - dist / CONNECTION_DIST) * 0.15;
+          ctx.beginPath();
+          ctx.strokeStyle = `rgba(74,108,247,${alpha})`;
+          ctx.lineWidth = 0.5;
+          ctx.moveTo(particles[i].x, particles[i].y);
+          ctx.lineTo(particles[j].x, particles[j].y);
+          ctx.stroke();
+        }
+      }
+    }
+
+    // Draw and update particles
+    particles.forEach(p => {
+      // Gentle rotation
+      const cx = w / 2, cy = h / 2;
+      const dx = p.x - cx, dy = p.y - cy;
+      const cos = Math.cos(rotation), sin = Math.sin(rotation);
+      p.x = cx + dx * cos - dy * sin;
+      p.y = cy + dx * sin + dy * cos;
+
+      p.x += p.vx;
+      p.y += p.vy;
+
+      if (p.x < 0) p.x = w;
+      if (p.x > w) p.x = 0;
+      if (p.y < 0) p.y = h;
+      if (p.y > h) p.y = 0;
+
+      ctx.beginPath();
+      ctx.fillStyle = `rgba(74,108,247,${p.alpha})`;
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fill();
+    });
+
+    requestAnimationFrame(draw);
+  }
+
+  window.addEventListener('resize', () => { resize(); createParticles(); });
+  resize();
+  createParticles();
+  draw();
+})();
+
+// ── Init ──
+renderCards();
+</script>
+</body>
+</html>
