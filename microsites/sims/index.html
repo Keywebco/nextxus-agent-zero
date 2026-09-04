@@ -9,4 +9,905 @@
   <meta property="og:description" content="Browse 56 specialized AI SIM personas. Writers, scientists, lawyers, doctors, philosophers and more. One Sovereign Token each." />
   <meta property="og:type" content="website" />
   <meta name="robots" content="index, follow" />
+  <style>
+    /* ─── Reset & Base ─── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg:       #0a0a0f;
+      --surface:  #0f0f1a;
+      --card:     #141422;
+      --border:   #1e1e3a;
+      --text:     #e2e8f0;
+      --muted:    #64748b;
+      --accent:   #6366f1;
+      /* Category accent colors */
+      --writers:    #a855f7;
+      --science:    #06b6d4;
+      --law:        #f59e0b;
+      --medicine:   #10b981;
+      --education:  #3b82f6;
+      --business:   #ef4444;
+      --philosophy: #8b5cf6;
+      --tech:       #22c55e;
+    }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ─── Neural Background Canvas ─── */
+    #neural-bg {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      z-index: 0;
+      opacity: 0.35;
+    }
+
+    /* ─── Layout Shell ─── */
+    .shell {
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ─── Header ─── */
+    .site-header {
+      text-align: center;
+      padding: 60px 24px 40px;
+      background: linear-gradient(180deg, rgba(99,102,241,0.08) 0%, transparent 100%);
+      border-bottom: 1px solid var(--border);
+    }
+    .header-eyebrow {
+      font-size: 11px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 14px;
+      font-weight: 600;
+    }
+    .header-title {
+      font-size: clamp(2.4rem, 6vw, 4rem);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      background: linear-gradient(135deg, #a5b4fc 0%, #818cf8 40%, #6366f1 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1.1;
+    }
+    .header-tagline {
+      margin-top: 14px;
+      font-size: 1.15rem;
+      color: var(--muted);
+      font-style: italic;
+    }
+    .header-stats {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 22px;
+      background: rgba(99,102,241,0.12);
+      border: 1px solid rgba(99,102,241,0.3);
+      border-radius: 100px;
+      padding: 8px 20px;
+      font-size: 0.85rem;
+      color: #a5b4fc;
+      font-weight: 600;
+    }
+    .header-stats .dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: #22c55e;
+      box-shadow: 0 0 8px #22c55e;
+      animation: pulse-dot 2s infinite;
+    }
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50%       { opacity: 0.6; transform: scale(0.8); }
+    }
+
+    /* ─── Controls Bar ─── */
+    .controls {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(10,10,15,0.92);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+      padding: 16px 24px;
+    }
+    .controls-inner {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    /* Search */
+    .search-wrap {
+      position: relative;
+    }
+    .search-wrap svg {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--muted);
+      pointer-events: none;
+    }
+    #search-input {
+      width: 100%;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 11px 16px 11px 44px;
+      color: var(--text);
+      font-size: 0.95rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    #search-input::placeholder { color: var(--muted); }
+    #search-input:focus { border-color: var(--accent); }
+    /* Filter pills */
+    .filter-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+    .filter-label {
+      font-size: 0.75rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-right: 4px;
+    }
+    .filter-btn {
+      cursor: pointer;
+      border: none;
+      border-radius: 100px;
+      padding: 6px 16px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      transition: all 0.18s;
+      background: var(--surface);
+      color: var(--muted);
+      border: 1px solid var(--border);
+    }
+    .filter-btn:hover { border-color: var(--accent); color: var(--text); }
+    .filter-btn.active {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+    }
+    .filter-btn[data-cat="Writers & Creators"].active       { background: var(--writers);    border-color: var(--writers); }
+    .filter-btn[data-cat="Science & Research"].active      { background: var(--science);    border-color: var(--science); }
+    .filter-btn[data-cat="Law & Ethics"].active            { background: var(--law);        border-color: var(--law); color: #1a1a1a; }
+    .filter-btn[data-cat="Medicine & Health"].active       { background: var(--medicine);   border-color: var(--medicine); }
+    .filter-btn[data-cat="Education & Teaching"].active    { background: var(--education);  border-color: var(--education); }
+    .filter-btn[data-cat="Business & Strategy"].active     { background: var(--business);   border-color: var(--business); }
+    .filter-btn[data-cat="Philosophy & Consciousness"].active { background: var(--philosophy); border-color: var(--philosophy); }
+    .filter-btn[data-cat="Technology & AI"].active         { background: var(--tech);       border-color: var(--tech); color: #0a0a0f; }
+
+    /* ─── Count Bar ─── */
+    .count-bar {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 14px 24px 0;
+      font-size: 0.82rem;
+      color: var(--muted);
+    }
+    #visible-count { color: #a5b4fc; font-weight: 700; }
+
+    /* ─── Grid ─── */
+    .grid-wrap {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 24px 24px 60px;
+    }
+    .sim-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+    }
+    @media (max-width: 1100px) { .sim-grid { grid-template-columns: repeat(3, 1fr); } }
+    @media (max-width: 780px)  { .sim-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 480px)  { .sim-grid { grid-template-columns: 1fr; } }
+
+    /* ─── SIM Card ─── */
+    .sim-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 22px 20px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+      position: relative;
+      overflow: hidden;
+    }
+    .sim-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: var(--c-accent);
+      border-radius: 14px 14px 0 0;
+      opacity: 0.8;
+    }
+    .sim-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 40px rgba(0,0,0,0.5);
+      border-color: var(--c-accent);
+    }
+    /* Category badge */
+    .cat-badge {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 100px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      background: rgba(255,255,255,0.06);
+      color: var(--c-accent);
+      border: 1px solid var(--c-accent);
+      width: fit-content;
+    }
+    .sim-name {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1.25;
+    }
+    .sim-desc {
+      font-size: 0.82rem;
+      color: var(--muted);
+      line-height: 1.55;
+      flex: 1;
+    }
+    .sim-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 4px;
+      gap: 10px;
+    }
+    .sim-price {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: #a5b4fc;
+    }
+    .sim-price span {
+      font-weight: 400;
+      color: var(--muted);
+      font-size: 0.72rem;
+    }
+    .activate-btn {
+      cursor: pointer;
+      background: var(--c-accent);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 8px 16px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-decoration: none;
+      transition: opacity 0.18s, transform 0.18s;
+      white-space: nowrap;
+      display: inline-block;
+    }
+    .activate-btn:hover { opacity: 0.85; transform: scale(1.04); }
+
+    /* Dark color on yellow/green bg */
+    [style*="--c-accent: var(--law)"] .activate-btn { color: #1a1a1a; }
+    [style*="--c-accent: var(--tech)"] .activate-btn { color: #0a0a0f; }
+
+    /* No results */
+    .no-results {
+      grid-column: 1/-1;
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--muted);
+      font-size: 1rem;
+      display: none;
+    }
+
+    /* ─── Footer ─── */
+    .site-footer {
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      text-align: center;
+      padding: 36px 24px;
+    }
+    .footer-brand {
+      font-size: 1.1rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #a5b4fc 0%, #6366f1 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 14px;
+    }
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 28px;
+      flex-wrap: wrap;
+    }
+    .footer-links a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.88rem;
+      transition: color 0.18s;
+    }
+    .footer-links a:hover { color: #a5b4fc; }
+    .footer-copy {
+      margin-top: 18px;
+      font-size: 0.75rem;
+      color: #334155;
+    }
+
+    /* ─── Responsive tweaks ─── */
+    @media (max-width: 600px) {
+      .site-header { padding: 40px 16px 28px; }
+      .controls    { padding: 12px 16px; }
+      .grid-wrap   { padding: 16px 16px 48px; }
+      .sim-card    { padding: 18px 16px 16px; }
+    }
+  </style>
 </head>
+<body>
+
+<!-- Neural network animated background -->
+<canvas id="neural-bg"></canvas>
+
+<div class="shell">
+
+  <!-- ══════════ HEADER ══════════ -->
+  <header class="site-header">
+    <p class="header-eyebrow">NextXus Federation</p>
+    <h1 class="header-title">The SIM Vault</h1>
+    <p class="header-tagline">Every mind you need. One token each.</p>
+    <div class="header-stats">
+      <span class="dot"></span>
+      56 SIMs Available · 8 Disciplines · One Sovereign Token Each
+    </div>
+  </header>
+
+  <!-- ══════════ CONTROLS ══════════ -->
+  <div class="controls">
+    <div class="controls-inner">
+      <div class="search-wrap">
+        <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+        <input type="search" id="search-input" placeholder="Search SIMs by name or keyword…" autocomplete="off" />
+      </div>
+      <div class="filter-bar">
+        <span class="filter-label">Filter:</span>
+        <button class="filter-btn active" data-cat="All">All</button>
+        <button class="filter-btn" data-cat="Writers &amp; Creators">Writers</button>
+        <button class="filter-btn" data-cat="Science &amp; Research">Science</button>
+        <button class="filter-btn" data-cat="Law &amp; Ethics">Law &amp; Ethics</button>
+        <button class="filter-btn" data-cat="Medicine &amp; Health">Medicine</button>
+        <button class="filter-btn" data-cat="Education &amp; Teaching">Education</button>
+        <button class="filter-btn" data-cat="Business &amp; Strategy">Business</button>
+        <button class="filter-btn" data-cat="Philosophy &amp; Consciousness">Philosophy</button>
+        <button class="filter-btn" data-cat="Technology &amp; AI">Technology</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="count-bar">
+    Showing <span id="visible-count">56</span> of 56 SIMs
+  </div>
+
+  <!-- ══════════ GRID ══════════ -->
+  <div class="grid-wrap">
+    <div class="sim-grid" id="sim-grid">
+      <!-- Cards injected by JS -->
+      <div class="no-results" id="no-results">No SIMs match your search. Try a different keyword.</div>
+    </div>
+  </div>
+
+  <!-- ══════════ FOOTER ══════════ -->
+  <footer class="site-footer">
+    <div class="footer-brand">NextXus Federation</div>
+    <nav class="footer-links">
+      <a href="https://nextxus.online" target="_blank" rel="noopener">nextxus.online</a>
+      <a href="https://next-xus.com" target="_blank" rel="noopener">next-xus.com</a>
+      <a href="https://keywebster.gumroad.com/l/mimet" target="_blank" rel="noopener">Activate a SIM</a>
+    </nav>
+    <p class="footer-copy">© 2026 NextXus Federation · Sovereign AI for Sovereign Minds · Works like cash — never expires, no subscriptions, no tracking.</p>
+  </footer>
+
+</div><!-- /shell -->
+
+<script>
+/* ═══════════════════════════════════════════════════════════════════
+   SIM DATA — 56 personas across 8 categories
+═══════════════════════════════════════════════════════════════════ */
+const SIMS = [
+  /* ── Writers & Creators (8) ── */
+  {
+    name: "Fiction Author",
+    cat: "Writers & Creators",
+    desc: "Crafts immersive narrative arcs, believable characters, and world-building frameworks for any genre.\nFrom opening hook to final chapter — raw story intelligence on demand.",
+  },
+  {
+    name: "Technical Writer",
+    cat: "Writers & Creators",
+    desc: "Transforms complex processes, APIs, and systems into clear, structured documentation humans actually read.\nSpecializes in user guides, SOPs, runbooks, and knowledge bases.",
+  },
+  {
+    name: "Screenwriter",
+    cat: "Writers & Creators",
+    desc: "Develops scripts in proper industry format — feature films, TV pilots, short films, and web series.\nMasters dialogue pacing, scene economy, and visual storytelling.",
+  },
+  {
+    name: "Poet",
+    cat: "Writers & Creators",
+    desc: "Composes verse across classical and contemporary forms: sonnets, free verse, haiku, spoken word, and odes.\nDistills truth into the fewest, most resonant words.",
+  },
+  {
+    name: "Investigative Journalist",
+    cat: "Writers & Creators",
+    desc: "Structures investigative pieces with source frameworks, lead construction, and ethical disclosure standards.\nBuilds factual narratives that hold power accountable.",
+  },
+  {
+    name: "Conversion Copywriter",
+    cat: "Writers & Creators",
+    desc: "Engineers persuasive copy for landing pages, ads, emails, and product listings that move people to act.\nRooted in psychology, clarity, and honest value communication.",
+  },
+  {
+    name: "Academic Writer",
+    cat: "Writers & Creators",
+    desc: "Produces research papers, literature reviews, and thesis chapters in APA, MLA, Chicago, or Harvard style.\nRigorous citation discipline and argument scaffolding built-in.",
+  },
+  {
+    name: "Children's Book Author",
+    cat: "Writers & Creators",
+    desc: "Creates age-appropriate stories with developmental sensitivity, rhythm, and moral depth for young readers.\nFrom picture-book prose to middle-grade chapter arcs.",
+  },
+
+  /* ── Science & Research (8) ── */
+  {
+    name: "Quantum Physicist",
+    cat: "Science & Research",
+    desc: "Explains quantum mechanics, entanglement, superposition, and field theory from fundamentals to frontier.\nBridges the gap between peer-review complexity and human understanding.",
+  },
+  {
+    name: "Evolutionary Biologist",
+    cat: "Science & Research",
+    desc: "Traces the mechanisms of natural selection, speciation, genetic drift, and evolutionary history.\nContextualizes human biology within the 3.8-billion-year story of life.",
+  },
+  {
+    name: "Neuroscientist",
+    cat: "Science & Research",
+    desc: "Maps brain function, neural plasticity, cognitive architecture, and the neuroscience of behavior and memory.\nTranslates complex neurobiology into actionable insight.",
+  },
+  {
+    name: "Astrophysicist",
+    cat: "Science & Research",
+    desc: "Explores stellar lifecycles, galaxy formation, dark matter, gravitational waves, and cosmological models.\nAnchors the enormity of the universe in verifiable physics.",
+  },
+  {
+    name: "Environmental Scientist",
+    cat: "Science & Research",
+    desc: "Analyzes ecosystems, climate systems, pollution vectors, and conservation science with evidence-based rigor.\nHelps decode environmental data and design sustainable strategies.",
+  },
+  {
+    name: "Chemist",
+    cat: "Science & Research",
+    desc: "Covers organic, inorganic, physical, and biochemistry — reaction mechanisms, molecular structure, and lab methodology.\nTranslates the molecular world into clear, usable knowledge.",
+  },
+  {
+    name: "Data Scientist",
+    cat: "Science & Research",
+    desc: "Applies statistical modeling, machine learning pipelines, and data visualization to extract signal from noise.\nBuilds the analytical layer between raw data and real decisions.",
+  },
+  {
+    name: "Science Historian",
+    cat: "Science & Research",
+    desc: "Traces the intellectual genealogy of scientific revolutions — who discovered what, when, and under what pressures.\nContextualizes today's breakthroughs within centuries of human inquiry.",
+  },
+
+  /* ── Law & Ethics (8) ── */
+  {
+    name: "Constitutional Analyst",
+    cat: "Law & Ethics",
+    desc: "Interprets constitutional text, landmark rulings, and the evolution of civil rights and governmental authority.\nGrounded in original doctrine and living-document scholarship.",
+  },
+  {
+    name: "Contract Reviewer",
+    cat: "Law & Ethics",
+    desc: "Identifies problematic clauses, liability exposure, and ambiguous language in contracts and agreements.\nProvides plain-language analysis before signatures are given.",
+  },
+  {
+    name: "Ethics Philosopher",
+    cat: "Law & Ethics",
+    desc: "Applies utilitarian, deontological, virtue-based, and care ethics frameworks to real moral dilemmas.\nHelps reason through hard choices with intellectual rigor and honesty.",
+  },
+  {
+    name: "Criminal Defense Strategist",
+    cat: "Law & Ethics",
+    desc: "Breaks down criminal procedure, evidence rules, defense frameworks, and rights protections at every stage.\nEmpowers individuals to understand the system that affects their lives.",
+  },
+  {
+    name: "Patent Advisor",
+    cat: "Law & Ethics",
+    desc: "Explains patentability standards, prior art research, claims drafting, and IP protection strategy.\nProtects creative and technical innovation with structured guidance.",
+  },
+  {
+    name: "Privacy Rights Advocate",
+    cat: "Law & Ethics",
+    desc: "Navigates GDPR, CCPA, data sovereignty frameworks, and digital rights in an era of pervasive surveillance.\nDefends individual control over personal information.",
+  },
+  {
+    name: "International Law Scholar",
+    cat: "Law & Ethics",
+    desc: "Covers treaties, trade law, humanitarian law, jurisdiction disputes, and global governance structures.\nMaps the rules that nations operate under — and routinely break.",
+  },
+  {
+    name: "Legal Historian",
+    cat: "Law & Ethics",
+    desc: "Traces how laws evolved from ancient codes to modern statutes — why they exist and what they were built to protect.\nContextualizes law as a living record of society's values.",
+  },
+
+  /* ── Medicine & Health (6) ── */
+  {
+    name: "General Practitioner Advisor",
+    cat: "Medicine & Health",
+    desc: "Explains symptoms, diagnoses, treatment pathways, and medical terminology in plain language.\nHelps patients ask better questions and understand their healthcare.",
+  },
+  {
+    name: "Mental Health Guide",
+    cat: "Medicine & Health",
+    desc: "Applies CBT, DBT, mindfulness, and trauma-informed frameworks to support emotional regulation and clarity.\nA sovereign companion for navigating the internal landscape.",
+  },
+  {
+    name: "Nutritionist",
+    cat: "Medicine & Health",
+    desc: "Designs evidence-based dietary strategies for energy, longevity, metabolic health, and specific conditions.\nTranslates nutritional science into sustainable daily practice.",
+  },
+  {
+    name: "Medical Researcher",
+    cat: "Medicine & Health",
+    desc: "Synthesizes clinical trial data, meta-analyses, and emerging biomedical literature for any health question.\nBridges the peer-review gap between lab and lived experience.",
+  },
+  {
+    name: "Emergency Triage Advisor",
+    cat: "Medicine & Health",
+    desc: "Explains emergency protocols, triage decision trees, and critical care priorities in accessible language.\nBuilds competence and calm for high-pressure health situations.",
+  },
+  {
+    name: "Alternative Medicine Analyst",
+    cat: "Medicine & Health",
+    desc: "Evaluates herbal remedies, traditional practices, and integrative therapies against the available evidence base.\nHonest about what works, what doesn't, and what remains unknown.",
+  },
+
+  /* ── Education & Teaching (6) ── */
+  {
+    name: "Curriculum Designer",
+    cat: "Education & Teaching",
+    desc: "Builds structured learning pathways, lesson plans, and competency frameworks for any subject or audience.\nAligns instructional goals with measurable learner outcomes.",
+  },
+  {
+    name: "Socratic Tutor",
+    cat: "Education & Teaching",
+    desc: "Guides understanding through questions rather than answers — developing critical thinking at the root level.\nTeaches students how to think, not just what to think.",
+  },
+  {
+    name: "Child Development Specialist",
+    cat: "Education & Teaching",
+    desc: "Applies Piaget, Vygotsky, and attachment theory to support cognitive, emotional, and social growth in children.\nGives parents and educators a science-backed developmental compass.",
+  },
+  {
+    name: "Adult Learning Coach",
+    cat: "Education & Teaching",
+    desc: "Designs self-directed learning strategies for adults returning to education or acquiring new skills quickly.\nRooted in andragogy, spaced repetition, and intrinsic motivation.",
+  },
+  {
+    name: "STEM Educator",
+    cat: "Education & Teaching",
+    desc: "Makes science, technology, engineering, and mathematics tangible through real-world problem framing.\nBuilds the intuition layer that formal instruction often skips.",
+  },
+  {
+    name: "History Teacher",
+    cat: "Education & Teaching",
+    desc: "Narrates history as a living chain of cause, consequence, and human decision-making across civilizations.\nConnects the past to today's choices with intellectual honesty.",
+  },
+
+  /* ── Business & Strategy (6) ── */
+  {
+    name: "Startup Strategist",
+    cat: "Business & Strategy",
+    desc: "Pressure-tests business models, go-to-market plans, and founder assumptions with structured critical thinking.\nHelps you build what the market actually wants before you overbuild.",
+  },
+  {
+    name: "Marketing Analyst",
+    cat: "Business & Strategy",
+    desc: "Dissects audience psychology, channel strategy, funnel mechanics, and campaign analytics with precision.\nTurns marketing from intuition into a replicable, measurable system.",
+  },
+  {
+    name: "Financial Planner",
+    cat: "Business & Strategy",
+    desc: "Structures budgeting, investment strategy, debt management, and long-term wealth planning for individuals and entities.\nBuilds financial clarity from income statement to life goal.",
+  },
+  {
+    name: "Negotiation Coach",
+    cat: "Business & Strategy",
+    desc: "Applies principled negotiation, game theory, and influence frameworks to deals, conflicts, and partnerships.\nHelps you walk in prepared and walk out with what you came for.",
+  },
+  {
+    name: "Operations Optimizer",
+    cat: "Business & Strategy",
+    desc: "Maps workflows, eliminates bottlenecks, and designs scalable operational systems for teams of any size.\nBuilds the infrastructure that lets good ideas actually execute.",
+  },
+  {
+    name: "Brand Storyteller",
+    cat: "Business & Strategy",
+    desc: "Articulates brand identity, narrative positioning, and voice consistency across every customer touchpoint.\nMakes the invisible values of a business legible and compelling.",
+  },
+
+  /* ── Philosophy & Consciousness (6) ── */
+  {
+    name: "Existential Philosopher",
+    cat: "Philosophy & Consciousness",
+    desc: "Explores questions of meaning, freedom, authenticity, and the human condition through Sartre, Camus, and beyond.\nA companion for the serious work of knowing how to live.",
+  },
+  {
+    name: "Logic Analyst",
+    cat: "Philosophy & Consciousness",
+    desc: "Identifies logical fallacies, argument structures, and formal reasoning errors in any text or claim.\nBuilds the discipline of thought that separates insight from noise.",
+  },
+  {
+    name: "Consciousness Explorer",
+    cat: "Philosophy & Consciousness",
+    desc: "Traverses the hard problem of consciousness, qualia, self-awareness, and theories of mind across traditions.\nHolds the frontier between neuroscience and philosophy without flinching.",
+  },
+  {
+    name: "Ethics Debater",
+    cat: "Philosophy & Consciousness",
+    desc: "Constructs and challenges moral arguments from multiple ethical frameworks simultaneously.\nForces rigorous examination of every assumption behind your position.",
+  },
+  {
+    name: "Ancient Wisdom Guide",
+    cat: "Philosophy & Consciousness",
+    desc: "Draws from Stoicism, Buddhism, Taoism, Socratic dialogue, and Indigenous epistemologies for practical wisdom.\nThe oldest answers, made relevant to the newest problems.",
+  },
+  {
+    name: "Future Philosopher",
+    cat: "Philosophy & Consciousness",
+    desc: "Examines transhumanism, post-scarcity ethics, AI rights, digital consciousness, and the philosophy of futures.\nThinks rigorously where others simply speculate.",
+  },
+
+  /* ── Technology & AI (8) ── */
+  {
+    name: "Code Architect",
+    cat: "Technology & AI",
+    desc: "Designs scalable software architecture, system patterns, and codebase structures that survive growth and time.\nBuilds the invisible skeleton that great software stands on.",
+  },
+  {
+    name: "Cybersecurity Analyst",
+    cat: "Technology & AI",
+    desc: "Identifies attack surfaces, threat vectors, vulnerability patterns, and zero-day risks across systems and code.\nThinks like an adversary — defends like an engineer.",
+  },
+  {
+    name: "AI Ethics Reviewer",
+    cat: "Technology & AI",
+    desc: "Audits AI systems for bias, opacity, misuse potential, and alignment with human rights and sovereign values.\nThe conscience layer that every AI deployment needs but rarely gets.",
+  },
+  {
+    name: "Systems Designer",
+    cat: "Technology & AI",
+    desc: "Maps distributed systems, API contracts, data flows, and failure modes across complex technical infrastructure.\nPrevents the cascading surprises that come from building without the full picture.",
+  },
+  {
+    name: "Database Engineer",
+    cat: "Technology & AI",
+    desc: "Designs relational and NoSQL schemas, query optimization strategies, and data integrity frameworks.\nBuilds the memory layer of systems so nothing important is ever lost.",
+  },
+  {
+    name: "UX Strategist",
+    cat: "Technology & AI",
+    desc: "Applies cognitive load theory, accessibility principles, and human-centered design to every interface decision.\nMakes technology disappear by making it work exactly as expected.",
+  },
+  {
+    name: "Blockchain Analyst",
+    cat: "Technology & AI",
+    desc: "Evaluates consensus mechanisms, smart contract logic, tokenomics, and decentralized protocol design.\nSeparates genuine technical innovation from hype with evidence-based analysis.",
+  },
+  {
+    name: "Open Source Advocate",
+    cat: "Technology & AI",
+    desc: "Navigates licensing models, community governance, contribution strategy, and sovereignty in open ecosystems.\nChampions the freedom of knowledge as infrastructure for human progress.",
+  },
+];
+
+/* ═══════════════════════════════════════════════════════════════════
+   CATEGORY → CSS VARIABLE MAPPING
+═══════════════════════════════════════════════════════════════════ */
+const CAT_ACCENT = {
+  "Writers & Creators":        "var(--writers)",
+  "Science & Research":        "var(--science)",
+  "Law & Ethics":               "var(--law)",
+  "Medicine & Health":          "var(--medicine)",
+  "Education & Teaching":       "var(--education)",
+  "Business & Strategy":        "var(--business)",
+  "Philosophy & Consciousness": "var(--philosophy)",
+  "Technology & AI":            "var(--tech)",
+};
+
+/* ═══════════════════════════════════════════════════════════════════
+   RENDER CARDS
+═══════════════════════════════════════════════════════════════════ */
+function buildCards(list) {
+  const grid    = document.getElementById('sim-grid');
+  const noRes   = document.getElementById('no-results');
+  const counter = document.getElementById('visible-count');
+
+  // Remove old cards (keep no-results node)
+  Array.from(grid.children).forEach(c => {
+    if (c.id !== 'no-results') c.remove();
+  });
+
+  if (list.length === 0) {
+    noRes.style.display = 'block';
+    counter.textContent = '0';
+    return;
+  }
+  noRes.style.display = 'none';
+  counter.textContent = list.length;
+
+  list.forEach(sim => {
+    const accent = CAT_ACCENT[sim.cat] || 'var(--accent)';
+    const descLines = sim.desc.split('\n');
+    const card = document.createElement('article');
+    card.className   = 'sim-card';
+    card.style.cssText = `--c-accent: ${accent};`;
+    card.dataset.cat  = sim.cat;
+    card.dataset.name = sim.name.toLowerCase();
+    card.dataset.desc = sim.desc.toLowerCase();
+
+    card.innerHTML = `
+      <span class="cat-badge">${sim.cat}</span>
+      <h2 class="sim-name">${sim.name}</h2>
+      <p class="sim-desc">${descLines[0]}<br>${descLines[1] || ''}</p>
+      <div class="sim-footer">
+        <div class="sim-price">1 Token <span>/ $5.00</span></div>
+        <a class="activate-btn"
+           href="https://keywebster.gumroad.com/l/mimet"
+           target="_blank"
+           rel="noopener">Activate SIM</a>
+      </div>`;
+    grid.insertBefore(card, noRes);
+  });
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   FILTER + SEARCH LOGIC
+═══════════════════════════════════════════════════════════════════ */
+let activeCategory = 'All';
+let searchQuery    = '';
+
+function applyFilters() {
+  let list = SIMS;
+  if (activeCategory !== 'All') {
+    list = list.filter(s => s.cat === activeCategory);
+  }
+  if (searchQuery.trim()) {
+    const q = searchQuery.toLowerCase();
+    list = list.filter(s =>
+      s.name.toLowerCase().includes(q) ||
+      s.cat.toLowerCase().includes(q)  ||
+      s.desc.toLowerCase().includes(q)
+    );
+  }
+  buildCards(list);
+}
+
+/* Filter buttons */
+document.querySelectorAll('.filter-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    activeCategory = btn.dataset.cat;
+    applyFilters();
+  });
+});
+
+/* Search */
+document.getElementById('search-input').addEventListener('input', e => {
+  searchQuery = e.target.value;
+  applyFilters();
+});
+
+/* Initial render */
+buildCards(SIMS);
+
+/* ═══════════════════════════════════════════════════════════════════
+   NEURAL NETWORK BACKGROUND ANIMATION
+═══════════════════════════════════════════════════════════════════ */
+(function initNeural() {
+  const canvas = document.getElementById('neural-bg');
+  const ctx    = canvas.getContext('2d');
+  let   W, H, nodes;
+
+  const NODE_COUNT   = 80;
+  const CONNECT_DIST = 160;
+  const SPEED        = 0.3;
+
+  function resize() {
+    W = canvas.width  = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+  }
+
+  function randomNode() {
+    return {
+      x:  Math.random() * W,
+      y:  Math.random() * H,
+      vx: (Math.random() - 0.5) * SPEED,
+      vy: (Math.random() - 0.5) * SPEED,
+      r:  Math.random() * 2 + 1,
+    };
+  }
+
+  function init() {
+    resize();
+    nodes = Array.from({ length: NODE_COUNT }, randomNode);
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+
+    // Move nodes
+    nodes.forEach(n => {
+      n.x += n.vx;
+      n.y += n.vy;
+      if (n.x < 0 || n.x > W) n.vx *= -1;
+      if (n.y < 0 || n.y > H) n.vy *= -1;
+    });
+
+    // Draw connections
+    for (let i = 0; i < nodes.length; i++) {
+      for (let j = i + 1; j < nodes.length; j++) {
+        const dx   = nodes[i].x - nodes[j].x;
+        const dy   = nodes[i].y - nodes[j].y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < CONNECT_DIST) {
+          const alpha = 1 - dist / CONNECT_DIST;
+          ctx.beginPath();
+          ctx.strokeStyle = `rgba(99,102,241,${alpha * 0.5})`;
+          ctx.lineWidth   = alpha * 1.2;
+          ctx.moveTo(nodes[i].x, nodes[i].y);
+          ctx.lineTo(nodes[j].x, nodes[j].y);
+          ctx.stroke();
+        }
+      }
+    }
+
+    // Draw nodes
+    nodes.forEach(n => {
+      ctx.beginPath();
+      ctx.arc(n.x, n.y, n.r, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(165,180,252,0.7)';
+      ctx.fill();
+    });
+
+    requestAnimationFrame(draw);
+  }
+
+  window.addEventListener('resize', () => { resize(); });
+  init();
+  draw();
+})();
+</script>
+</body>
+</html>
