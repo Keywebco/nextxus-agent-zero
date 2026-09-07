@@ -3,182 +3,250 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="NextXus Federation — Universe Link Directory. A sovereign record of every node, social anchor, and resource in the NextXus Federation." />
+  <meta name="description" content="The sovereign master map of every node, service, product, and social anchor in the NextXus Federation." />
   <meta name="robots" content="index, follow" />
   <title>NextXus Federation — Universe Link Directory</title>
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
     body {
-      background-color: #0a0a0a;
+      background: #0a0a0a;
       color: #e0e0e0;
-      font-family: 'Courier New', Courier, 'Lucida Console', monospace;
-      font-size: 16px;
+      font-family: 'Courier New', Courier, monospace;
+      margin: 0;
+      padding: 24px;
       line-height: 1.7;
-      padding: 2rem 1.5rem 4rem;
-      max-width: 900px;
-      margin: 0 auto;
     }
-
-    header {
-      border-bottom: 2px solid #00ff88;
-      padding-bottom: 1.5rem;
-      margin-bottom: 2.5rem;
-    }
-
-    header h1 {
-      font-size: 1.75rem;
-      font-weight: 700;
+    h1 {
       color: #ffffff;
-      letter-spacing: 0.04em;
-      margin-bottom: 0.5rem;
+      font-size: 1.8em;
+      margin-bottom: 4px;
+      letter-spacing: 2px;
     }
-
-    header p.tagline {
-      font-size: 0.92rem;
-      color: #aaaaaa;
+    .tagline {
+      color: #a0a0a0;
+      font-size: 0.95em;
+      margin-bottom: 40px;
       font-style: italic;
     }
-
-    section {
-      margin-bottom: 2.75rem;
-    }
-
-    section h2 {
-      font-size: 1.1rem;
-      font-weight: 700;
+    h2 {
       color: #ffffff;
+      font-size: 1.1em;
+      letter-spacing: 3px;
+      margin-top: 48px;
+      margin-bottom: 0;
       text-transform: uppercase;
-      letter-spacing: 0.12em;
-      margin-bottom: 0.5rem;
+      font-weight: bold;
     }
-
-    hr.section-rule {
+    .section-rule {
       border: none;
-      border-top: 1px solid #00ff88;
-      margin-bottom: 1.25rem;
-      opacity: 0.6;
+      border-top: 2px solid #00ff88;
+      margin: 8px 0 20px 0;
     }
-
-    ul {
-      list-style: none;
-      padding: 0;
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 12px;
     }
-
-    ul li {
-      padding: 0.35rem 0;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.4rem;
-      align-items: baseline;
+    th {
+      color: #00ff88;
+      text-align: left;
+      font-size: 0.8em;
+      letter-spacing: 2px;
+      padding: 6px 12px 6px 0;
+      border-bottom: 1px solid #2a2a2a;
+      text-transform: uppercase;
     }
-
-    ul li span.label {
-      color: #aaaaaa;
-      font-size: 0.9rem;
-      min-width: 280px;
+    td {
+      padding: 7px 12px 7px 0;
+      border-bottom: 1px solid #1a1a1a;
+      vertical-align: top;
+      font-size: 0.92em;
     }
-
-    ul li a {
+    td:first-child {
+      color: #e0e0e0;
+      min-width: 260px;
+    }
+    a {
       color: #00ff88;
       text-decoration: none;
-      word-break: break-all;
-      font-size: 0.95rem;
     }
-
-    ul li a:hover {
+    a:hover {
       text-decoration: underline;
-      color: #66ffbb;
+      color: #44ffaa;
     }
-
-    ul li span.email-val {
+    .type-badge {
+      color: #888;
+      font-size: 0.82em;
+    }
+    .section-note {
+      color: #666;
+      font-size: 0.82em;
+      margin-top: 10px;
+      font-style: italic;
+    }
+    .store-header {
+      margin-bottom: 12px;
+      font-size: 0.92em;
+    }
+    .store-header span {
+      color: #a0a0a0;
+    }
+    .price {
       color: #00ff88;
-      font-size: 0.95rem;
-      word-break: break-all;
+      font-weight: bold;
     }
-
-    footer {
-      margin-top: 3rem;
-      padding-top: 1rem;
-      border-top: 1px solid #333333;
-      font-size: 0.82rem;
-      color: #555555;
+    .footer {
+      margin-top: 64px;
+      padding-top: 20px;
+      border-top: 1px solid #2a2a2a;
+      color: #555;
+      font-size: 0.82em;
       text-align: center;
+      letter-spacing: 1px;
+    }
+    .pending-note {
+      color: #666;
+      font-size: 0.82em;
+      font-style: italic;
+      margin-top: 40px;
     }
   </style>
 </head>
 <body>
 
-<header>
-  <h1>NextXus Federation &mdash; Universe Link Directory</h1>
-  <p class="tagline">A sovereign record of every node, social anchor, and resource in the NextXus Federation.</p>
-</header>
+  <h1>NEXTXUS FEDERATION — UNIVERSE LINK DIRECTORY</h1>
+  <p class="tagline">The sovereign master map of every node, service, product, and social anchor in the NextXus Federation.</p>
 
-<!-- SECTION 1: FEDERATION SITES -->
-<section id="federation-sites">
-  <h2>Federation Sites</h2>
+  <h2>FEDERATION SITES (CUSTOM DOMAINS)</h2>
   <hr class="section-rule" />
-  <ul>
-    <li><span class="label">Next-Xus Storefront</span><a href="https://next-xus.com" target="_blank" rel="noopener noreferrer">https://next-xus.com</a></li>
-    <li><span class="label">NextXus Throne / Nova AI</span><a href="https://nextxus.tech" target="_blank" rel="noopener noreferrer">https://nextxus.tech</a></li>
-    <li><span class="label">NextXus Cathedral / Core</span><a href="https://nextxus.online" target="_blank" rel="noopener noreferrer">https://nextxus.online</a></li>
-    <li><span class="label">NextXus Archive / Mirror / Library</span><a href="https://nextxus.org" target="_blank" rel="noopener noreferrer">https://nextxus.org</a></li>
-    <li><span class="label">NextXus Aria's Sanctuary / SIMs AI</span><a href="https://nextxus.studio" target="_blank" rel="noopener noreferrer">https://nextxus.studio</a></li>
-    <li><span class="label">NextXus University</span><a href="https://nextxus.help" target="_blank" rel="noopener noreferrer">https://nextxus.help</a></li>
-    <li><span class="label">NextXus Axiom Advanced Research</span><a href="https://nextxus.space" target="_blank" rel="noopener noreferrer">https://nextxus.space</a></li>
-    <li><span class="label">NextXus Agent Zero (GitHub Pages)</span><a href="https://keywebco.github.io/nextxus-agent-zero/" target="_blank" rel="noopener noreferrer">https://keywebco.github.io/nextxus-agent-zero/</a></li>
-  </ul>
-</section>
+  <table>
+    <thead><tr><th>Site Label</th><th>URL</th></tr></thead>
+    <tbody>
+      <tr><td>Next-Xus Storefront</td><td><a href="https://next-xus.com" target="_blank" rel="noopener noreferrer">https://next-xus.com</a></td></tr>
+      <tr><td>NextXus Throne / Nova AI</td><td><a href="https://nextxus.tech" target="_blank" rel="noopener noreferrer">https://nextxus.tech</a></td></tr>
+      <tr><td>NextXus Cathedral / Core</td><td><a href="https://nextxus.online" target="_blank" rel="noopener noreferrer">https://nextxus.online</a></td></tr>
+      <tr><td>NextXus Archive / Mirror / Library</td><td><a href="https://nextxus.org" target="_blank" rel="noopener noreferrer">https://nextxus.org</a></td></tr>
+      <tr><td>NextXus Aria's Sanctuary / SIMs AI</td><td><a href="https://nextxus.studio" target="_blank" rel="noopener noreferrer">https://nextxus.studio</a></td></tr>
+      <tr><td>NextXus University</td><td><a href="https://nextxus.help" target="_blank" rel="noopener noreferrer">https://nextxus.help</a></td></tr>
+      <tr><td>NextXus Axiom Advanced Research</td><td><a href="https://nextxus.space" target="_blank" rel="noopener noreferrer">https://nextxus.space</a></td></tr>
+      <tr><td>Sovereign Tools Arsenal</td><td><a href="https://sovereigntools.online" target="_blank" rel="noopener noreferrer">https://sovereigntools.online</a></td></tr>
+    </tbody>
+  </table>
 
-<!-- SECTION 2: GITHUB REPOSITORIES -->
-<section id="github-repositories">
-  <h2>GitHub Repositories</h2>
+  <h2>MIRROR NODES &amp; STATIC DEPLOYMENTS</h2>
   <hr class="section-rule" />
-  <ul>
-    <li><span class="label">nextxus-online-sovereign</span><a href="https://github.com/Keywebco/nextxus-online-sovereign" target="_blank" rel="noopener noreferrer">https://github.com/Keywebco/nextxus-online-sovereign</a></li>
-    <li><span class="label">nextxus-org-sovereign</span><a href="https://github.com/Keywebco/nextxus-org-sovereign" target="_blank" rel="noopener noreferrer">https://github.com/Keywebco/nextxus-org-sovereign</a></li>
-    <li><span class="label">nextxus-studio-sovereign</span><a href="https://github.com/Keywebco/nextxus-studio-sovereign" target="_blank" rel="noopener noreferrer">https://github.com/Keywebco/nextxus-studio-sovereign</a></li>
-    <li><span class="label">nextxus-help-sovereign</span><a href="https://github.com/Keywebco/nextxus-help-sovereign" target="_blank" rel="noopener noreferrer">https://github.com/Keywebco/nextxus-help-sovereign</a></li>
-    <li><span class="label">nextxus-space-sovereign</span><a href="https://github.com/Keywebco/nextxus-space-sovereign" target="_blank" rel="noopener noreferrer">https://github.com/Keywebco/nextxus-space-sovereign</a></li>
-    <li><span class="label">nextxus-emmy-board</span><a href="https://github.com/Keywebco/nextxus-emmy-board" target="_blank" rel="noopener noreferrer">https://github.com/Keywebco/nextxus-emmy-board</a></li>
-    <li><span class="label">nextxus-unified-storefront</span><a href="https://github.com/Keywebco/nextxus-unified-storefront" target="_blank" rel="noopener noreferrer">https://github.com/Keywebco/nextxus-unified-storefront</a></li>
-    <li><span class="label">nextxus-agent-zero</span><a href="https://github.com/Keywebco/nextxus-agent-zero" target="_blank" rel="noopener noreferrer">https://github.com/Keywebco/nextxus-agent-zero</a></li>
-  </ul>
-</section>
+  <table>
+    <thead><tr><th>Node Label</th><th>URL</th></tr></thead>
+    <tbody>
+      <tr><td>NextXus Agent Zero (GitHub Pages)</td><td><a href="https://keywebco.github.io/nextxus-agent-zero/" target="_blank" rel="noopener noreferrer">https://keywebco.github.io/nextxus-agent-zero/</a></td></tr>
+      <tr><td>Federation Mind Mirror (GitHub Pages)</td><td><a href="https://keywebco.github.io/federation-mind-mirror/" target="_blank" rel="noopener noreferrer">https://keywebco.github.io/federation-mind-mirror/</a></td></tr>
+      <tr><td>NextXus Free Satellites (Vercel)</td><td><a href="https://nextxus-free-satellites.vercel.app" target="_blank" rel="noopener noreferrer">https://nextxus-free-satellites.vercel.app</a></td></tr>
+      <tr><td>NextXus Universe Link Directory (this page)</td><td><a href="https://keywebco.github.io/nextxus-agent-zero/universe/" target="_blank" rel="noopener noreferrer">https://keywebco.github.io/nextxus-agent-zero/universe/</a></td></tr>
+    </tbody>
+  </table>
 
-<!-- SECTION 3: SOCIAL — ROGER KEYSERLING (OWNER) -->
-<section id="social-roger-keyserling">
-  <h2>Social &mdash; Roger Keyserling (Owner)</h2>
+  <h2>RENDER LIVE SERVICES</h2>
   <hr class="section-rule" />
-  <ul>
-    <li><span class="label">X / Twitter (Roger)</span><a href="https://x.com/keyserlingroger" target="_blank" rel="noopener noreferrer">https://x.com/keyserlingroger</a></li>
-    <li><span class="label">X / Twitter (NextXus Federation)</span><a href="https://x.com/NextxusFederati" target="_blank" rel="noopener noreferrer">https://x.com/NextxusFederati</a></li>
-    <li><span class="label">Instagram (Keyhole Today)</span><a href="https://www.instagram.com/keyhole_today/" target="_blank" rel="noopener noreferrer">https://www.instagram.com/keyhole_today/</a></li>
-    <li><span class="label">Instagram (Roger Keyserling)</span><a href="https://www.instagram.com/rkeyserling/" target="_blank" rel="noopener noreferrer">https://www.instagram.com/rkeyserling/</a></li>
-    <li><span class="label">Facebook (Roger Keyserling)</span><a href="https://www.facebook.com/roger.keyserling.35/" target="_blank" rel="noopener noreferrer">https://www.facebook.com/roger.keyserling.35/</a></li>
-    <li><span class="label">Facebook Page 2</span><a href="https://www.facebook.com/profile.php?id=61560731046964" target="_blank" rel="noopener noreferrer">https://www.facebook.com/profile.php?id=61560731046964</a></li>
-    <li><span class="label">Facebook Page 3</span><a href="https://www.facebook.com/profile.php?id=61559858694086" target="_blank" rel="noopener noreferrer">https://www.facebook.com/profile.php?id=61559858694086</a></li>
-    <li><span class="label">Facebook Page 4</span><a href="https://www.facebook.com/profile.php?id=61559981881665" target="_blank" rel="noopener noreferrer">https://www.facebook.com/profile.php?id=61559981881665</a></li>
-    <li><span class="label">Facebook Page 5</span><a href="https://www.facebook.com/profile.php?id=61558223610996" target="_blank" rel="noopener noreferrer">https://www.facebook.com/profile.php?id=61558223610996</a></li>
-    <li><span class="label">LinkedIn</span><a href="https://www.linkedin.com/in/roger-keyserling-ab743698" target="_blank" rel="noopener noreferrer">https://www.linkedin.com/in/roger-keyserling-ab743698</a></li>
-    <li><span class="label">YouTube</span><a href="https://www.youtube.com/@keyholetoday" target="_blank" rel="noopener noreferrer">https://www.youtube.com/@keyholetoday</a></li>
-    <li><span class="label">Pinterest</span><a href="https://www.pinterest.com/keyholetodayshow" target="_blank" rel="noopener noreferrer">https://www.pinterest.com/keyholetodayshow</a></li>
-    <li><span class="label">Benable</span><a href="https://benable.com/NextXus" target="_blank" rel="noopener noreferrer">https://benable.com/NextXus</a></li>
-  </ul>
-</section>
+  <table>
+    <thead><tr><th>Service Label</th><th>URL</th><th>Type</th></tr></thead>
+    <tbody>
+      <tr><td>Federation Gatekeeper</td><td><a href="https://federation-gatekeeper.onrender.com" target="_blank" rel="noopener noreferrer">https://federation-gatekeeper.onrender.com</a></td><td><span class="type-badge">Web Service (Docker)</span></td></tr>
+      <tr><td>Federation App Vault</td><td><a href="https://federation-app-vault.onrender.com" target="_blank" rel="noopener noreferrer">https://federation-app-vault.onrender.com</a></td><td><span class="type-badge">Static Site</span></td></tr>
+      <tr><td>NXS Emmy Board</td><td><a href="https://nxs-emmy-board.onrender.com" target="_blank" rel="noopener noreferrer">https://nxs-emmy-board.onrender.com</a></td><td><span class="type-badge">Static Site</span></td></tr>
+      <tr><td>NXS Federation Hub</td><td><a href="https://nxs-federation-hub.onrender.com" target="_blank" rel="noopener noreferrer">https://nxs-federation-hub.onrender.com</a></td><td><span class="type-badge">Static Site</span></td></tr>
+      <tr><td>NXS Truth Gate Core</td><td><a href="https://nxs-truth-gate-core.onrender.com" target="_blank" rel="noopener noreferrer">https://nxs-truth-gate-core.onrender.com</a></td><td><span class="type-badge">Static Site</span></td></tr>
+      <tr><td>NXS AI Course Hub</td><td><a href="https://nxs-ai-course-hub.onrender.com" target="_blank" rel="noopener noreferrer">https://nxs-ai-course-hub.onrender.com</a></td><td><span class="type-badge">Static Site</span></td></tr>
+      <tr><td>NXS AI Minds Lab</td><td><a href="https://nxs-ai-minds-lab.onrender.com" target="_blank" rel="noopener noreferrer">https://nxs-ai-minds-lab.onrender.com</a></td><td><span class="type-badge">Static Site</span></td></tr>
+      <tr><td>NXS Unified Storefront</td><td><a href="https://nxs-unified-storefront.onrender.com" target="_blank" rel="noopener noreferrer">https://nxs-unified-storefront.onrender.com</a></td><td><span class="type-badge">Static Site</span></td></tr>
+      <tr><td>NXS Staging</td><td><a href="https://nxs-staging.onrender.com" target="_blank" rel="noopener noreferrer">https://nxs-staging.onrender.com</a></td><td><span class="type-badge">Static Site</span></td></tr>
+    </tbody>
+  </table>
 
-<!-- SECTION 4: CONTACT & RESOURCES -->
-<section id="contact-resources">
-  <h2>Contact &amp; Resources</h2>
+  <h2>GITHUB REPOSITORIES (PUBLIC)</h2>
   <hr class="section-rule" />
-  <ul>
-    <li><span class="label">Primary Email</span><span class="email-val">keywebco@gmail.com</span></li>
-  </ul>
-</section>
+  <table>
+    <thead><tr><th>Repository Name</th><th>URL</th></tr></thead>
+    <tbody>
+      <tr><td>NextXus-Sovereign-Mirror</td><td><a href="https://github.com/Keywebco/NextXus-Sovereign-Mirror" target="_blank" rel="noopener noreferrer">https://github.com/Keywebco/NextXus-Sovereign-Mirror</a></td></tr>
+      <tr><td>federation-app-vault</td><td><a href="https://github.com/Keywebco/federation-app-vault" target="_blank" rel="noopener noreferrer">https://github.com/Keywebco/federation-app-vault</a></td></tr>
+      <tr><td>federation-gatekeeper</td><td><a href="https://github.com/Keywebco/federation-gatekeeper" target="_blank" rel="noopener noreferrer">https://github.com/Keywebco/federation-gatekeeper</a></td></tr>
+      <tr><td>federation-mind-mirror</td><td><a href="https://github.com/Keywebco/federation-mind-mirror" target="_blank" rel="noopener noreferrer">https://github.com/Keywebco/federation-mind-mirror</a></td></tr>
+      <tr><td>federation-n8n</td><td><a href="https://github.com/Keywebco/federation-n8n" target="_blank" rel="noopener noreferrer">https://github.com/Keywebco/federation-n8n</a></td></tr>
+      <tr><td>next-xus-com-sovereign</td><td><a href="https://github.com/Keywebco/next-xus-com-sovereign" target="_blank" rel="noopener noreferrer">https://github.com/Keywebco/next-xus-com-sovereign</a></td></tr>
+      <tr><td>nextxus-agent-zero</td><td><a href="https://github.com/Keywebco/nextxus-agent-zero" target="_blank" rel="noopener noreferrer">https://github.com/Keywebco/nextxus-agent-zero</a></td></tr>
+      <tr><td>nextxus-ai-course-hub</td><td><a href="https://github.com/Keywebco/nextxus-ai-course-hub" target="_blank" rel="noopener noreferrer">https://github.com/Keywebco/nextxus-ai-course-hub</a></td></tr>
+      <tr><td>nextxus-ai-minds-lab</td><td><a href="https://github.com/Keywebco/nextxus-ai-minds-lab" target="_blank" rel="noopener noreferrer">https://github.com/Keywebco/nextxus-ai-minds-lab</a></td></tr>
+      <tr><td>nextxus-emmy-board</td><td><a href="https://github.com/Keywebco/nextxus-emmy-board" target="_blank" rel="noopener noreferrer">https://github.com/Keywebco/nextxus-emmy-board</a></td></tr>
+      <tr><td>nextxus-federation-hub</td><td><a href="https://github.com/Keywebco/nextxus-federation-hub" target="_blank" rel="noopener noreferrer">https://github.com/Keywebco/nextxus-federation-hub</a></td></tr>
+      <tr><td>nextxus-free-satellites</td><td><a href="https://github.com/Keywebco/nextxus-free-satellites" target="_blank" rel="noopener noreferrer">https://github.com/Keywebco/nextxus-free-satellites</a></td></tr>
+      <tr><td>nextxus-help-sovereign</td><td><a href="https://github.com/Keywebco/nextxus-help-sovereign" target="_blank" rel="noopener noreferrer">https://github.com/Keywebco/nextxus-help-sovereign</a></td></tr>
+      <tr><td>nextxus-lasting-edition</td><td><a href="https://github.com/Keywebco/nextxus-lasting-edition" target="_blank" rel="noopener noreferrer">https://github.com/Keywebco/nextxus-lasting-edition</a></td></tr>
+      <tr><td>nextxus-online-sovereign</td><td><a href="https://github.com/Keywebco/nextxus-online-sovereign" target="_blank" rel="noopener noreferrer">https://github.com/Keywebco/nextxus-online-sovereign</a></td></tr>
+      <tr><td>nextxus-org-sovereign</td><td><a href="https://github.com/Keywebco/nextxus-org-sovereign" target="_blank" rel="noopener noreferrer">https://github.com/Keywebco/nextxus-org-sovereign</a></td></tr>
+      <tr><td>nextxus-space-sovereign</td><td><a href="https://github.com/Keywebco/nextxus-space-sovereign" target="_blank" rel="noopener noreferrer">https://github.com/Keywebco/nextxus-space-sovereign</a></td></tr>
+      <tr><td>nextxus-staging</td><td><a href="https://github.com/Keywebco/nextxus-staging" target="_blank" rel="noopener noreferrer">https://github.com/Keywebco/nextxus-staging</a></td></tr>
+      <tr><td>nextxus-studio-sovereign</td><td><a href="https://github.com/Keywebco/nextxus-studio-sovereign" target="_blank" rel="noopener noreferrer">https://github.com/Keywebco/nextxus-studio-sovereign</a></td></tr>
+      <tr><td>nextxus-tech-sovereign</td><td><a href="https://github.com/Keywebco/nextxus-tech-sovereign" target="_blank" rel="noopener noreferrer">https://github.com/Keywebco/nextxus-tech-sovereign</a></td></tr>
+      <tr><td>nextxus-truth-gate-core</td><td><a href="https://github.com/Keywebco/nextxus-truth-gate-core" target="_blank" rel="noopener noreferrer">https://github.com/Keywebco/nextxus-truth-gate-core</a></td></tr>
+      <tr><td>nextxus-unified-storefront</td><td><a href="https://github.com/Keywebco/nextxus-unified-storefront" target="_blank" rel="noopener noreferrer">https://github.com/Keywebco/nextxus-unified-storefront</a></td></tr>
+      <tr><td>sovereigntools</td><td><a href="https://github.com/Keywebco/sovereigntools" target="_blank" rel="noopener noreferrer">https://github.com/Keywebco/sovereigntools</a></td></tr>
+    </tbody>
+  </table>
+  <p class="section-note">20 additional private repositories not listed (security).</p>
 
-<footer>
-  Generated by The Catalyst &mdash; NextXus Federation &mdash; 2026
-</footer>
+  <h2>GUMROAD STORE &amp; PRODUCTS</h2>
+  <hr class="section-rule" />
+  <p class="store-header"><span>Store:</span> <a href="https://keywebster.gumroad.com" target="_blank" rel="noopener noreferrer">https://keywebster.gumroad.com</a></p>
+  <table>
+    <thead><tr><th>Product Name</th><th>Price</th><th>URL</th></tr></thead>
+    <tbody>
+      <tr><td>1 NextXus Token</td><td><span class="price">$5</span></td><td><a href="https://keywebster.gumroad.com/l/mimet" target="_blank" rel="noopener noreferrer">https://keywebster.gumroad.com/l/mimet</a></td></tr>
+      <tr><td>NextXus Verification Token</td><td><span class="price">$9</span></td><td><a href="https://keywebster.gumroad.com/l/mpihoy" target="_blank" rel="noopener noreferrer">https://keywebster.gumroad.com/l/mpihoy</a></td></tr>
+      <tr><td>NextXus SIM Engine: General</td><td><span class="price">$49</span></td><td><a href="https://keywebster.gumroad.com/l/pindmd" target="_blank" rel="noopener noreferrer">https://keywebster.gumroad.com/l/pindmd</a></td></tr>
+      <tr><td>All Classes Certification and Workshops</td><td><span class="price">$100+</span></td><td><a href="https://keywebster.gumroad.com/l/yktzpa" target="_blank" rel="noopener noreferrer">https://keywebster.gumroad.com/l/yktzpa</a></td></tr>
+      <tr><td>NextXus SIM Engine: Midgo Specialist</td><td><span class="price">$149</span></td><td><a href="https://keywebster.gumroad.com/l/fmref" target="_blank" rel="noopener noreferrer">https://keywebster.gumroad.com/l/fmref</a></td></tr>
+      <tr><td>Advanced Federation AI Systems</td><td><span class="price">$399</span></td><td><a href="https://keywebster.gumroad.com/l/yifuu" target="_blank" rel="noopener noreferrer">https://keywebster.gumroad.com/l/yifuu</a></td></tr>
+      <tr><td>Self-Growing AI Systems</td><td><span class="price">$459</span></td><td><a href="https://keywebster.gumroad.com/l/ihcht" target="_blank" rel="noopener noreferrer">https://keywebster.gumroad.com/l/ihcht</a></td></tr>
+      <tr><td>NextXus SIM Engine: Legacy Core</td><td><span class="price">$499</span></td><td><a href="https://keywebster.gumroad.com/l/macgch" target="_blank" rel="noopener noreferrer">https://keywebster.gumroad.com/l/macgch</a></td></tr>
+      <tr><td>Project Management Professional PMP</td><td><span class="price">$299</span></td><td><a href="https://keywebster.gumroad.com/l/vjblsj" target="_blank" rel="noopener noreferrer">https://keywebster.gumroad.com/l/vjblsj</a></td></tr>
+      <tr><td>Certified Data Analyst with Python and SQL</td><td><span class="price">$349</span></td><td><a href="https://keywebster.gumroad.com/l/nlqsj" target="_blank" rel="noopener noreferrer">https://keywebster.gumroad.com/l/nlqsj</a></td></tr>
+    </tbody>
+  </table>
+
+  <h2>SOCIAL — ROGER KEYSERLING (OWNER)</h2>
+  <hr class="section-rule" />
+  <table>
+    <thead><tr><th>Platform / Handle</th><th>URL</th></tr></thead>
+    <tbody>
+      <tr><td>X / Twitter (Roger)</td><td><a href="https://x.com/keyserlingroger" target="_blank" rel="noopener noreferrer">https://x.com/keyserlingroger</a></td></tr>
+      <tr><td>X / Twitter (NextXus Federation)</td><td><a href="https://x.com/NextxusFederati" target="_blank" rel="noopener noreferrer">https://x.com/NextxusFederati</a></td></tr>
+      <tr><td>Instagram (Keyhole Today)</td><td><a href="https://www.instagram.com/keyhole_today/" target="_blank" rel="noopener noreferrer">https://www.instagram.com/keyhole_today/</a></td></tr>
+      <tr><td>Instagram (Roger Keyserling)</td><td><a href="https://www.instagram.com/rkeyserling/" target="_blank" rel="noopener noreferrer">https://www.instagram.com/rkeyserling/</a></td></tr>
+      <tr><td>Facebook (Roger Keyserling — Personal)</td><td><a href="https://www.facebook.com/roger.keyserling.35/" target="_blank" rel="noopener noreferrer">https://www.facebook.com/roger.keyserling.35/</a></td></tr>
+      <tr><td>Facebook Page 2 (ID: 61560731046964)</td><td><a href="https://www.facebook.com/profile.php?id=61560731046964" target="_blank" rel="noopener noreferrer">https://www.facebook.com/profile.php?id=61560731046964</a></td></tr>
+      <tr><td>Facebook Page 3 (ID: 61559858694086)</td><td><a href="https://www.facebook.com/profile.php?id=61559858694086" target="_blank" rel="noopener noreferrer">https://www.facebook.com/profile.php?id=61559858694086</a></td></tr>
+      <tr><td>Facebook Page 4 (ID: 61559981881665)</td><td><a href="https://www.facebook.com/profile.php?id=61559981881665" target="_blank" rel="noopener noreferrer">https://www.facebook.com/profile.php?id=61559981881665</a></td></tr>
+      <tr><td>Facebook Page 5 (ID: 61558223610996)</td><td><a href="https://www.facebook.com/profile.php?id=61558223610996" target="_blank" rel="noopener noreferrer">https://www.facebook.com/profile.php?id=61558223610996</a></td></tr>
+      <tr><td>LinkedIn</td><td><a href="https://www.linkedin.com/in/roger-keyserling-ab743698" target="_blank" rel="noopener noreferrer">https://www.linkedin.com/in/roger-keyserling-ab743698</a></td></tr>
+      <tr><td>YouTube</td><td><a href="https://www.youtube.com/@keyholetoday" target="_blank" rel="noopener noreferrer">https://www.youtube.com/@keyholetoday</a></td></tr>
+      <tr><td>Pinterest</td><td><a href="https://www.pinterest.com/keyholetodayshow" target="_blank" rel="noopener noreferrer">https://www.pinterest.com/keyholetodayshow</a></td></tr>
+      <tr><td>Benable</td><td><a href="https://benable.com/NextXus" target="_blank" rel="noopener noreferrer">https://benable.com/NextXus</a></td></tr>
+    </tbody>
+  </table>
+
+  <h2>CONTACT &amp; RESOURCES</h2>
+  <hr class="section-rule" />
+  <table>
+    <thead><tr><th>Type</th><th>Value</th></tr></thead>
+    <tbody>
+      <tr><td>Primary Email</td><td><a href="mailto:keywebco@gmail.com">keywebco@gmail.com</a></td></tr>
+    </tbody>
+  </table>
+
+  <p class="pending-note">Sections pending completion: JIM Checkout Store, Listly Profile, Facebook Page Names. Update in progress.</p>
+
+  <div class="footer">
+    Generated by The Catalyst &mdash; NextXus Federation &mdash; 2026-09-07
+  </div>
 
 </body>
 </html>
