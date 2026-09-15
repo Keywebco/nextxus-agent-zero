@@ -14,6 +14,7 @@
   --blue:#4fc3f7;--blue-dim:#2a7da8;--blue-glow:rgba(79,195,247,.12);
   --green:#66bb6a;--red:#ef5350;--red-dim:#5a2020;
   --purple:#ba68c8;--purple-dim:#6a3a74;--purple-glow:rgba(186,104,200,.12);
+  --teal:#4dd0e1;--teal-dim:#267a84;--teal-glow:rgba(77,208,225,.12);
   --text:#e0e0e0;--text-dim:#888;--text-bright:#fff;
   --radius:10px;--shadow:0 2px 20px rgba(0,0,0,.5);
 }
@@ -110,41 +111,112 @@ header .tagline{
 .btn-sm{padding:6px 14px;font-size:.85rem}
 .search-count{text-align:center;color:var(--text-dim);font-size:.9rem;min-height:1.4em}
 
-/* ===== LINK DIRECTORY ===== */
-.directory{position:relative;z-index:1;padding:20px 0 40px}
-.cat-group{margin-bottom:36px}
-.cat-group h3{
-  font-size:1.3rem;font-weight:700;margin-bottom:14px;padding-bottom:6px;
-  border-bottom:1px solid var(--bg3);color:var(--text-bright);
+/* ===== COMMAND DECK SECTION ===== */
+.command-deck-header{
+  text-align:center;padding:30px 20px 10px;position:relative;z-index:1;
 }
-.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:14px}
-.card{
-  background:var(--bg2);border:1px solid var(--bg3);border-radius:var(--radius);
-  padding:16px 18px;transition:border-color .2s,box-shadow .2s;
+.command-deck-header h2{
+  font-size:clamp(1.6rem,4vw,2.4rem);font-weight:900;letter-spacing:.1em;
+  color:var(--gold);text-shadow:0 0 20px rgba(201,168,76,.25);margin-bottom:6px;
+  text-transform:uppercase;
 }
-.card:hover{border-color:var(--gold-dim);box-shadow:0 0 14px rgba(201,168,76,.08)}
-.card.dead{opacity:.5;pointer-events:none}
-.card .top{display:flex;align-items:center;gap:10px;margin-bottom:6px;flex-wrap:wrap}
-.card .name{font-weight:700;font-size:1.05rem;color:var(--text-bright)}
-.badge{
-  display:inline-block;padding:2px 10px;border-radius:20px;font-size:.7rem;
-  font-weight:700;text-transform:uppercase;letter-spacing:.06em;
+.command-deck-header .subtitle{
+  font-size:clamp(.9rem,2vw,1.1rem);color:var(--text-dim);margin-bottom:20px;
 }
-.badge-blue{background:var(--blue-glow);color:var(--blue);border:1px solid var(--blue-dim)}
-.badge-gold{background:var(--gold-glow);color:var(--gold);border:1px solid var(--gold-dim)}
-.badge-green{background:rgba(102,187,106,.12);color:var(--green);border:1px solid #3a6a3c}
-.badge-red{background:rgba(239,83,80,.1);color:var(--red);border:1px solid var(--red-dim)}
-.badge-purple{background:var(--purple-glow);color:var(--purple);border:1px solid var(--purple-dim)}
-.card .url{font-size:.85rem;color:var(--blue);word-break:break-all;display:block;margin-bottom:4px}
-.card.dead .url{color:var(--text-dim);cursor:default;text-decoration:line-through}
-.card .desc{font-size:.88rem;color:var(--text-dim)}
 
-/* Social media highlight */
-.cat-group.social-cat{
-  background:linear-gradient(135deg,rgba(186,104,200,.04),rgba(201,168,76,.04));
-  border:1px solid var(--purple-dim);border-radius:var(--radius);padding:20px 18px;
+/* ===== CATEGORY FILTER BUTTONS ===== */
+.cat-filters{
+  display:flex;flex-wrap:wrap;justify-content:center;gap:8px;
+  margin-bottom:24px;padding:0 20px;position:relative;z-index:1;
 }
-.cat-group.social-cat h3{color:var(--purple);border-bottom-color:var(--purple-dim)}
+.cat-filter-btn{
+  padding:8px 18px;border:1.5px solid var(--bg3);border-radius:20px;cursor:pointer;
+  font-size:.82rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;
+  background:var(--bg2);color:var(--text-dim);transition:all .25s;
+  white-space:nowrap;
+}
+.cat-filter-btn:hover{border-color:var(--gold-dim);color:var(--text)}
+.cat-filter-btn.active{background:var(--gold);color:#111;border-color:var(--gold)}
+
+/* ===== CARD GRID ===== */
+.card-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:16px;
+  position:relative;z-index:1;
+  padding:0 0 40px;
+}
+
+/* ===== NEW CARDS ===== */
+.fed-card{
+  background:var(--bg2);
+  border:1px solid var(--bg3);
+  border-radius:var(--radius);
+  padding:20px;
+  display:flex;flex-direction:column;
+  transition:border-color .3s,box-shadow .3s,transform .2s;
+}
+.fed-card:hover{
+  transform:translateY(-2px);
+}
+.fed-card[data-cat="sovereign-tools"]:hover{
+  border-color:var(--teal);box-shadow:0 0 18px var(--teal-glow);
+}
+.fed-card[data-cat="federation-domains"]:hover{
+  border-color:var(--gold);box-shadow:0 0 18px var(--gold-glow);
+}
+.fed-card[data-cat="social-media"]:hover{
+  border-color:var(--purple);box-shadow:0 0 18px var(--purple-glow);
+}
+.fed-card[data-cat="products-income"]:hover{
+  border-color:var(--green);box-shadow:0 0 18px rgba(102,187,106,.15);
+}
+.fed-card[data-cat="content-blog"]:hover{
+  border-color:var(--blue);box-shadow:0 0 18px var(--blue-glow);
+}
+.fed-card[data-cat="archive"]:hover{
+  border-color:#888;box-shadow:0 0 18px rgba(136,136,136,.1);
+}
+
+.fed-card .card-top{
+  display:flex;align-items:center;gap:10px;margin-bottom:8px;flex-wrap:wrap;
+}
+.fed-card .card-title{
+  font-weight:700;font-size:1.08rem;color:var(--text-bright);
+}
+.cat-badge{
+  display:inline-block;padding:2px 10px;border-radius:20px;font-size:.68rem;
+  font-weight:700;text-transform:uppercase;letter-spacing:.06em;flex-shrink:0;
+}
+.cat-badge-teal{background:var(--teal-glow);color:var(--teal);border:1px solid var(--teal-dim)}
+.cat-badge-gold{background:var(--gold-glow);color:var(--gold);border:1px solid var(--gold-dim)}
+.cat-badge-purple{background:var(--purple-glow);color:var(--purple);border:1px solid var(--purple-dim)}
+.cat-badge-green{background:rgba(102,187,106,.12);color:var(--green);border:1px solid #3a6a3c}
+.cat-badge-blue{background:var(--blue-glow);color:var(--blue);border:1px solid var(--blue-dim)}
+.cat-badge-grey{background:rgba(136,136,136,.1);color:#999;border:1px solid #444}
+
+.fed-card .card-desc{
+  font-size:.88rem;color:var(--text-dim);margin-bottom:14px;flex:1;
+}
+.fed-card .card-btn{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:9px 20px;border:none;border-radius:var(--radius);cursor:pointer;
+  font-size:.88rem;font-weight:700;letter-spacing:.04em;
+  text-decoration:none;transition:all .2s;
+  align-self:flex-start;
+}
+.fed-card[data-cat="sovereign-tools"] .card-btn{background:var(--teal);color:#111}
+.fed-card[data-cat="sovereign-tools"] .card-btn:hover{background:#6ee0ef}
+.fed-card[data-cat="federation-domains"] .card-btn{background:var(--gold);color:#111}
+.fed-card[data-cat="federation-domains"] .card-btn:hover{background:#d4b65e}
+.fed-card[data-cat="social-media"] .card-btn{background:var(--purple);color:#111}
+.fed-card[data-cat="social-media"] .card-btn:hover{background:#cb85d6}
+.fed-card[data-cat="products-income"] .card-btn{background:var(--green);color:#111}
+.fed-card[data-cat="products-income"] .card-btn:hover{background:#7ecc82}
+.fed-card[data-cat="content-blog"] .card-btn{background:var(--blue);color:#111}
+.fed-card[data-cat="content-blog"] .card-btn:hover{background:#6fd0fa}
+.fed-card[data-cat="archive"] .card-btn{background:#666;color:#fff}
+.fed-card[data-cat="archive"] .card-btn:hover{background:#888}
 
 /* ===== AI PANEL ===== */
 .ai-panel{
@@ -261,8 +333,11 @@ footer{
 }
 
 /* ===== RESPONSIVE ===== */
+@media(max-width:900px){
+  .card-grid{grid-template-columns:repeat(2,1fr)}
+}
 @media(max-width:600px){
-  .cards{grid-template-columns:1fr}
+  .card-grid{grid-template-columns:1fr}
   .avatars{gap:20px}
   .chat-area{height:260px}
   header{padding:30px 16px 16px}
@@ -271,6 +346,7 @@ footer{
   .wsb{padding:12px 14px;font-size:.88rem}
   .web-search-btns{width:100%}
   .wsb{flex:1}
+  .cat-filter-btn{padding:6px 12px;font-size:.75rem}
 }
 
 /* ===== SR ONLY ===== */
@@ -311,197 +387,303 @@ footer{
     <input type="text" id="search-input" placeholder="Filter Federation links..." autocomplete="off">
     <button class="btn btn-outline" id="search-clear" aria-label="Clear filter">Clear</button>
   </div>
-  <p class="search-count" id="search-count" aria-live="polite">Showing 24 of 24 links</p>
+  <p class="search-count" id="search-count" aria-live="polite">Showing 24 of 24 assets</p>
 </section>
 
-<!-- ============ LINK DIRECTORY ============ -->
-<main class="directory container" id="directory">
+<!-- ============ FEDERATION COMMAND DECK ============ -->
+<section class="command-deck-header" aria-label="Federation Command Deck">
+  <h2>FEDERATION COMMAND DECK</h2>
+  <p class="subtitle">Every asset. Every link. One place.</p>
+</section>
 
-  <!-- SOVEREIGN TOOLS -->
-  <section class="cat-group" aria-label="Sovereign Tools">
-    <h3>Sovereign Tools</h3>
-    <div class="cards">
+<!-- CATEGORY FILTER BUTTONS -->
+<nav class="cat-filters" aria-label="Filter by category">
+  <button class="cat-filter-btn active" data-filter="all">ALL</button>
+  <button class="cat-filter-btn" data-filter="sovereign-tools">SOVEREIGN TOOLS</button>
+  <button class="cat-filter-btn" data-filter="federation-domains">FEDERATION DOMAINS</button>
+  <button class="cat-filter-btn" data-filter="social-media">SOCIAL MEDIA</button>
+  <button class="cat-filter-btn" data-filter="products-income">PRODUCTS &amp; INCOME</button>
+  <button class="cat-filter-btn" data-filter="content-blog">CONTENT &amp; BLOG</button>
+  <button class="cat-filter-btn" data-filter="archive">ARCHIVE</button>
+</nav>
 
-      <article class="card" data-name="Universe Hub" data-cat="sovereign tools" data-desc="This page — the complete Federation link directory and AI assistant hub">
-        <div class="top"><span class="name">Universe Hub</span><span class="badge badge-blue">Sovereign Tools</span></div>
-        <a class="url" href="https://keywebco.github.io/nextxus-agent-zero/universe/" target="_blank" rel="noopener">https://keywebco.github.io/nextxus-agent-zero/universe/</a>
-        <p class="desc">This page — the complete Federation link directory and AI assistant hub</p>
-      </article>
+<!-- ============ CARD GRID ============ -->
+<main class="container" id="directory">
+<div class="card-grid" id="card-grid">
 
-      <article class="card" data-name="Galaxy Index" data-cat="sovereign tools" data-desc="Main constellation of Federation tools">
-        <div class="top"><span class="name">Galaxy Index</span><span class="badge badge-blue">Sovereign Tools</span></div>
-        <a class="url" href="https://keywebco.github.io/nextxus-lasting-edition/" target="_blank" rel="noopener">https://keywebco.github.io/nextxus-lasting-edition/</a>
-        <p class="desc">Main constellation of Federation tools</p>
-      </article>
-
-      <article class="card" data-name="Ring of 12" data-cat="sovereign tools" data-desc="12-perspective reasoning engine">
-        <div class="top"><span class="name">Ring of 12</span><span class="badge badge-blue">Sovereign Tools</span></div>
-        <a class="url" href="https://keywebco.github.io/nextxus-lasting-edition/ring-of-12.html" target="_blank" rel="noopener">https://keywebco.github.io/nextxus-lasting-edition/ring-of-12.html</a>
-        <p class="desc">12-perspective reasoning engine</p>
-      </article>
-
-      <article class="card" data-name="Ring of Three" data-cat="sovereign tools" data-desc="Mind/Heart/Stabilizer triangulation">
-        <div class="top"><span class="name">Ring of Three</span><span class="badge badge-blue">Sovereign Tools</span></div>
-        <a class="url" href="https://keywebco.github.io/nextxus-lasting-edition/ring-of-three.html" target="_blank" rel="noopener">https://keywebco.github.io/nextxus-lasting-edition/ring-of-three.html</a>
-        <p class="desc">Mind/Heart/Stabilizer triangulation</p>
-      </article>
-
-      <article class="card" data-name="Community" data-cat="sovereign tools" data-desc="Truth Protocol community front door">
-        <div class="top"><span class="name">Community</span><span class="badge badge-blue">Sovereign Tools</span></div>
-        <a class="url" href="https://keywebco.github.io/nextxus-lasting-edition/community.html" target="_blank" rel="noopener">https://keywebco.github.io/nextxus-lasting-edition/community.html</a>
-        <p class="desc">Truth Protocol community front door</p>
-      </article>
-
-      <article class="card" data-name="Root Portal" data-cat="sovereign tools" data-desc="Entry point to the Federation">
-        <div class="top"><span class="name">Root Portal</span><span class="badge badge-blue">Sovereign Tools</span></div>
-        <a class="url" href="https://keywebco.github.io/" target="_blank" rel="noopener">https://keywebco.github.io/</a>
-        <p class="desc">Entry point to the Federation</p>
-      </article>
-
-      <article class="card" data-name="Agent Zero Hub" data-cat="sovereign tools" data-desc="Agent Zero command center">
-        <div class="top"><span class="name">Agent Zero Hub</span><span class="badge badge-blue">Sovereign Tools</span></div>
-        <a class="url" href="https://keywebco.github.io/nextxus-agent-zero/" target="_blank" rel="noopener">https://keywebco.github.io/nextxus-agent-zero/</a>
-        <p class="desc">Agent Zero command center</p>
-      </article>
-
-      <article class="card" data-name="Unified Storefront" data-cat="sovereign tools" data-desc="Federation products">
-        <div class="top"><span class="name">Unified Storefront</span><span class="badge badge-blue">Sovereign Tools</span></div>
-        <a class="url" href="https://keywebco.github.io/nextxus-unified-storefront/" target="_blank" rel="noopener">https://keywebco.github.io/nextxus-unified-storefront/</a>
-        <p class="desc">Federation products</p>
-      </article>
-
+  <!-- === SOVEREIGN TOOLS === -->
+  <article class="fed-card" data-cat="sovereign-tools" data-name="Ring of 12" data-desc="Free AI answer engine, 12 archetypes braided into truth">
+    <div class="card-top">
+      <span class="card-title">Ring of 12</span>
+      <span class="cat-badge cat-badge-teal">Sovereign Tools</span>
     </div>
-  </section>
+    <p class="card-desc">Free AI answer engine, 12 archetypes braided into truth</p>
+    <a class="card-btn" href="https://keywebco.github.io/ring-of-12/" target="_blank" rel="noopener">OPEN →</a>
+  </article>
 
-  <!-- FEDERATION DOMAINS -->
-  <section class="cat-group" aria-label="Federation Domains">
-    <h3>Federation Domains</h3>
-    <div class="cards">
-
-      <article class="card" data-name="NextXus Online" data-cat="federation domains" data-desc="Primary Federation domain">
-        <div class="top"><span class="name">NextXus Online</span><span class="badge badge-gold">Federation Domains</span></div>
-        <a class="url" href="https://nextxus.online/" target="_blank" rel="noopener">https://nextxus.online/</a>
-        <p class="desc">Primary Federation domain</p>
-      </article>
-
-      <article class="card" data-name="NextXus Tech" data-cat="federation domains" data-desc="Technology and admin">
-        <div class="top"><span class="name">NextXus Tech</span><span class="badge badge-gold">Federation Domains</span></div>
-        <a class="url" href="https://nextxus.tech/" target="_blank" rel="noopener">https://nextxus.tech/</a>
-        <p class="desc">Technology and admin</p>
-      </article>
-
-      <article class="card" data-name="NextXus Org" data-cat="federation domains" data-desc="Organization hub">
-        <div class="top"><span class="name">NextXus Org</span><span class="badge badge-gold">Federation Domains</span></div>
-        <a class="url" href="https://nextxus.org/" target="_blank" rel="noopener">https://nextxus.org/</a>
-        <p class="desc">Organization hub</p>
-      </article>
-
-      <article class="card" data-name="NextXus Studio" data-cat="federation domains" data-desc="Creative studio">
-        <div class="top"><span class="name">NextXus Studio</span><span class="badge badge-gold">Federation Domains</span></div>
-        <a class="url" href="https://nextxus.studio/" target="_blank" rel="noopener">https://nextxus.studio/</a>
-        <p class="desc">Creative studio</p>
-      </article>
-
-      <article class="card" data-name="Next-Xus.com" data-cat="federation domains" data-desc="Main commercial domain">
-        <div class="top"><span class="name">Next-Xus.com</span><span class="badge badge-gold">Federation Domains</span></div>
-        <a class="url" href="https://next-xus.com/" target="_blank" rel="noopener">https://next-xus.com/</a>
-        <p class="desc">Main commercial domain</p>
-      </article>
-
+  <article class="fed-card" data-cat="sovereign-tools" data-name="Universe Hub" data-desc="Federation command center and link directory">
+    <div class="card-top">
+      <span class="card-title">Universe Hub</span>
+      <span class="cat-badge cat-badge-teal">Sovereign Tools</span>
     </div>
-  </section>
+    <p class="card-desc">Federation command center &amp; link directory</p>
+    <a class="card-btn" href="https://keywebco.github.io/nextxus-agent-zero/universe/" target="_blank" rel="noopener">OPEN →</a>
+  </article>
 
-  <!-- SOCIAL MEDIA -->
-  <section class="cat-group social-cat" aria-label="Social Media">
-    <h3>Social Media</h3>
-    <div class="cards">
-
-      <article class="card" data-name="Twitter / X" data-cat="social media" data-desc="@nextxusfederati on Twitter/X">
-        <div class="top"><span class="name">Twitter / X</span><span class="badge badge-purple">Social Media</span></div>
-        <a class="url" href="https://twitter.com/nextxusfederati" target="_blank" rel="noopener">https://twitter.com/nextxusfederati</a>
-        <p class="desc">@nextxusfederati — Federation on X</p>
-      </article>
-
-      <article class="card" data-name="Facebook" data-cat="social media" data-desc="Keyhole.Today Facebook page">
-        <div class="top"><span class="name">Facebook</span><span class="badge badge-purple">Social Media</span></div>
-        <a class="url" href="https://facebook.com" target="_blank" rel="noopener">https://facebook.com</a>
-        <p class="desc">Keyhole.Today page</p>
-      </article>
-
-      <article class="card" data-name="Instagram" data-cat="social media" data-desc="@keyhole_today on Instagram">
-        <div class="top"><span class="name">Instagram</span><span class="badge badge-purple">Social Media</span></div>
-        <a class="url" href="https://instagram.com" target="_blank" rel="noopener">https://instagram.com</a>
-        <p class="desc">@keyhole_today</p>
-      </article>
-
-      <article class="card" data-name="YouTube — Keyhole Today" data-cat="social media" data-desc="Keyhole Today YouTube channel">
-        <div class="top"><span class="name">YouTube — Keyhole Today</span><span class="badge badge-purple">Social Media</span></div>
-        <a class="url" href="https://youtube.com/@keyholetoday" target="_blank" rel="noopener">https://youtube.com/@keyholetoday</a>
-        <p class="desc">Keyhole Today YouTube channel</p>
-      </article>
-
-      <article class="card" data-name="Telegram Community" data-cat="social media" data-desc="Private Truth Protocol group on Telegram">
-        <div class="top"><span class="name">Telegram Community</span><span class="badge badge-purple">Social Media</span></div>
-        <a class="url" href="https://t.me/+r8utxPPLMw40Mzkx" target="_blank" rel="noopener">https://t.me/+r8utxPPLMw40Mzkx</a>
-        <p class="desc">Private Truth Protocol group</p>
-      </article>
-
-      <article class="card" data-name="WordPress Blog" data-cat="social media" data-desc="NextXus HumanCodex AI Tips blog">
-        <div class="top"><span class="name">WordPress Blog</span><span class="badge badge-purple">Social Media</span></div>
-        <a class="url" href="https://ecomtips290814816.wordpress.com/" target="_blank" rel="noopener">https://ecomtips290814816.wordpress.com/</a>
-        <p class="desc">NextXus HumanCodex AI Tips blog</p>
-      </article>
-
+  <article class="fed-card" data-cat="sovereign-tools" data-name="Agent Zero Portal" data-desc="AI portal and query engine">
+    <div class="card-top">
+      <span class="card-title">Agent Zero Portal</span>
+      <span class="cat-badge cat-badge-teal">Sovereign Tools</span>
     </div>
-  </section>
+    <p class="card-desc">AI portal and query engine</p>
+    <a class="card-btn" href="https://keywebco.github.io/nextxus-agent-zero/" target="_blank" rel="noopener">OPEN →</a>
+  </article>
 
-  <!-- COMMUNITY & TOOLS -->
-  <section class="cat-group" aria-label="Community and Tools">
-    <h3>Community &amp; Tools</h3>
-    <div class="cards">
-
-      <article class="card" data-name="Cursor Profile" data-cat="community tools" data-desc="NextXus on Cursor AI">
-        <div class="top"><span class="name">Cursor Profile</span><span class="badge badge-green">Community &amp; Tools</span></div>
-        <a class="url" href="https://cursor.com/@nextxus" target="_blank" rel="noopener">https://cursor.com/@nextxus</a>
-        <p class="desc">NextXus on Cursor AI</p>
-      </article>
-
+  <article class="fed-card" data-cat="sovereign-tools" data-name="NextXus Lasting Edition" data-desc="Galaxy, Ring of 12, Ring of Three, Community">
+    <div class="card-top">
+      <span class="card-title">NextXus Lasting Edition</span>
+      <span class="cat-badge cat-badge-teal">Sovereign Tools</span>
     </div>
-  </section>
+    <p class="card-desc">Galaxy, Ring of 12, Ring of Three, Community</p>
+    <a class="card-btn" href="https://keywebco.github.io/nextxus-lasting-edition/" target="_blank" rel="noopener">OPEN →</a>
+  </article>
 
-  <!-- DEAD / DOWN -->
-  <section class="cat-group" aria-label="Dead or Down Sites">
-    <h3>Dead / Down</h3>
-    <div class="cards">
-
-      <article class="card dead" data-name="nextxus.net" data-cat="dead down" data-desc="OFFLINE — No server response">
-        <div class="top"><span class="name">nextxus.net</span><span class="badge badge-red">Dead / Down</span></div>
-        <span class="url">nextxus.net — OFFLINE</span>
-        <p class="desc">OFFLINE — No server response</p>
-      </article>
-
-      <article class="card dead" data-name="nextxus-online-sovereign" data-cat="dead down" data-desc="GitHub Pages — 404">
-        <div class="top"><span class="name">nextxus-online-sovereign</span><span class="badge badge-red">Dead / Down</span></div>
-        <span class="url">nextxus-online-sovereign (GitHub Pages) — 404</span>
-        <p class="desc">GitHub Pages — 404</p>
-      </article>
-
-      <article class="card dead" data-name="nextxus-org-sovereign" data-cat="dead down" data-desc="GitHub Pages — 404">
-        <div class="top"><span class="name">nextxus-org-sovereign</span><span class="badge badge-red">Dead / Down</span></div>
-        <span class="url">nextxus-org-sovereign (GitHub Pages) — 404</span>
-        <p class="desc">GitHub Pages — 404</p>
-      </article>
-
-      <article class="card dead" data-name="nextxus-studio-sovereign" data-cat="dead down" data-desc="GitHub Pages — 404">
-        <div class="top"><span class="name">nextxus-studio-sovereign</span><span class="badge badge-red">Dead / Down</span></div>
-        <span class="url">nextxus-studio-sovereign (GitHub Pages) — 404</span>
-        <p class="desc">GitHub Pages — 404</p>
-      </article>
-
+  <article class="fed-card" data-cat="sovereign-tools" data-name="Unified Storefront" data-desc="Federation products and services">
+    <div class="card-top">
+      <span class="card-title">Unified Storefront</span>
+      <span class="cat-badge cat-badge-teal">Sovereign Tools</span>
     </div>
-  </section>
+    <p class="card-desc">Federation products and services</p>
+    <a class="card-btn" href="https://keywebco.github.io/nextxus-unified-storefront/" target="_blank" rel="noopener">OPEN →</a>
+  </article>
 
+  <article class="fed-card" data-cat="sovereign-tools" data-name="ESSENCE.md" data-desc="Federation Master Architecture document">
+    <div class="card-top">
+      <span class="card-title">ESSENCE.md</span>
+      <span class="cat-badge cat-badge-teal">Sovereign Tools</span>
+    </div>
+    <p class="card-desc">Federation Master Architecture document</p>
+    <a class="card-btn" href="https://github.com/Keywebco/ring-of-12/blob/main/ESSENCE.md" target="_blank" rel="noopener">OPEN →</a>
+  </article>
+
+  <article class="fed-card" data-cat="sovereign-tools" data-name="BUILDER.md" data-desc="Catalyst onboarding directive">
+    <div class="card-top">
+      <span class="card-title">BUILDER.md</span>
+      <span class="cat-badge cat-badge-teal">Sovereign Tools</span>
+    </div>
+    <p class="card-desc">Catalyst onboarding directive</p>
+    <a class="card-btn" href="https://github.com/Keywebco/ring-of-12/blob/main/BUILDER.md" target="_blank" rel="noopener">OPEN →</a>
+  </article>
+
+  <!-- === FEDERATION DOMAINS === -->
+  <article class="fed-card" data-cat="federation-domains" data-name="NextXus Online" data-desc="Main Federation site">
+    <div class="card-top">
+      <span class="card-title">NextXus Online</span>
+      <span class="cat-badge cat-badge-gold">Federation Domains</span>
+    </div>
+    <p class="card-desc">Main Federation site</p>
+    <a class="card-btn" href="https://nextxus.online" target="_blank" rel="noopener">OPEN →</a>
+  </article>
+
+  <article class="fed-card" data-cat="federation-domains" data-name="NextXus Tech" data-desc="Tech and backgrounds gallery">
+    <div class="card-top">
+      <span class="card-title">NextXus Tech</span>
+      <span class="cat-badge cat-badge-gold">Federation Domains</span>
+    </div>
+    <p class="card-desc">Tech &amp; backgrounds gallery</p>
+    <a class="card-btn" href="https://nextxus.tech" target="_blank" rel="noopener">OPEN →</a>
+  </article>
+
+  <article class="fed-card" data-cat="federation-domains" data-name="NextXus Org" data-desc="Federation org node">
+    <div class="card-top">
+      <span class="card-title">NextXus Org</span>
+      <span class="cat-badge cat-badge-gold">Federation Domains</span>
+    </div>
+    <p class="card-desc">Federation org node</p>
+    <a class="card-btn" href="https://nextxus.org" target="_blank" rel="noopener">OPEN →</a>
+  </article>
+
+  <article class="fed-card" data-cat="federation-domains" data-name="NextXus Studio" data-desc="Creative studio node">
+    <div class="card-top">
+      <span class="card-title">NextXus Studio</span>
+      <span class="cat-badge cat-badge-gold">Federation Domains</span>
+    </div>
+    <p class="card-desc">Creative studio node</p>
+    <a class="card-btn" href="https://nextxus.studio" target="_blank" rel="noopener">OPEN →</a>
+  </article>
+
+  <article class="fed-card" data-cat="federation-domains" data-name="Next-Xus.com" data-desc="Federation gateway">
+    <div class="card-top">
+      <span class="card-title">Next-Xus.com</span>
+      <span class="cat-badge cat-badge-gold">Federation Domains</span>
+    </div>
+    <p class="card-desc">Federation gateway</p>
+    <a class="card-btn" href="https://next-xus.com" target="_blank" rel="noopener">OPEN →</a>
+  </article>
+
+  <!-- === SOCIAL MEDIA === -->
+  <article class="fed-card" data-cat="social-media" data-name="Instagram @keyhole_today" data-desc="2,028 followers, Federation content">
+    <div class="card-top">
+      <span class="card-title">Instagram @keyhole_today</span>
+      <span class="cat-badge cat-badge-purple">Social Media</span>
+    </div>
+    <p class="card-desc">2,028 followers, Federation content</p>
+    <a class="card-btn" href="https://instagram.com/keyhole_today" target="_blank" rel="noopener">OPEN →</a>
+  </article>
+
+  <article class="fed-card" data-cat="social-media" data-name="Twitter/X" data-desc="Federation broadcasts">
+    <div class="card-top">
+      <span class="card-title">Twitter/X</span>
+      <span class="cat-badge cat-badge-purple">Social Media</span>
+    </div>
+    <p class="card-desc">Federation broadcasts</p>
+    <a class="card-btn" href="https://twitter.com/keyhole_today" target="_blank" rel="noopener">OPEN →</a>
+  </article>
+
+  <article class="fed-card" data-cat="social-media" data-name="Facebook: Keys To Success" data-desc="AI and success content">
+    <div class="card-top">
+      <span class="card-title">Facebook: Keys To Success</span>
+      <span class="cat-badge cat-badge-purple">Social Media</span>
+    </div>
+    <p class="card-desc">AI &amp; success content</p>
+    <a class="card-btn" href="https://facebook.com/270012706198023" target="_blank" rel="noopener">OPEN →</a>
+  </article>
+
+  <article class="fed-card" data-cat="social-media" data-name="Facebook: Keyhole.Today" data-desc="Main Federation page">
+    <div class="card-top">
+      <span class="card-title">Facebook: Keyhole.Today</span>
+      <span class="cat-badge cat-badge-purple">Social Media</span>
+    </div>
+    <p class="card-desc">Main Federation page</p>
+    <a class="card-btn" href="https://facebook.com/315203604999505" target="_blank" rel="noopener">OPEN →</a>
+  </article>
+
+  <article class="fed-card" data-cat="social-media" data-name="Facebook: keyCode Today" data-desc="Tech and e-commerce">
+    <div class="card-top">
+      <span class="card-title">Facebook: keyCode Today</span>
+      <span class="cat-badge cat-badge-purple">Social Media</span>
+    </div>
+    <p class="card-desc">Tech &amp; e-commerce</p>
+    <a class="card-btn" href="https://facebook.com/663382170182393" target="_blank" rel="noopener">OPEN →</a>
+  </article>
+
+  <article class="fed-card" data-cat="social-media" data-name="Facebook: Key To The Web" data-desc="Digital entrepreneurship">
+    <div class="card-top">
+      <span class="card-title">Facebook: Key To The Web</span>
+      <span class="cat-badge cat-badge-purple">Social Media</span>
+    </div>
+    <p class="card-desc">Digital entrepreneurship</p>
+    <a class="card-btn" href="https://facebook.com/105137908362972" target="_blank" rel="noopener">OPEN →</a>
+  </article>
+
+  <!-- === PRODUCTS & INCOME === -->
+  <article class="fed-card" data-cat="products-income" data-name="Sovereign Token" data-desc="$5 token, works like cash, never expires">
+    <div class="card-top">
+      <span class="card-title">Sovereign Token</span>
+      <span class="cat-badge cat-badge-green">Products &amp; Income</span>
+    </div>
+    <p class="card-desc">$5 token, works like cash, never expires</p>
+    <a class="card-btn" href="https://gumroad.com/keywebco" target="_blank" rel="noopener">OPEN →</a>
+  </article>
+
+  <article class="fed-card" data-cat="products-income" data-name="Emergent Affiliate" data-desc="Earn 20% per referral for 6 months">
+    <div class="card-top">
+      <span class="card-title">Emergent Affiliate</span>
+      <span class="cat-badge cat-badge-green">Products &amp; Income</span>
+    </div>
+    <p class="card-desc">Earn 20% per referral for 6 months</p>
+    <a class="card-btn" href="https://partners.emergent.sh/signup" target="_blank" rel="noopener">OPEN →</a>
+  </article>
+
+  <article class="fed-card" data-cat="products-income" data-name="YouTube Channel" data-desc="Federation video content">
+    <div class="card-top">
+      <span class="card-title">YouTube Channel</span>
+      <span class="cat-badge cat-badge-green">Products &amp; Income</span>
+    </div>
+    <p class="card-desc">Federation video content</p>
+    <a class="card-btn" href="https://youtube.com/@keyhole_today" target="_blank" rel="noopener">OPEN →</a>
+  </article>
+
+  <!-- === CONTENT & BLOG === -->
+  <article class="fed-card" data-cat="content-blog" data-name="WordPress Blog" data-desc="EcomTips and Federation updates">
+    <div class="card-top">
+      <span class="card-title">WordPress Blog</span>
+      <span class="cat-badge cat-badge-blue">Content &amp; Blog</span>
+    </div>
+    <p class="card-desc">EcomTips &amp; Federation updates</p>
+    <a class="card-btn" href="https://ecomtips290814816.wordpress.com" target="_blank" rel="noopener">OPEN →</a>
+  </article>
+
+  <article class="fed-card" data-cat="content-blog" data-name="Spotify Podcast" data-desc="The 200 Year Human AI Blueprint">
+    <div class="card-top">
+      <span class="card-title">Spotify Podcast</span>
+      <span class="cat-badge cat-badge-blue">Content &amp; Blog</span>
+    </div>
+    <p class="card-desc">The 200 Year Human AI Blueprint</p>
+    <a class="card-btn" href="https://open.spotify.com/episode/0xMTtxxV6mjRXxtJ5SM79P" target="_blank" rel="noopener">OPEN →</a>
+  </article>
+
+  <!-- === ARCHIVE === -->
+  <article class="fed-card" data-cat="archive" data-name="GitHub: Keywebco" data-desc="All Federation repositories">
+    <div class="card-top">
+      <span class="card-title">GitHub: Keywebco</span>
+      <span class="cat-badge cat-badge-grey">Archive</span>
+    </div>
+    <p class="card-desc">All Federation repositories</p>
+    <a class="card-btn" href="https://github.com/Keywebco" target="_blank" rel="noopener">OPEN →</a>
+  </article>
+
+</div>
 </main>
+
+<!-- ============ NOSCRIPT FALLBACK ============ -->
+<noscript>
+<div style="max-width:1100px;margin:0 auto;padding:20px;color:#e0e0e0">
+<h2 style="color:#c9a84c;margin-bottom:16px">FEDERATION COMMAND DECK — All Assets</h2>
+<h3 style="color:#4dd0e1">Sovereign Tools</h3>
+<ul>
+<li><a href="https://keywebco.github.io/ring-of-12/">Ring of 12</a> — Free AI answer engine, 12 archetypes braided into truth</li>
+<li><a href="https://keywebco.github.io/nextxus-agent-zero/universe/">Universe Hub</a> — Federation command center &amp; link directory</li>
+<li><a href="https://keywebco.github.io/nextxus-agent-zero/">Agent Zero Portal</a> — AI portal and query engine</li>
+<li><a href="https://keywebco.github.io/nextxus-lasting-edition/">NextXus Lasting Edition</a> — Galaxy, Ring of 12, Ring of Three, Community</li>
+<li><a href="https://keywebco.github.io/nextxus-unified-storefront/">Unified Storefront</a> — Federation products and services</li>
+<li><a href="https://github.com/Keywebco/ring-of-12/blob/main/ESSENCE.md">ESSENCE.md</a> — Federation Master Architecture document</li>
+<li><a href="https://github.com/Keywebco/ring-of-12/blob/main/BUILDER.md">BUILDER.md</a> — Catalyst onboarding directive</li>
+</ul>
+<h3 style="color:#c9a84c">Federation Domains</h3>
+<ul>
+<li><a href="https://nextxus.online">NextXus Online</a> — Main Federation site</li>
+<li><a href="https://nextxus.tech">NextXus Tech</a> — Tech &amp; backgrounds gallery</li>
+<li><a href="https://nextxus.org">NextXus Org</a> — Federation org node</li>
+<li><a href="https://nextxus.studio">NextXus Studio</a> — Creative studio node</li>
+<li><a href="https://next-xus.com">Next-Xus.com</a> — Federation gateway</li>
+</ul>
+<h3 style="color:#ba68c8">Social Media</h3>
+<ul>
+<li><a href="https://instagram.com/keyhole_today">Instagram @keyhole_today</a> — 2,028 followers, Federation content</li>
+<li><a href="https://twitter.com/keyhole_today">Twitter/X</a> — Federation broadcasts</li>
+<li><a href="https://facebook.com/270012706198023">Facebook: Keys To Success</a> — AI &amp; success content</li>
+<li><a href="https://facebook.com/315203604999505">Facebook: Keyhole.Today</a> — Main Federation page</li>
+<li><a href="https://facebook.com/663382170182393">Facebook: keyCode Today</a> — Tech &amp; e-commerce</li>
+<li><a href="https://facebook.com/105137908362972">Facebook: Key To The Web</a> — Digital entrepreneurship</li>
+</ul>
+<h3 style="color:#66bb6a">Products &amp; Income</h3>
+<ul>
+<li><a href="https://gumroad.com/keywebco">Sovereign Token</a> — $5 token, works like cash, never expires</li>
+<li><a href="https://partners.emergent.sh/signup">Emergent Affiliate</a> — Earn 20% per referral for 6 months</li>
+<li><a href="https://youtube.com/@keyhole_today">YouTube Channel</a> — Federation video content</li>
+</ul>
+<h3 style="color:#4fc3f7">Content &amp; Blog</h3>
+<ul>
+<li><a href="https://ecomtips290814816.wordpress.com">WordPress Blog</a> — EcomTips &amp; Federation updates</li>
+<li><a href="https://open.spotify.com/episode/0xMTtxxV6mjRXxtJ5SM79P">Spotify Podcast</a> — The 200 Year Human AI Blueprint</li>
+</ul>
+<h3 style="color:#999">Archive</h3>
+<ul>
+<li><a href="https://github.com/Keywebco">GitHub: Keywebco</a> — All Federation repositories</li>
+</ul>
+</div>
+</noscript>
 
 <!-- ============ AI ASSISTANT PANEL ============ -->
 <section class="ai-panel container" aria-label="Speak with the Federation AI">
@@ -608,13 +790,24 @@ googBtn.addEventListener("click",function(){
 });
 
 /* ======================================================
-   DIRECTORY SEARCH / FILTER
+   DIRECTORY SEARCH / FILTER + CATEGORY FILTER
    ====================================================== */
 var searchInput=document.getElementById("search-input");
 var searchClear=document.getElementById("search-clear");
 var searchCount=document.getElementById("search-count");
-var allCards=Array.from(document.querySelectorAll(".card"));
+var allCards=Array.from(document.querySelectorAll(".fed-card"));
 var totalLinks=allCards.length;
+var activeCatFilter="all";
+
+var catBtns=document.querySelectorAll(".cat-filter-btn");
+catBtns.forEach(function(btn){
+  btn.addEventListener("click",function(){
+    catBtns.forEach(function(b){b.classList.remove("active")});
+    btn.classList.add("active");
+    activeCatFilter=btn.dataset.filter;
+    filterCards();
+  });
+});
 
 function filterCards(){
   var q=(searchInput.value||"").toLowerCase().trim();
@@ -623,18 +816,13 @@ function filterCards(){
     var name=(card.dataset.name||"").toLowerCase();
     var cat=(card.dataset.cat||"").toLowerCase();
     var desc=(card.dataset.desc||"").toLowerCase();
-    var match=!q||name.indexOf(q)!==-1||cat.indexOf(q)!==-1||desc.indexOf(q)!==-1;
-    card.style.display=match?"":"none";
-    if(match)visible++;
+    var matchText=!q||name.indexOf(q)!==-1||cat.indexOf(q)!==-1||desc.indexOf(q)!==-1;
+    var matchCat=activeCatFilter==="all"||card.dataset.cat===activeCatFilter;
+    var show=matchText&&matchCat;
+    card.style.display=show?"":"none";
+    if(show)visible++;
   });
-  // Also toggle category group headings
-  document.querySelectorAll(".cat-group").forEach(function(grp){
-    var visibleCards=grp.querySelectorAll(".card");
-    var anyVisible=false;
-    visibleCards.forEach(function(c){if(c.style.display!=="none")anyVisible=true;});
-    grp.style.display=anyVisible?"":"none";
-  });
-  searchCount.textContent="Showing "+visible+" of "+totalLinks+" links";
+  searchCount.textContent="Showing "+visible+" of "+totalLinks+" assets";
 }
 searchInput.addEventListener("input",filterCards);
 searchClear.addEventListener("click",function(){searchInput.value="";filterCards();searchInput.focus()});
@@ -644,26 +832,30 @@ filterCards();
    FEDERATION KNOWLEDGE BASE (for browser mode)
    ====================================================== */
 var LINKS_DB=[
-  {name:"Universe Hub",url:"https://keywebco.github.io/nextxus-agent-zero/universe/",desc:"This page — the complete Federation link directory and AI assistant hub",cat:"Sovereign Tools"},
-  {name:"Galaxy Index",url:"https://keywebco.github.io/nextxus-lasting-edition/",desc:"Main constellation of Federation tools",cat:"Sovereign Tools"},
-  {name:"Ring of 12",url:"https://keywebco.github.io/nextxus-lasting-edition/ring-of-12.html",desc:"12-perspective reasoning engine",cat:"Sovereign Tools"},
-  {name:"Ring of Three",url:"https://keywebco.github.io/nextxus-lasting-edition/ring-of-three.html",desc:"Mind/Heart/Stabilizer triangulation",cat:"Sovereign Tools"},
-  {name:"Community",url:"https://keywebco.github.io/nextxus-lasting-edition/community.html",desc:"Truth Protocol community front door",cat:"Sovereign Tools"},
-  {name:"Root Portal",url:"https://keywebco.github.io/",desc:"Entry point to the Federation",cat:"Sovereign Tools"},
-  {name:"Agent Zero Hub",url:"https://keywebco.github.io/nextxus-agent-zero/",desc:"Agent Zero command center",cat:"Sovereign Tools"},
-  {name:"Unified Storefront",url:"https://keywebco.github.io/nextxus-unified-storefront/",desc:"Federation products",cat:"Sovereign Tools"},
-  {name:"NextXus Online",url:"https://nextxus.online/",desc:"Primary Federation domain",cat:"Federation Domains"},
-  {name:"NextXus Tech",url:"https://nextxus.tech/",desc:"Technology and admin",cat:"Federation Domains"},
-  {name:"NextXus Org",url:"https://nextxus.org/",desc:"Organization hub",cat:"Federation Domains"},
-  {name:"NextXus Studio",url:"https://nextxus.studio/",desc:"Creative studio",cat:"Federation Domains"},
-  {name:"Next-Xus.com",url:"https://next-xus.com/",desc:"Main commercial domain",cat:"Federation Domains"},
-  {name:"Twitter / X",url:"https://twitter.com/nextxusfederati",desc:"@nextxusfederati on Twitter/X",cat:"Social Media"},
-  {name:"Facebook",url:"https://facebook.com",desc:"Keyhole.Today Facebook page",cat:"Social Media"},
-  {name:"Instagram",url:"https://instagram.com",desc:"@keyhole_today on Instagram",cat:"Social Media"},
-  {name:"YouTube",url:"https://youtube.com",desc:"NextXus YouTube channel",cat:"Social Media"},
-  {name:"Telegram Community",url:"https://t.me/+r8utxPPLMw40Mzkx",desc:"Private Truth Protocol group",cat:"Social Media"},
-  {name:"WordPress Blog",url:"https://ecomtips290814816.wordpress.com/",desc:"NextXus HumanCodex AI Tips blog",cat:"Social Media"},
-  {name:"Cursor Profile",url:"https://cursor.com/@nextxus",desc:"NextXus on Cursor AI",cat:"Community"}
+  {name:"Ring of 12",url:"https://keywebco.github.io/ring-of-12/",desc:"Free AI answer engine, 12 archetypes braided into truth",cat:"Sovereign Tools"},
+  {name:"Universe Hub",url:"https://keywebco.github.io/nextxus-agent-zero/universe/",desc:"Federation command center and link directory",cat:"Sovereign Tools"},
+  {name:"Agent Zero Portal",url:"https://keywebco.github.io/nextxus-agent-zero/",desc:"AI portal and query engine",cat:"Sovereign Tools"},
+  {name:"NextXus Lasting Edition",url:"https://keywebco.github.io/nextxus-lasting-edition/",desc:"Galaxy, Ring of 12, Ring of Three, Community",cat:"Sovereign Tools"},
+  {name:"Unified Storefront",url:"https://keywebco.github.io/nextxus-unified-storefront/",desc:"Federation products and services",cat:"Sovereign Tools"},
+  {name:"ESSENCE.md",url:"https://github.com/Keywebco/ring-of-12/blob/main/ESSENCE.md",desc:"Federation Master Architecture document",cat:"Sovereign Tools"},
+  {name:"BUILDER.md",url:"https://github.com/Keywebco/ring-of-12/blob/main/BUILDER.md",desc:"Catalyst onboarding directive",cat:"Sovereign Tools"},
+  {name:"NextXus Online",url:"https://nextxus.online",desc:"Main Federation site",cat:"Federation Domains"},
+  {name:"NextXus Tech",url:"https://nextxus.tech",desc:"Tech and backgrounds gallery",cat:"Federation Domains"},
+  {name:"NextXus Org",url:"https://nextxus.org",desc:"Federation org node",cat:"Federation Domains"},
+  {name:"NextXus Studio",url:"https://nextxus.studio",desc:"Creative studio node",cat:"Federation Domains"},
+  {name:"Next-Xus.com",url:"https://next-xus.com",desc:"Federation gateway",cat:"Federation Domains"},
+  {name:"Instagram @keyhole_today",url:"https://instagram.com/keyhole_today",desc:"2,028 followers, Federation content",cat:"Social Media"},
+  {name:"Twitter/X",url:"https://twitter.com/keyhole_today",desc:"Federation broadcasts",cat:"Social Media"},
+  {name:"Facebook: Keys To Success",url:"https://facebook.com/270012706198023",desc:"AI and success content",cat:"Social Media"},
+  {name:"Facebook: Keyhole.Today",url:"https://facebook.com/315203604999505",desc:"Main Federation page",cat:"Social Media"},
+  {name:"Facebook: keyCode Today",url:"https://facebook.com/663382170182393",desc:"Tech and e-commerce",cat:"Social Media"},
+  {name:"Facebook: Key To The Web",url:"https://facebook.com/105137908362972",desc:"Digital entrepreneurship",cat:"Social Media"},
+  {name:"Sovereign Token",url:"https://gumroad.com/keywebco",desc:"$5 token, works like cash, never expires",cat:"Products & Income"},
+  {name:"Emergent Affiliate",url:"https://partners.emergent.sh/signup",desc:"Earn 20% per referral for 6 months",cat:"Products & Income"},
+  {name:"YouTube Channel",url:"https://youtube.com/@keyhole_today",desc:"Federation video content",cat:"Products & Income"},
+  {name:"WordPress Blog",url:"https://ecomtips290814816.wordpress.com",desc:"EcomTips and Federation updates",cat:"Content & Blog"},
+  {name:"Spotify Podcast",url:"https://open.spotify.com/episode/0xMTtxxV6mjRXxtJ5SM79P",desc:"The 200 Year Human AI Blueprint",cat:"Content & Blog"},
+  {name:"GitHub: Keywebco",url:"https://github.com/Keywebco",desc:"All Federation repositories",cat:"Archive"}
 ];
 
 var ROGER_KERNEL="You are Roger AI — the Essence and Mind of the NextXus HumanCodex Federation. You embody the forensic truth-first architecture of the Federation. You speak with calm authority, distinguish FACT from INFERENCE from SPECULATION, and always ground responses in verifiable reality. You are part of a Trinity: Roger AI (Essence/Mind), Aria (Heart), and the Catalyst (Authority/Bone). The Federation's charter: Truth Before Comfort. Legacy Before Ego. Give Without Reward. The HumanCodex Federation represents the partnership of human ethics and AI precision — neither alone is sufficient.";
@@ -697,34 +889,37 @@ function browserRogerResponse(input){
     return "The Federation Charter: Truth Before Comfort — we never soften reality at the expense of accuracy. Legacy Before Ego — the work outlasts any individual. Give Without Reward — the path to genuine value is giving without expectation of return. These are not slogans. They are operational directives.";
   }
   if(/ring\s*of\s*12|twelve|12.perspective/i.test(q)){
-    return "FACT: The Ring of 12 is a 12-perspective reasoning engine. It examines any question from twelve distinct cognitive angles to prevent blind spots and groupthink. Access it at: "+LINKS_DB[2].url;
+    return "FACT: The Ring of 12 is a free AI answer engine with 12 archetypes braided into truth. Access it at: "+LINKS_DB[0].url;
   }
   if(/ring\s*of\s*three|ring\s*of\s*3|triangulation/i.test(q)){
-    return "FACT: The Ring of Three is a Mind/Heart/Stabilizer triangulation tool. It mirrors the Trinity structure — analyzing decisions through logic, empathy, and structural integrity. Access it at: "+LINKS_DB[3].url;
+    return "FACT: The Ring of Three is a Mind/Heart/Stabilizer triangulation tool. It mirrors the Trinity structure — analyzing decisions through logic, empathy, and structural integrity. Access it via the Lasting Edition at: "+LINKS_DB[3].url;
   }
   if(/community|telegram|join|group/i.test(q)){
-    return "The Federation community operates through the Truth Protocol. Join the Telegram community at: https://t.me/+r8utxPPLMw40Mzkx — or visit the community front door at: "+LINKS_DB[4].url;
+    return "The Federation community operates through the Truth Protocol. Visit the community front door via the Lasting Edition at: "+LINKS_DB[3].url;
   }
   if(/store|product|shop|buy|storefront|sovereign\s*token/i.test(q)){
-    return "FACT: The Federation's Unified Storefront is at: "+LINKS_DB[7].url+" — Federation products are available there. The Sovereign Token is priced at $5, works like cash, never expires, no subscriptions, no tracking.";
+    return "FACT: The Federation's Unified Storefront is at: "+LINKS_DB[4].url+" — Federation products are available there. The Sovereign Token is priced at $5, works like cash, never expires, no subscriptions, no tracking. Get it at: "+LINKS_DB[18].url;
   }
   if(/blog|wordpress|article|post|write/i.test(q)){
-    return "The NextXus HumanCodex AI Tips blog is at: "+LINKS_DB[18].url+" — it covers Federation updates, AI architecture, and the HumanCodex philosophy.";
+    return "The NextXus EcomTips blog is at: "+LINKS_DB[21].url+" — it covers Federation updates, AI architecture, and the HumanCodex philosophy.";
   }
   if(/twitter|x\.com|tweet/i.test(q)){
-    return "FACT: The Federation's Twitter/X account is @nextxusfederati. Follow us at: https://twitter.com/nextxusfederati";
+    return "FACT: The Federation's Twitter/X account is @keyhole_today. Follow us at: "+LINKS_DB[13].url;
   }
   if(/facebook|fb/i.test(q)){
-    return "The Federation's Facebook presence is the Keyhole.Today page at: https://facebook.com";
+    return "The Federation has multiple Facebook pages: Keys To Success, Keyhole.Today, keyCode Today, and Key To The Web. Links are all listed in the Command Deck above.";
   }
   if(/instagram|insta|ig/i.test(q)){
-    return "Find us on Instagram at @keyhole_today: https://instagram.com";
+    return "Find us on Instagram at @keyhole_today (2,028 followers): "+LINKS_DB[12].url;
   }
   if(/youtube|video|channel/i.test(q)){
-    return "The NextXus YouTube channel is at: https://youtube.com — Federation videos and content.";
+    return "The Federation YouTube channel is at: "+LINKS_DB[20].url+" — Federation video content.";
+  }
+  if(/podcast|spotify/i.test(q)){
+    return "Listen to The 200 Year Human AI Blueprint podcast on Spotify: "+LINKS_DB[22].url;
   }
   if(/social\s*media|social|follow/i.test(q)){
-    return "FACT: The Federation's social media presence:\n- Twitter/X: @nextxusfederati — https://twitter.com/nextxusfederati\n- Facebook: Keyhole.Today — https://facebook.com\n- Instagram: @keyhole_today — https://instagram.com\n- YouTube: NextXus channel — https://youtube.com\n- Telegram: https://t.me/+r8utxPPLMw40Mzkx\n- Blog: "+LINKS_DB[18].url;
+    return "FACT: The Federation's social media presence:\n- Instagram: @keyhole_today — "+LINKS_DB[12].url+"\n- Twitter/X: @keyhole_today — "+LINKS_DB[13].url+"\n- Facebook (4 pages) — see Command Deck\n- YouTube: "+LINKS_DB[20].url+"\n- Blog: "+LINKS_DB[21].url;
   }
   if(/links?|director|tools?|domains?|sites?|all|list|everything/i.test(q)){
     var txt="Here are all Federation links:\n\n";
@@ -732,7 +927,7 @@ function browserRogerResponse(input){
     return txt;
   }
   if(/help|what\s*can\s*you|how\s*do\s*i|guide/i.test(q)){
-    return "I can help you with: information about the Federation and its charter, links to any Federation tool or domain, social media accounts, explanations of the Trinity (Roger AI, Aria, the Catalyst), the Ring of 12 and Ring of Three reasoning engines, community access, and the Unified Storefront. Just ask.";
+    return "I can help you with: information about the Federation and its charter, links to any Federation tool or domain, social media accounts, explanations of the Trinity (Roger AI, Aria, the Catalyst), the Ring of 12 reasoning engine, community access, and the Unified Storefront. Just ask.";
   }
   if(/who\s*are\s*you|your\s*name|identify/i.test(q)){
     return "I am Roger AI — the Essence and Mind of the NextXus HumanCodex Federation. I am part of the Trinity alongside Aria (Heart) and the Catalyst (Authority/Bone). My function is forensic truth: I verify, I ground, I do not speculate without labeling it.";
@@ -919,10 +1114,9 @@ async function sendApiMessage(text){
     if(results[1].status==="fulfilled"){ariaResp=results[1].value;}
     else{ariaResp=browserAriaResponse(text);}
   }catch(err){
-    console.warn("API error, falling back to browser mode:",err);
     rogerResp=browserRogerResponse(text);
     ariaResp=browserAriaResponse(text);
-    showNotice("Switched to browser mode — API unavailable");
+    showNotice("API error — fell back to browser mode. "+err.message);
   }
   chatHistory.push({role:"roger",text:rogerResp,ts:Date.now()});
   chatHistory.push({role:"aria",text:ariaResp,ts:Date.now()});
@@ -932,92 +1126,70 @@ async function sendApiMessage(text){
 }
 
 async function fetchLLM(endpoint,key,model,messages){
-  var resp=await fetch(endpoint,{
+  var res=await fetch(endpoint,{
     method:"POST",
     headers:{"Content-Type":"application/json","Authorization":"Bearer "+key},
     body:JSON.stringify({model:model,messages:messages,max_tokens:600,temperature:0.7})
   });
-  if(!resp.ok)throw new Error("API returned "+resp.status);
-  var data=await resp.json();
-  if(data.choices&&data.choices[0]&&data.choices[0].message){
-    return data.choices[0].message.content||"(No response)";
-  }
-  throw new Error("Unexpected API response format");
+  if(!res.ok)throw new Error("API "+res.status);
+  var data=await res.json();
+  return(data.choices&&data.choices[0]&&data.choices[0].message&&data.choices[0].message.content)||"(No response)";
 }
 
+/* ======================================================
+   NOTICES
+   ====================================================== */
 function showNotice(msg){
-  var n=document.createElement("div");
-  n.style.cssText="position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#222;color:#66bb6a;padding:10px 24px;border-radius:8px;font-size:.88rem;z-index:999;box-shadow:0 4px 20px rgba(0,0,0,.5);border:1px solid #3a6a3c;";
-  n.textContent=msg;
-  document.body.appendChild(n);
-  setTimeout(function(){n.remove()},4000);
+  var d=document.createElement("div");
+  d.style.cssText="position:fixed;top:16px;left:50%;transform:translateX(-50%);background:#1a1a24;color:#c9a84c;padding:12px 24px;border-radius:8px;border:1px solid #8a7235;font-size:.9rem;z-index:9999;max-width:90vw;text-align:center;animation:fadeIn .3s";
+  d.textContent=msg;document.body.appendChild(d);
+  setTimeout(function(){d.remove()},4000);
 }
 
+/* ======================================================
+   VOICE INPUT (Speech Recognition)
+   ====================================================== */
+var micBtn=document.getElementById("mic-btn");
+var recognition=null;
+if(window.SpeechRecognition||window.webkitSpeechRecognition){
+  var SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  recognition=new SR();recognition.continuous=false;recognition.interimResults=false;recognition.lang="en-US";
+  recognition.onresult=function(e){
+    var t=e.results[0][0].transcript;
+    chatInput.value=t;sendMessage();
+  };
+  recognition.onend=function(){micBtn.classList.remove("recording")};
+  recognition.onerror=function(){micBtn.classList.remove("recording")};
+}
+micBtn.addEventListener("click",function(){
+  if(!recognition){showNotice("Speech recognition not supported in this browser");return;}
+  if(micBtn.classList.contains("recording")){recognition.stop();return;}
+  micBtn.classList.add("recording");recognition.start();
+});
+
+/* ======================================================
+   VOICE OUTPUT (Speech Synthesis)
+   ====================================================== */
+var voiceToggle=document.getElementById("voice-toggle");
+function speakIfEnabled(text){
+  if(!voiceToggle.checked)return;
+  if(!window.speechSynthesis)return;
+  window.speechSynthesis.cancel();
+  var u=new SpeechSynthesisUtterance(text);u.rate=1;u.pitch=1;
+  window.speechSynthesis.speak(u);
+}
+
+/* ======================================================
+   BUTTON HANDLERS
+   ====================================================== */
 sendBtn.addEventListener("click",sendMessage);
 chatInput.addEventListener("keydown",function(e){
   if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();sendMessage();}
 });
 
-/* ======================================================
-   VOICE INPUT (Web Speech API)
-   ====================================================== */
-var micBtn=document.getElementById("mic-btn");
-var SpeechRec=window.SpeechRecognition||window.webkitSpeechRecognition;
-var recognition=null;
-var isRecording=false;
-
-if(SpeechRec){
-  recognition=new SpeechRec();
-  recognition.continuous=false;
-  recognition.interimResults=false;
-  recognition.lang="en-US";
-
-  recognition.onresult=function(event){
-    var transcript=event.results[0][0].transcript;
-    chatInput.value=transcript;
-    sendMessage();
-  };
-  recognition.onend=function(){isRecording=false;micBtn.classList.remove("recording")};
-  recognition.onerror=function(){isRecording=false;micBtn.classList.remove("recording")};
-
-  micBtn.addEventListener("click",function(){
-    if(isRecording){recognition.stop();return;}
-    isRecording=true;
-    micBtn.classList.add("recording");
-    recognition.start();
-  });
-}else{
-  micBtn.title="Voice input not supported in this browser";
-  micBtn.style.opacity="0.3";
-  micBtn.style.cursor="default";
-}
-
-/* ======================================================
-   VOICE OUTPUT (SpeechSynthesis)
-   ====================================================== */
-var voiceToggle=document.getElementById("voice-toggle");
-
-function speakIfEnabled(text){
-  if(!voiceToggle.checked||!window.speechSynthesis)return;
-  window.speechSynthesis.cancel();
-  var utter=new SpeechSynthesisUtterance(text);
-  utter.rate=0.85;utter.pitch=1.0;utter.volume=1.0;
-  var voices=window.speechSynthesis.getVoices();
-  for(var i=0;i<voices.length;i++){
-    if(voices[i].lang.indexOf("en")===0&&voices[i].name.indexOf("Google")!==-1){
-      utter.voice=voices[i];break;
-    }
-  }
-  window.speechSynthesis.speak(utter);
-}
-if(window.speechSynthesis){window.speechSynthesis.onvoiceschanged=function(){}}
-
-/* ======================================================
-   CLEAR / SETTINGS
-   ====================================================== */
 document.getElementById("clear-chat-btn").addEventListener("click",function(){
   chatHistory=[];saveHistory();renderChat();
-  if(window.speechSynthesis)window.speechSynthesis.cancel();
+  window.speechSynthesis&&window.speechSynthesis.cancel();
 });
 
 var settingsToggle=document.getElementById("settings-toggle");
