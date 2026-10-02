@@ -1,3 +1,6 @@
+# DISABLED 2026-10-02 - pending review by Catalyst before re-enabling
+# Reason: a push of any root *.yaml/*.json would broadcast this whole repo onto 7 sovereign mirror repos.
+# To re-enable: Catalyst review, then move back to .github/workflows/mesh-sync.yml and remove 'if: false'.
 name: NextXus Mesh Autonomous Cross-Repo Synchronization
 
 on:
@@ -14,6 +17,7 @@ on:
 
 jobs:
   broadcast-mesh-sync:
+    if: false
     runs-on: ubuntu-latest
     strategy:
       matrix:
