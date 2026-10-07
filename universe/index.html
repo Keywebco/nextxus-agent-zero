@@ -377,10 +377,16 @@ footer{
 .ring6-lens h3{font-size:1rem;color:var(--c,var(--gold));margin-bottom:4px}
 .ring6-lens .meta{font-size:.8rem;color:var(--text-dim);margin-bottom:6px}
 .ring6-lens pre{white-space:pre-wrap;font:inherit;font-size:.85rem;color:var(--text);margin:0}
+.ring6-src{text-align:left;margin:12px auto 0;max-width:640px;font-size:.88rem;padding-left:20px}
+.ring6-src li{margin-bottom:8px}
+.ring6-src .meta,#ring6-truth .meta{font-size:.78rem;color:var(--text-dim)}
+#api-provider{width:100%;padding:10px;border-radius:8px;background:var(--bg);color:var(--text);border:1px solid var(--bg3)}
 .ring6-note{font-size:.82rem;color:var(--text-dim);margin-top:14px;text-align:center}
 .ring6-conflict{font-size:.85rem;color:var(--gold);margin-top:10px;text-align:center}
 
 </style>
+<script src="nx-providers.js"></script>
+<script src="truth-check.js"></script>
 </head>
 <body>
 
@@ -763,12 +769,14 @@ footer{
 
     <div class="settings-toggle" id="settings-toggle" role="button" tabindex="0" aria-expanded="false">&#9881; API Settings</div>
     <div class="settings-panel" id="settings-panel" aria-label="API Settings">
-      <label for="api-endpoint">API Endpoint</label>
-      <input type="url" id="api-endpoint" placeholder="https://integrations.emergentagent.com/llm/v1/chat/completions">
-      <label for="api-key">API Key (stored locally, never sent elsewhere)</label>
-      <input type="password" id="api-key" placeholder="sk-...">
-      <label for="api-model">Model</label>
-      <input type="text" id="api-model" placeholder="gpt-4o-mini">
+      <p style="font-size:.82rem;color:var(--text-dim);margin-bottom:6px">The first 3 questions are free. After that, add your own key from one of these providers. Your key stays in this browser and goes only to the provider you pick.</p>
+      <label for="api-provider">Provider</label>
+      <select id="api-provider"><option value="mimo">MiMo (Xiaomi)</option><option value="deepseek">DeepSeek</option><option value="grok">Grok (xAI)</option><option value="openai">OpenAI</option></select>
+      <label for="api-key">API Key</label>
+      <input type="password" id="api-key" placeholder="paste your key" autocomplete="off">
+      <label for="api-model">Model (leave blank for the default)</label>
+      <input type="text" id="api-model" placeholder="default for the provider">
+      <p id="api-free-left" style="font-size:.82rem;color:var(--gold);margin-top:10px"></p>
       <div style="margin-top:14px;display:flex;gap:8px">
         <button class="btn btn-gold btn-sm" id="save-settings-btn">Save Settings</button>
         <button class="btn btn-outline btn-sm" id="clear-settings-btn">Clear API Config</button>
@@ -783,12 +791,14 @@ footer{
 <section class="ring6-section container" id="ring6" aria-label="Ring of Six truth check">
   <div class="ring6-box">
     <h2>THE RING OF SIX</h2>
-    <p class="ring6-sub">Five lenses read your question: Mind, Heart, Hands, Legs, Eyes. The Truth Agent weighs them and scores the answer against the 95% Truth Gate.</p>
+    <p class="ring6-sub">Ask a question or paste a claim. The Ring checks it against Wikipedia and scholarly papers, shows you every source, and scores how well they agree. Five lenses (Mind, Heart, Hands, Legs, Eyes) then read the wording itself.</p>
     <form class="ring6-form" id="ring6-form">
       <input type="text" id="ring6-q" aria-label="Ask the Ring of Six" placeholder="Ask the Ring of Six a question or paste a claim..." autocomplete="off">
       <button type="submit" id="ring6-go">Run the Ring</button>
     </form>
     <p class="ring6-mode" id="ring6-mode" aria-live="polite"></p>
+    <div id="ring6-truth" class="ring6-gauge" style="display:none;text-align:left" aria-live="polite"></div>
+    <p class="ring6-sub" id="ring6-lens-title" style="margin-top:18px">How the Ring read the wording (the five lenses)</p>
     <div class="ring6-gauge" id="ring6-gauge" aria-live="polite">
       <div class="ring6-pct"><span id="ring6-pct">0</span><small>% text-grounding score</small></div>
       <div class="ring6-bar" aria-hidden="true"><div class="ring6-fill" id="ring6-fill"></div><div class="ring6-gate"></div></div>
@@ -797,7 +807,7 @@ footer{
       <div id="ring6-conflicts" class="ring6-conflict"></div>
     </div>
     <div class="ring6-lenses" id="ring6-lenses"></div>
-    <p class="ring6-note">Honest limit: this score reads HOW a text claims (labels, evidence anchors, hedges, pressure language), not WHETHER the claim is true. The built-in engine is capped at 90% and cannot pass the 95% gate alone. A passing score needs a model answering each lens with evidence.</p>
+    <p class="ring6-note">Honest limits: the top score is how well outside sources agree, not proof. Wikipedia and papers can be wrong or silent on a claim. The lens score below it reads how the text is written, not whether it is true, and the built-in engine is capped at 90%.</p>
   </div>
 </section>
 
@@ -1035,7 +1045,7 @@ var STORAGE_KEY="nxu_chat_history";
 var SETTINGS_KEY="nxu_api_settings";
 var MAX_HISTORY=20;
 var chatHistory=[];
-var apiSettings={endpoint:"",key:"",model:""};
+var apiSettings={provider:"mimo",endpoint:"",key:"",model:""};
 
 function loadHistory(){
   try{var d=localStorage.getItem(STORAGE_KEY);if(d)chatHistory=JSON.parse(d).slice(-MAX_HISTORY);}catch(e){}
@@ -1044,32 +1054,41 @@ function saveHistory(){
   try{localStorage.setItem(STORAGE_KEY,JSON.stringify(chatHistory.slice(-MAX_HISTORY)));}catch(e){}
 }
 function loadSettings(){
-  try{var d=localStorage.getItem(SETTINGS_KEY);if(d)apiSettings=JSON.parse(d);}catch(e){}
-  document.getElementById("api-endpoint").value=apiSettings.endpoint||"";
+  try{var d=window.NXProviders&&window.NXProviders.load();if(d)apiSettings={provider:d.provider,endpoint:window.NXProviders.PROVIDERS[d.provider].endpoint,key:d.key,model:d.model};}catch(e){}
+  document.getElementById("api-provider").value=apiSettings.provider||"mimo";
   document.getElementById("api-key").value=apiSettings.key||"";
-  document.getElementById("api-model").value=apiSettings.model||"";
-  updateModeBadge();
+  document.getElementById("api-model").value=apiSettings.model&&apiSettings.model!==(window.NXProviders&&window.NXProviders.PROVIDERS[apiSettings.provider]||{}).model?apiSettings.model:"";
+  updateModeBadge();refreshFree();
 }
 function saveSettings(){
-  apiSettings.endpoint=document.getElementById("api-endpoint").value.trim()||"https://integrations.emergentagent.com/llm/v1/chat/completions";
-  apiSettings.key=document.getElementById("api-key").value.trim();
-  apiSettings.model=document.getElementById("api-model").value.trim()||"gpt-4o-mini";
-  try{localStorage.setItem(SETTINGS_KEY,JSON.stringify(apiSettings));}catch(e){}
-  updateModeBadge();
+  var prov=document.getElementById("api-provider").value;
+  var key=document.getElementById("api-key").value.trim();
+  var model=document.getElementById("api-model").value.trim();
+  if(!key){showNotice("Paste your key first.");return;}
+  var d=window.NXProviders.save(prov,key,model);
+  apiSettings={provider:d.provider,endpoint:window.NXProviders.PROVIDERS[d.provider].endpoint,key:d.key,model:d.model};
+  updateModeBadge();refreshFree();
+  document.dispatchEvent(new CustomEvent("nx-settings-changed"));
 }
 function clearSettings(){
-  apiSettings={endpoint:"",key:"",model:""};
-  try{localStorage.removeItem(SETTINGS_KEY);}catch(e){}
-  document.getElementById("api-endpoint").value="";
+  apiSettings={provider:"mimo",endpoint:"",key:"",model:""};
+  try{window.NXProviders.clear();}catch(e){}
   document.getElementById("api-key").value="";
   document.getElementById("api-model").value="";
-  updateModeBadge();
+  updateModeBadge();refreshFree();
+  document.dispatchEvent(new CustomEvent("nx-settings-changed"));
+}
+async function refreshFree(){
+  var el=document.getElementById("api-free-left");if(!el||!window.NXProviders)return;
+  if(window.NXProviders.mine()){el.textContent="Using your own key. No limit from us.";return;}
+  var q=await window.NXProviders.quota();
+  el.textContent=q?(q.remaining>0?"Free questions left: "+q.remaining+" of "+q.freeLimit:"Your free questions are used. Add your own key to continue."):"";
 }
 function isApiMode(){return!!(apiSettings.key&&apiSettings.endpoint)}
 function updateModeBadge(){
   var badge=document.getElementById("mode-badge");
   if(isApiMode()){
-    badge.textContent="API Mode (Connected) — "+(apiSettings.model||"gpt-4o-mini");
+    badge.textContent="Your key — "+((window.NXProviders&&window.NXProviders.PROVIDERS[apiSettings.provider]||{}).label||"")+" — "+(apiSettings.model||"");
     badge.className="mode-badge mode-api";
   }else{
     badge.textContent="Running in Browser Mode — Voice + Local Intelligence";
@@ -1115,7 +1134,7 @@ async function sendMessage(){
   chatHistory.push({role:"user",text:text,ts:Date.now()});
   renderChat();
 
-  if(isApiMode()){
+  if(isApiMode()||window.__nxFreeLeft!==0){
     await sendApiMessage(text);
   }else{
     sendBrowserMessage(text);
@@ -1133,59 +1152,34 @@ function sendBrowserMessage(text){
 }
 
 async function sendApiMessage(text){
-  var endpoint=apiSettings.endpoint||"https://integrations.emergentagent.com/llm/v1/chat/completions";
-  var model=apiSettings.model||"gpt-4o-mini";
-  var key=apiSettings.key;
-
   var linksContext=LINKS_DB.map(function(l){return l.name+" — "+l.url+" — "+l.desc}).join("\n");
   var rogerMessages=[{role:"system",content:ROGER_KERNEL+"\n\nFederation links:\n"+linksContext}];
   var ariaMessages=[{role:"system",content:ARIA_KERNEL+"\n\nFederation links:\n"+linksContext}];
-
   var recent=chatHistory.slice(-18);
   recent.forEach(function(m){
-    if(m.role==="user"){
-      rogerMessages.push({role:"user",content:m.text});
-      ariaMessages.push({role:"user",content:m.text});
-    }else if(m.role==="roger"){
-      rogerMessages.push({role:"assistant",content:m.text});
-    }else if(m.role==="aria"){
-      ariaMessages.push({role:"assistant",content:m.text});
-    }
+    if(m.role==="user"){rogerMessages.push({role:"user",content:m.text});ariaMessages.push({role:"user",content:m.text});}
+    else if(m.role==="roger"){rogerMessages.push({role:"assistant",content:m.text});}
+    else if(m.role==="aria"){ariaMessages.push({role:"assistant",content:m.text});}
   });
   rogerMessages.push({role:"user",content:text});
   ariaMessages.push({role:"user",content:text});
-
   var rogerResp="",ariaResp="";
   try{
-    var results=await Promise.allSettled([
-      fetchLLM(endpoint,key,model,rogerMessages),
-      fetchLLM(endpoint,key,model,ariaMessages)
-    ]);
-    if(results[0].status==="fulfilled"){rogerResp=results[0].value;}
-    else{throw results[0].reason;}
-    if(results[1].status==="fulfilled"){ariaResp=results[1].value;}
-    else{ariaResp=browserAriaResponse(text);}
+    var r=await window.NXProviders.ask(rogerMessages,{maxTokens:600,temperature:0.7});
+    rogerResp=r.text||"(No response)";
+    try{ariaResp=(await window.NXProviders.callOwn(ariaMessages,{maxTokens:600,temperature:0.7}));}
+    catch(e2){ariaResp=browserAriaResponse(text);}
   }catch(err){
     rogerResp=browserRogerResponse(text);
     ariaResp=browserAriaResponse(text);
-    showNotice("API error — fell back to browser mode. "+err.message);
+    showNotice(err.code==="need_key"?"Your free questions are used. Open API Settings and add your own key.":"API error, fell back to browser mode. "+err.message);
   }
   chatHistory.push({role:"roger",text:rogerResp,ts:Date.now()});
   chatHistory.push({role:"aria",text:ariaResp,ts:Date.now()});
   saveHistory();
   renderChat();
+  refreshFree();
   speakIfEnabled(rogerResp+" ... "+ariaResp);
-}
-
-async function fetchLLM(endpoint,key,model,messages){
-  var res=await fetch(endpoint,{
-    method:"POST",
-    headers:{"Content-Type":"application/json","Authorization":"Bearer "+key},
-    body:JSON.stringify({model:model,messages:messages,max_tokens:600,temperature:0.7})
-  });
-  if(!res.ok)throw new Error("API "+res.status);
-  var data=await res.json();
-  return(data.choices&&data.choices[0]&&data.choices[0].message&&data.choices[0].message.content)||"(No response)";
 }
 
 /* ======================================================
@@ -1277,24 +1271,50 @@ if(chatHistory.length>0)renderChat();
 (function(){
   var COL={mind:"#4fc3f7",heart:"#ef5350",hands:"#66bb6a",legs:"#ffb74d",eyes:"#ba68c8"};
   function $(id){return document.getElementById(id);}
-  function settings(){try{var d=JSON.parse(localStorage.getItem("nxu_api_settings")||"{}");return d&&d.key?d:null;}catch(e){return null;}}
-  function mode(){var s=settings();$("ring6-mode").textContent=s?"Mode: your own model ("+(s.model||"gpt-4o-mini")+") answers each lens. Your key stays in this browser.":"Mode: built-in lenses, free, no key. Add your key in API Settings above to have a model answer each lens.";}
-  function esc(t){var d=document.createElement("div");d.textContent=t;return d.innerHTML;}
-  mode();
-  document.addEventListener("click",function(){setTimeout(mode,300);});
+  function esc(t){var d=document.createElement("div");d.textContent=t==null?"":String(t);return d.innerHTML;}
+  async function mode(){
+    var el=$("ring6-mode");
+    if(window.NXProviders.mine()){var s=window.NXProviders.load();el.textContent="Mode: your own key ("+window.NXProviders.PROVIDERS[s.provider].label+"). A model checks the sources and answers each lens.";return;}
+    var q=await window.NXProviders.quota();
+    el.textContent=q&&q.remaining>0?"Free: "+q.remaining+" of "+q.freeLimit+" questions left. Each check uses one. Then add your own key in API Settings above.":q?"Your free questions are used. Add your own key in API Settings above to keep going.":"Built-in lenses only (the free service is not reachable). Add your own key in API Settings above for the source check.";
+  }
+  mode();document.addEventListener("nx-settings-changed",mode);
+  function renderTruth(t){
+    var box=$("ring6-truth");box.style.display="block";
+    var pct=t.percent==null?"--":t.percent+"%";
+    var src=t.sources.map(function(x){
+      var v=x.verdict||"";var c=v==="SUPPORTS"?"var(--green)":v==="CONTRADICTS"?"var(--red)":"var(--text-dim)";
+      return '<li><span style="color:'+c+';font-weight:700">'+esc(v||"LISTED")+'</span> <a href="'+esc(x.url)+'" target="_blank" rel="noopener">'+esc(x.title)+'</a> <span class="meta">('+esc(x.source)+')</span>'+(x.why?'<div class="meta">'+esc(x.why)+'</div>':'')+'</li>';}).join("");
+    box.innerHTML='<div class="ring6-pct">'+pct+'<small> source agreement</small></div><div class="ring6-verdict below" style="margin-top:8px">'+esc(t.label)+'</div>'+(src?'<ol class="ring6-src">'+src+'</ol>':'')+(t.notes&&t.notes.length?'<div class="meta">'+esc(t.notes.join("; "))+'</div>':'');
+  }
   $("ring6-form").addEventListener("submit",async function(ev){
     ev.preventDefault();
     var q=$("ring6-q").value.trim();if(!q||!window.RingOfSix)return;
-    var btn=$("ring6-go");btn.disabled=true;btn.textContent="Reading...";
-    var s=settings(),engine=null;
-    if(s){engine=window.RingOfSix.makeEngine({endpoint:s.endpoint||"https://integrations.emergentagent.com/llm/v1/chat/completions",key:s.key,model:s.model||"gpt-4o-mini"});}
+    var btn=$("ring6-go");btn.disabled=true;btn.textContent="Checking sources...";
+    $("ring6-truth").style.display="none";
+    var ownKey=!!window.NXProviders.mine(),needKey=false,usedFree=false;
+    var ask=async function(m,o){var r=await window.NXProviders.ask(m,o);if(r.via==="free")usedFree=true;return r.text;};
     try{
+      /* 1. source check (the real truth percentage). One free question covers the whole check. */
+      var t;
+      try{t=await window.NXTruthCheck.check(q,ask);}
+      catch(e){
+        if(e.code==="need_key"){needKey=true;t=await window.NXTruthCheck.check(q,null);t.label="FREE QUESTIONS USED. Sources are listed but not judged. Add your own key in API Settings to score them.";}
+        else{t=await window.NXTruthCheck.check(q,null);t.notes=(t.notes||[]).concat(["The judge model failed: "+e.message]);}
+      }
+      renderTruth(t);
+      /* 2. the six-lens read: the visitor's model if they have a key, else built-in lenses */
+      $("ring6-go").textContent="Running the Ring...";
+      var engine=ownKey?async function(spec,prompt){return window.NXProviders.callOwn([{role:"system",content:spec.system},{role:"user",content:prompt}],{maxTokens:600,temperature:0.3});}:null;
       var r=await window.RingOfSix.analyze(q,{engine:engine});
       $("ring6-gauge").style.display="block";
       $("ring6-pct").textContent=r.truth_percent;
       $("ring6-fill").style.width=Math.min(100,r.truth_percent)+"%";
       var v=r.agent_zero.verdict,ve=$("ring6-verdict");
-      ve.textContent=v==="VERIFIED"?"VERIFIED: cleared the 95% Truth Gate":v==="BLOCKED"?"BLOCKED: a lens broke its directives":"LABELED: below the 95% gate, shown for what it is";
+      /* the wording score can never declare "verified" on its own: the 95% gate also needs the outside sources to agree */
+      var srcOk=t&&t.percent!=null&&t.percent>=95;
+      if(v==="VERIFIED"&&!srcOk)v="LABELED";
+      ve.textContent=v==="VERIFIED"?"VERIFIED: wording and sources both clear the 95% Truth Gate":v==="BLOCKED"?"BLOCKED: a lens broke its directives":"LABELED: not verified. The wording score alone cannot pass the 95% gate; the sources must agree too.";
       ve.className="ring6-verdict "+(v==="VERIFIED"?"pass":v==="BLOCKED"?"blocked":"below");
       $("ring6-rec").textContent="Recommendation: "+r.recommendation.replace(/_/g," ")+" (weighted stance "+(r.weighted_stance>=0?"+":"")+r.weighted_stance.toFixed(2)+") | Classified: "+r.classification;
       $("ring6-conflicts").textContent=r.conflicts.length?"Disagreement preserved: "+r.conflicts.map(function(c){return c.lenses.join(" vs ")+" ("+c.agreement.toFixed(2)+")";}).join("; ")+". "+r.conflicts[0].resolution_hint:"No lens pair crossed the conflict line.";
@@ -1303,9 +1323,9 @@ if(chatHistory.length>0)renderChat();
       box.innerHTML=r.lens_order.map(function(k){var L=r.lenses[k];
         var err=L.metadata&&L.metadata.engine_error?" | model error, used built-in lens":"";
         return '<article class="ring6-lens" style="--c:'+COL[k]+'"><h3>'+L.symbol+" "+L.name+" ("+L.body_part+')</h3><div class="meta">confidence '+Math.round(L.confidence*100)+"% | weight "+Math.round(w[k]*100)+"% | "+L.classification+" | "+(L.engine==="engine"?"model":"built-in")+err+"</div><pre>"+esc(L.perspective)+"</pre></article>";}).join("");
-      mode();
     }catch(e){$("ring6-mode").textContent="The Ring could not run: "+e.message;}
     btn.disabled=false;btn.textContent="Run the Ring";
+    mode();
   });
 })();
 </script>
