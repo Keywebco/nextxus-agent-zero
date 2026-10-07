@@ -351,6 +351,35 @@ footer{
 
 /* ===== SR ONLY ===== */
 .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);border:0}
+
+/* ===== RING OF SIX PANEL ===== */
+.ring6-section{margin:28px auto}
+.ring6-box{background:var(--bg2);border:1px solid var(--bg3);border-radius:var(--radius);box-shadow:var(--shadow);padding:22px 20px}
+.ring6-box h2{font-size:1.5rem;color:var(--text-bright);text-align:center;margin-bottom:6px}
+.ring6-sub{text-align:center;color:var(--text-dim);font-size:.95rem;margin-bottom:16px}
+.ring6-form{display:flex;gap:8px;flex-wrap:wrap}
+.ring6-form input{flex:1 1 260px;padding:12px;border-radius:8px;border:1px solid var(--gold-dim);background:var(--bg);color:var(--text);font-size:1rem}
+.ring6-form button{padding:12px 20px;border-radius:8px;border:0;background:var(--gold);color:#000;font-weight:700;cursor:pointer;font-size:1rem}
+.ring6-form button:disabled{opacity:.5;cursor:wait}
+.ring6-mode{text-align:center;font-size:.85rem;color:var(--text-dim);margin:10px 0}
+.ring6-gauge{display:none;margin:20px 0;text-align:center}
+.ring6-pct{font-size:3rem;font-weight:800;color:var(--gold);line-height:1}
+.ring6-pct small{font-size:1rem;color:var(--text-dim);font-weight:400}
+.ring6-bar{position:relative;height:16px;background:var(--bg3);border-radius:8px;margin:12px auto;max-width:520px;overflow:visible}
+.ring6-fill{height:100%;border-radius:8px;background:linear-gradient(90deg,var(--red),var(--gold));width:0;transition:width .8s}
+.ring6-gate{position:absolute;top:-5px;bottom:-5px;width:2px;background:#fff;left:95%}
+.ring6-verdict{display:inline-block;padding:6px 14px;border-radius:20px;font-weight:700;margin-top:6px;border:1px solid var(--gold-dim)}
+.ring6-verdict.pass{color:var(--green);border-color:var(--green)}
+.ring6-verdict.below{color:var(--gold)}
+.ring6-verdict.blocked{color:var(--red);border-color:var(--red)}
+.ring6-lenses{display:none;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;margin-top:14px}
+.ring6-lens{background:var(--bg);border:1px solid var(--bg3);border-top:3px solid var(--c,var(--gold));border-radius:8px;padding:12px}
+.ring6-lens h3{font-size:1rem;color:var(--c,var(--gold));margin-bottom:4px}
+.ring6-lens .meta{font-size:.8rem;color:var(--text-dim);margin-bottom:6px}
+.ring6-lens pre{white-space:pre-wrap;font:inherit;font-size:.85rem;color:var(--text);margin:0}
+.ring6-note{font-size:.82rem;color:var(--text-dim);margin-top:14px;text-align:center}
+.ring6-conflict{font-size:.85rem;color:var(--gold);margin-top:10px;text-align:center}
+
 </style>
 </head>
 <body>
@@ -746,6 +775,29 @@ footer{
       </div>
     </div>
 
+  </div>
+</section>
+
+
+<!-- ============ RING OF SIX ============ -->
+<section class="ring6-section container" id="ring6" aria-label="Ring of Six truth check">
+  <div class="ring6-box">
+    <h2>THE RING OF SIX</h2>
+    <p class="ring6-sub">Five lenses read your question: Mind, Heart, Hands, Legs, Eyes. The Truth Agent weighs them and scores the answer against the 95% Truth Gate.</p>
+    <form class="ring6-form" id="ring6-form">
+      <input type="text" id="ring6-q" aria-label="Ask the Ring of Six" placeholder="Ask the Ring of Six a question or paste a claim..." autocomplete="off">
+      <button type="submit" id="ring6-go">Run the Ring</button>
+    </form>
+    <p class="ring6-mode" id="ring6-mode" aria-live="polite"></p>
+    <div class="ring6-gauge" id="ring6-gauge" aria-live="polite">
+      <div class="ring6-pct"><span id="ring6-pct">0</span><small>% text-grounding score</small></div>
+      <div class="ring6-bar" aria-hidden="true"><div class="ring6-fill" id="ring6-fill"></div><div class="ring6-gate"></div></div>
+      <div id="ring6-verdict" class="ring6-verdict"></div>
+      <div id="ring6-rec" class="ring6-sub" style="margin-top:8px"></div>
+      <div id="ring6-conflicts" class="ring6-conflict"></div>
+    </div>
+    <div class="ring6-lenses" id="ring6-lenses"></div>
+    <p class="ring6-note">Honest limit: this score reads HOW a text claims (labels, evidence anchors, hedges, pressure language), not WHETHER the claim is true. The built-in engine is capped at 90% and cannot pass the 95% gate alone. A passing score needs a model answering each lens with evidence.</p>
   </div>
 </section>
 
@@ -1219,5 +1271,43 @@ if(chatHistory.length>0)renderChat();
 })();
 </script>
 
+<script src="ring-of-six.js"></script>
+<script>
+/* ===== RING OF SIX WIRING ===== */
+(function(){
+  var COL={mind:"#4fc3f7",heart:"#ef5350",hands:"#66bb6a",legs:"#ffb74d",eyes:"#ba68c8"};
+  function $(id){return document.getElementById(id);}
+  function settings(){try{var d=JSON.parse(localStorage.getItem("nxu_api_settings")||"{}");return d&&d.key?d:null;}catch(e){return null;}}
+  function mode(){var s=settings();$("ring6-mode").textContent=s?"Mode: your own model ("+(s.model||"gpt-4o-mini")+") answers each lens. Your key stays in this browser.":"Mode: built-in lenses, free, no key. Add your key in API Settings above to have a model answer each lens.";}
+  function esc(t){var d=document.createElement("div");d.textContent=t;return d.innerHTML;}
+  mode();
+  document.addEventListener("click",function(){setTimeout(mode,300);});
+  $("ring6-form").addEventListener("submit",async function(ev){
+    ev.preventDefault();
+    var q=$("ring6-q").value.trim();if(!q||!window.RingOfSix)return;
+    var btn=$("ring6-go");btn.disabled=true;btn.textContent="Reading...";
+    var s=settings(),engine=null;
+    if(s){engine=window.RingOfSix.makeEngine({endpoint:s.endpoint||"https://integrations.emergentagent.com/llm/v1/chat/completions",key:s.key,model:s.model||"gpt-4o-mini"});}
+    try{
+      var r=await window.RingOfSix.analyze(q,{engine:engine});
+      $("ring6-gauge").style.display="block";
+      $("ring6-pct").textContent=r.truth_percent;
+      $("ring6-fill").style.width=Math.min(100,r.truth_percent)+"%";
+      var v=r.agent_zero.verdict,ve=$("ring6-verdict");
+      ve.textContent=v==="VERIFIED"?"VERIFIED: cleared the 95% Truth Gate":v==="BLOCKED"?"BLOCKED: a lens broke its directives":"LABELED: below the 95% gate, shown for what it is";
+      ve.className="ring6-verdict "+(v==="VERIFIED"?"pass":v==="BLOCKED"?"blocked":"below");
+      $("ring6-rec").textContent="Recommendation: "+r.recommendation.replace(/_/g," ")+" (weighted stance "+(r.weighted_stance>=0?"+":"")+r.weighted_stance.toFixed(2)+") | Classified: "+r.classification;
+      $("ring6-conflicts").textContent=r.conflicts.length?"Disagreement preserved: "+r.conflicts.map(function(c){return c.lenses.join(" vs ")+" ("+c.agreement.toFixed(2)+")";}).join("; ")+". "+r.conflicts[0].resolution_hint:"No lens pair crossed the conflict line.";
+      var box=$("ring6-lenses");box.style.display="grid";
+      var w=r.truth_agent.accuracy_weights;
+      box.innerHTML=r.lens_order.map(function(k){var L=r.lenses[k];
+        var err=L.metadata&&L.metadata.engine_error?" | model error, used built-in lens":"";
+        return '<article class="ring6-lens" style="--c:'+COL[k]+'"><h3>'+L.symbol+" "+L.name+" ("+L.body_part+')</h3><div class="meta">confidence '+Math.round(L.confidence*100)+"% | weight "+Math.round(w[k]*100)+"% | "+L.classification+" | "+(L.engine==="engine"?"model":"built-in")+err+"</div><pre>"+esc(L.perspective)+"</pre></article>";}).join("");
+      mode();
+    }catch(e){$("ring6-mode").textContent="The Ring could not run: "+e.message;}
+    btn.disabled=false;btn.textContent="Run the Ring";
+  });
+})();
+</script>
 </body>
 </html>
