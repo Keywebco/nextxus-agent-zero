@@ -1083,7 +1083,7 @@ async function refreshFree(){
   var el=document.getElementById("api-free-left");if(!el||!window.NXProviders)return;
   if(window.NXProviders.mine()){el.textContent="Using your own key. No limit from us.";return;}
   var q=await window.NXProviders.quota();
-  el.textContent=q?(q.remaining>0?"Free questions left: "+q.remaining+" of "+q.freeLimit:"Your free questions are used. Add your own key to continue."):"";
+  el.textContent=q&&q.owner?"Owner: unlimited.":q?(q.remaining>0?"Free questions left: "+q.remaining+" of "+q.freeLimit:"Your free questions are used. Add your own key to continue."):"";
 }
 function isApiMode(){return!!(apiSettings.key&&apiSettings.endpoint)}
 function updateModeBadge(){

@@ -12,6 +12,18 @@
     grok:     {label: "Grok (xAI)",     endpoint: "https://api.x.ai/v1/chat/completions",           model: "grok-3-mini",     maxTokens: 800},
     openai:   {label: "OpenAI",         endpoint: "https://api.openai.com/v1/chat/completions",     model: "gpt-4o-mini",     maxTokens: 500}
   };
+
+  /* Owner unlock: open any page with #owner=TOKEN once on a device. The token is saved in that browser only,
+   * removed from the address bar, and sent as a header so the Federation server skips the free-question limit. */
+  var OWNER_KEY = "nx_owner_token";
+  try {
+    var mh = /[#&]owner=([A-Za-z0-9_\-]{16,64})/.exec(location.hash || "");
+    if (mh) { localStorage.setItem(OWNER_KEY, mh[1]); history.replaceState(null, "", location.pathname + location.search); }
+  } catch (e) {}
+  function ownerHeaders(h) {
+    try { var t = localStorage.getItem(OWNER_KEY); if (t) h["x-owner-token"] = t; } catch (e) {}
+    return h;
+  }
   var KEY = "nx_provider_settings";
   var FREE_API = "https://ring-of-12-api.onrender.com";
 
@@ -38,12 +50,12 @@
 
   /* Federation's free allowance: server counts questions per visitor */
   async function quota() {
-    try { var r = await fetch(FREE_API + "/quota"); return r.ok ? await r.json() : null; } catch (e) { return null; }
+    try { var r = await fetch(FREE_API + "/quota", {headers: ownerHeaders({})}); return r.ok ? await r.json() : null; } catch (e) { return null; }
   }
 
   /* Federation's free allowance: the server runs the call and counts it against the visitor */
   async function callFree(messages, opts) {
-    var res = await fetch(FREE_API + "/complete", {method: "POST", headers: {"Content-Type": "application/json"},
+    var res = await fetch(FREE_API + "/complete", {method: "POST", headers: ownerHeaders({"Content-Type": "application/json"}),
       body: JSON.stringify({messages: messages, maxTokens: (opts && opts.maxTokens) || 900})});
     if (res.status === 402 || res.status === 503) { var b = {}; try { b = await res.json(); } catch (e) {} var e = new Error(b.message || "Your free questions are used. Add your own key to continue."); e.code = "need_key"; e.quota = b; throw e; }
     if (!res.ok) throw new Error("free service error " + res.status);
