@@ -258,7 +258,9 @@ footer a:hover{text-decoration:underline}
     <div class="key-row">
       <div class="field">
         <label for="api-key">API Key (OpenAI or DeepSeek)</label>
-        <input type="password" id="api-key" placeholder="sk-… or ds-…" autocomplete="off">
+        <select id="nx-prov" aria-label="AI provider" style="padding:10px;border-radius:8px;background:#0f1117;color:#e8e8e8;border:1px solid #333;margin-bottom:8px;width:100%"><option value="mimo">MiMo (Xiaomi)</option><option value="deepseek">DeepSeek</option><option value="grok">Grok (xAI)</option><option value="openai">OpenAI</option></select>
+        <input type="password" id="api-key" placeholder="paste your key (optional: 3 free questions first)" autocomplete="off">
+        <p id="nx-free" style="font-size:.82rem;color:#d4af37;margin:6px 0"></p>
       </div>
       <a href="https://keywebster.gumroad.com/l/mimet" target="_blank" rel="noopener" class="get-key-link" title="Get a Nextxus Sovereign Token — $5, works like cash, never expires">
         🪙 Get a Nextxus API
@@ -394,32 +396,8 @@ const transformType=document.getElementById('transform-type');
 
 btnTransform.addEventListener('click',async()=>{
   const content=inputText.value.trim();
-  const key=keyInput.value.trim();
   if(!content){alert('Paste some content first.');inputText.focus();return}
-  if(!key){alert('Enter your API key.');keyInput.focus();return}
-
   const sysPrompt=PROMPTS[transformType.value];
-
-  // Determine endpoint
-  let url,model,headers,body;
-  if(key.startsWith('sk-')){
-    url='https://api.openai.com/v1/chat/completions';
-    model='gpt-3.5-turbo';
-  } else {
-    url='https://api.deepseek.com/chat/completions';
-    model='deepseek-chat';
-  }
-
-  headers={'Content-Type':'application/json','Authorization':'Bearer '+key};
-  body=JSON.stringify({
-    model:model,
-    messages:[
-      {role:'system',content:sysPrompt},
-      {role:'user',content:content}
-    ],
-    temperature:0.7,
-    max_tokens:2048
-  });
 
   // UI states
   btnTransform.disabled=true;
@@ -428,16 +406,10 @@ btnTransform.addEventListener('click',async()=>{
   outputBox.textContent='';
 
   try{
-    const res=await fetch(url,{method:'POST',headers:headers,body:body});
-    if(!res.ok){
-      const err=await res.json().catch(()=>null);
-      throw new Error(err?.error?.message||'API returned '+res.status);
-    }
-    const data=await res.json();
-    const result=data.choices?.[0]?.message?.content||'No content returned.';
+    const result=await window.nxChat([{role:'system',content:sysPrompt},{role:'user',content:content}],{maxTokens:2048,temperature:0.7})||'No content returned.';
     outputBox.textContent=result;
   }catch(e){
-    outputBox.textContent='❌ Error: '+e.message;
+    outputBox.textContent=e.code==='need_key'?'Your 3 free questions are used. Paste your own key above (MiMo, DeepSeek, Grok or OpenAI) to continue.':'❌ Error: '+e.message;
   }finally{
     btnTransform.disabled=false;
     btnLabel.textContent='♻ Transform';
@@ -455,6 +427,26 @@ document.getElementById('btn-copy').addEventListener('click',()=>{
     setTimeout(()=>btn.textContent='📋 Copy',1800);
   }).catch(()=>alert('Copy failed — please select and copy manually.'));
 });
+</script>
+<script src="../nx-providers.js"></script>
+<script>
+/* Shared free-question wiring. No key: 3 free questions on the Federation server. With a key: the provider you pick. */
+window.nxChat=async function(messages,opts){
+  var keyEl=document.getElementById('api-key'),provEl=document.getElementById('nx-prov');
+  var key=keyEl?keyEl.value.trim():'';
+  if(key){window.NXProviders.save(provEl?provEl.value:'mimo',key,'');}
+  else{window.NXProviders.clear();}
+  var r=await window.NXProviders.ask(messages,opts||{maxTokens:1500});
+  nxFree();return r.text;
+};
+window.nxFree=async function(){
+  var el=document.getElementById('nx-free');if(!el)return;
+  var k=document.getElementById('api-key');
+  if(k&&k.value.trim()){el.textContent='Using your own key. No limit from us.';return;}
+  var q=await window.NXProviders.quota();
+  el.textContent=q?(q.remaining>0?'Free questions left: '+q.remaining+' of '+q.freeLimit+'. After that, paste your own key above.':'Your free questions are used. Paste your own key above to continue.'):'';
+};
+window.addEventListener('load',function(){nxFree();var k=document.getElementById('api-key');if(k)k.addEventListener('input',nxFree);});
 </script>
 </body>
 </html>
