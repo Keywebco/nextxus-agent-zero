@@ -131,7 +131,9 @@ footer a:hover{text-decoration:underline}
     <div class="api-section">
       <label>API Key (OpenAI or DeepSeek)</label>
       <div class="api-row">
-        <input id="apiKey" type="password" placeholder="sk-… or ds-…" autocomplete="off">
+        <select id="nx-prov" aria-label="AI provider" style="padding:10px;border-radius:8px;background:#0f1117;color:#e8e8e8;border:1px solid #333;margin-bottom:8px;width:100%"><option value="mimo">MiMo (Xiaomi)</option><option value="deepseek">DeepSeek</option><option value="grok">Grok (xAI)</option><option value="openai">OpenAI</option></select>
+      <input id="apiKey" type="password" placeholder="paste your key (optional: 3 free questions first)" autocomplete="off">
+      <p id="nx-free" style="font-size:.82rem;color:#d4af37;margin:6px 0"></p>
         <a class="btn-key" href="https://keywebster.gumroad.com/l/mimet" target="_blank" rel="noopener">🔑 Get a Nextxus API</a>
       </div>
     </div>
@@ -320,40 +322,17 @@ function displayResult(parsed){
 async function handleWrite(){
   const text=document.getElementById('inputText').value.trim();
   if(!text){showError('Please enter some text first.');return}
-  const key=getApiKey();
-  if(!key){showError('Please enter your API key (OpenAI or DeepSeek).');return}
   const goal=document.getElementById('goalSelect').value;
   const btn=document.getElementById('btnWrite');
   btn.disabled=true;btn.classList.add('loading');
   document.getElementById('errorMsg').style.display='none';
-  const isOpenAI=key.startsWith('sk-');
-  const url=isOpenAI?'https://api.openai.com/v1/chat/completions':'https://api.deepseek.com/chat/completions';
-  const model=isOpenAI?'gpt-3.5-turbo':'deepseek-chat';
   try{
-    const resp=await fetch(url,{
-      method:'POST',
-      headers:{'Content-Type':'application/json','Authorization':'Bearer '+key},
-      body:JSON.stringify({
-        model:model,
-        messages:[
-          {role:'system',content:SYSTEM_PROMPT},
-          {role:'user',content:`Writing Goal: ${goal}\n\nText:\n${text}`}
-        ],
-        temperature:0.7,
-        max_tokens:2048
-      })
-    });
-    if(!resp.ok){
-      const err=await resp.json().catch(()=>({}));
-      throw new Error(err.error?.message||`API error ${resp.status}`);
-    }
-    const data=await resp.json();
-    const raw=data.choices?.[0]?.message?.content||'';
+    const raw=await window.nxChat([{role:'system',content:SYSTEM_PROMPT},{role:'user',content:`Writing Goal: ${goal}\n\nText:\n${text}`}],{maxTokens:2048,temperature:0.7});
     if(!raw)throw new Error('Empty response from API');
     const parsed=parseResponse(raw);
     displayResult(parsed);
   }catch(e){
-    showError('Error: '+e.message);
+    showError(e.code==='need_key'?'Your 3 free questions are used. Paste your own key above (MiMo, DeepSeek, Grok or OpenAI) to continue.':'Error: '+e.message);
   }finally{
     btn.disabled=false;btn.classList.remove('loading');
   }
@@ -364,6 +343,26 @@ async function handleWrite(){
   const saved=sessionStorage.getItem('sw_apikey');
   if(saved)document.getElementById('apiKey').value=saved;
 })();
+</script>
+<script src="../nx-providers.js"></script>
+<script>
+/* Shared free-question wiring. No key: 3 free questions on the Federation server. With a key: the provider you pick. */
+window.nxChat=async function(messages,opts){
+  var keyEl=document.getElementById('apiKey'),provEl=document.getElementById('nx-prov');
+  var key=keyEl?keyEl.value.trim():'';
+  if(key){window.NXProviders.save(provEl?provEl.value:'mimo',key,'');}
+  else{window.NXProviders.clear();}
+  var r=await window.NXProviders.ask(messages,opts||{maxTokens:1500});
+  nxFree();return r.text;
+};
+window.nxFree=async function(){
+  var el=document.getElementById('nx-free');if(!el)return;
+  var k=document.getElementById('apiKey');
+  if(k&&k.value.trim()){el.textContent='Using your own key. No limit from us.';return;}
+  var q=await window.NXProviders.quota();
+  el.textContent=q?(q.remaining>0?'Free questions left: '+q.remaining+' of '+q.freeLimit+'. After that, paste your own key above.':'Your free questions are used. Paste your own key above to continue.'):'';
+};
+window.addEventListener('load',function(){nxFree();var k=document.getElementById('apiKey');if(k)k.addEventListener('input',nxFree);});
 </script>
 </body>
 </html>
