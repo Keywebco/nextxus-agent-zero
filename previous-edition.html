@@ -1739,7 +1739,7 @@ function renderKanban(tasks) {
     var colIdx = COLS.indexOf(task.col);
     var nextCol = colIdx < COLS.length - 1 ? COLS[colIdx + 1] : null;
     var advanceHtml = nextCol
-      ? '<button class="advance-btn" onclick="advanceTask('' + task.id + '')" aria-label="Advance ' + task.title + ' to ' + nextCol + '">▶ ' + nextCol + '</button>'
+      ? '<button class="advance-btn" onclick="advanceTask(\'' + task.id + '\')" aria-label="Advance ' + task.title + ' to ' + nextCol + '">▶ ' + nextCol + '</button>'
       : '<span style="font-size:0.7rem; color:var(--green);">✓ Done</span>';
 
     card.innerHTML = '<div class="k-title">' + task.title + '</div>' +
