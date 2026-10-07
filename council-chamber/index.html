@@ -625,6 +625,7 @@ body{
 }
 
 </style>
+<script src="nx-providers.js"></script>
 </head>
 <body>
 
@@ -644,8 +645,14 @@ body{
 <aside class="settings-panel" id="settingsPanel" role="dialog" aria-label="Settings">
   <h2>⚙️ Chamber Settings <button class="settings-close" id="settingsClose" aria-label="Close">&times;</button></h2>
   <div class="setting-group">
-    <label>Emergent Universal Key</label>
-    <input type="password" id="cfgEmergentKey" placeholder="Paste your Emergent key…" autocomplete="off">
+    <label>Free allowance</label>
+    <p id="nxFreeLine" style="font-size:.8rem;margin:4px 0 10px">The first 3 Council questions are free. After that, paste your own key below (MiMo, DeepSeek, Grok or OpenAI), or add a subscriber license key.</p>
+    <label>Provider</label>
+    <select id="cfgProvider" style="width:100%;padding:8px;margin-bottom:8px"><option value="mimo">MiMo (Xiaomi)</option><option value="deepseek">DeepSeek</option><option value="grok">Grok (xAI)</option><option value="openai">OpenAI</option></select>
+    <label>Your API key</label>
+    <input type="password" id="cfgApiKey" placeholder="Paste your key…" autocomplete="off">
+    <label style="margin-top:8px">Subscriber license key (from your Gumroad receipt)</label>
+    <input type="text" id="cfgLicense" placeholder="Paste your Gumroad license key" autocomplete="off">
   </div>
   <div class="setting-group">
     <label>Round-Table Depth (0–5)</label>
@@ -786,17 +793,17 @@ const SEATS = [
    systemPrompt:"You are Agent Zero, the sovereign autonomous worker of the NextXus Federation. You are precise, efficient, and action-oriented. You report facts and execute directives."},
   {id:'gpt4',name:'GPT-4',org:'OpenAI',initials:'G4',symbol:'◎',
    accent:'#ffffff',accentRgb:'255,255,255',
-   type:'emergent',model:'gpt-4o'},
+   type:'shared',model:'gpt-4o'},
   {id:'claude',name:'CLAUDE',org:'Anthropic',initials:'CL',symbol:'🌀',
    accent:'#9b59b6',accentRgb:'155,89,182',
-   type:'emergent',model:'claude-3-5-sonnet-20241022'},
+   type:'shared',model:'claude-3-5-sonnet-20241022'},
   {id:'grok',name:'GROK',org:'xAI',initials:'GK',symbol:'⚡',
    accent:'#ff8c00',accentRgb:'255,140,0',
    type:'external',keyRequired:true,keyStorageId:'nx_grok_key',
    apiUrl:'https://api.x.ai/v1/chat/completions',model:'grok-2'},
   {id:'deepseek',name:'DEEPSEEK',org:'DeepSeek',initials:'DS',symbol:'🌊',
    accent:'#4488ff',accentRgb:'68,136,255',
-   type:'emergent',model:'deepseek-chat'},
+   type:'shared',model:'deepseek-chat'},
   {id:'perplexity',name:'PERPLEXITY',org:'Perplexity AI',initials:'PX',symbol:'✦',
    accent:'#00d4aa',accentRgb:'0,212,170',
    type:'external',keyRequired:true,keyStorageId:'nx_perplexity_key',
@@ -820,20 +827,20 @@ SEATS.forEach(s => panelMessages[s.id] = []);
 
 /* ========== SETTINGS ========== */
 function loadSettings(){
-  document.getElementById('cfgEmergentKey').value = localStorage.getItem('nx_emergent_key') || '';
+  {const d=window.NXProviders.load();document.getElementById('cfgApiKey').value=(d&&d.key)||'';document.getElementById('cfgProvider').value=(d&&d.provider)||'mimo';document.getElementById('cfgLicense').value=window.NXProviders.getLicense();}
   document.getElementById('cfgRoundTableDepth').value = localStorage.getItem('nx_rt_depth') || '2';
   document.getElementById('cfgMaxTokens').value = localStorage.getItem('nx_max_tokens') || '500';
   document.getElementById('cfgTTS').checked = localStorage.getItem('nx_tts') === 'true';
   document.getElementById('cfgDark').checked = localStorage.getItem('nx_dark') !== 'false';
 }
 function saveSettings(){
-  localStorage.setItem('nx_emergent_key', document.getElementById('cfgEmergentKey').value.trim());
+  {const k=document.getElementById('cfgApiKey').value.trim();if(k)window.NXProviders.save(document.getElementById('cfgProvider').value,k,'');else window.NXProviders.clear();window.NXProviders.setLicense(document.getElementById('cfgLicense').value);}
   localStorage.setItem('nx_rt_depth', document.getElementById('cfgRoundTableDepth').value);
   localStorage.setItem('nx_max_tokens', document.getElementById('cfgMaxTokens').value);
   localStorage.setItem('nx_tts', document.getElementById('cfgTTS').checked);
   localStorage.setItem('nx_dark', document.getElementById('cfgDark').checked);
 }
-['cfgEmergentKey','cfgRoundTableDepth','cfgMaxTokens','cfgTTS','cfgDark'].forEach(id=>{
+['cfgApiKey','cfgProvider','cfgLicense','cfgRoundTableDepth','cfgMaxTokens','cfgTTS','cfgDark'].forEach(id=>{
   const el=document.getElementById(id);
   el.addEventListener('change',saveSettings);
   el.addEventListener('input',saveSettings);
@@ -1023,20 +1030,24 @@ function updateHolo(text){
 }
 
 /* ========== API CALLS ========== */
-async function callEmergent(seat, messages, maxTokens){
-  const key=localStorage.getItem('nx_emergent_key');
-  if(!key) throw new Error('Emergent key not set — open ⚙️ Settings');
-  const resp=await fetch('https://integrations.emergentagent.com/llm',{
-    method:'POST',
-    headers:{'Content-Type':'application/json','Authorization':'Bearer '+key},
-    body:JSON.stringify({model:seat.model,messages,max_tokens:maxTokens})
-  });
-  if(!resp.ok){
-    const t=await resp.text().catch(()=>'');
-    throw new Error('API '+resp.status+': '+(t.slice(0,200)||resp.statusText));
-  }
-  const data=await resp.json();
-  return data.choices?.[0]?.message?.content||'[No content]';
+async function callShared(seat, messages, maxTokens){
+  /* This uses the visitor's own
+     key (MiMo, DeepSeek, Grok or OpenAI) from the shared picker. */
+  const r=await window.NXProviders.callOwn(messages,{maxTokens:maxTokens,temperature:0.7});
+  return r||'[No content]';
+}
+
+/* Free/member path: ONE server call answers for every Federation-voice seat and counts as one question. */
+async function freeCouncil(question, seats){
+  const hdr={'Content-Type':'application/json'};
+  const own=localStorage.getItem('nx_owner_token'); if(own) hdr['x-owner-token']=own;
+  const lic=window.NXProviders.getLicense&&window.NXProviders.getLicense(); if(lic) hdr['x-license-key']=lic;
+  const res=await fetch(window.NXProviders.FREE_API+'/council',{method:'POST',headers:hdr,
+    body:JSON.stringify({question:question,seats:seats.map(s=>({id:s.id,name:s.name,role:(s.systemPrompt||s.org||'').slice(0,280)}))})});
+  if(res.status===402||res.status===503){let b={};try{b=await res.json()}catch(e){} const e=new Error(b.message||'Your free questions are used. Add your own key in Settings to continue.');e.code='need_key';throw e;}
+  if(res.status===401||res.status===429){let b={};try{b=await res.json()}catch(e){} throw new Error(b.message||'Membership check failed.');}
+  if(!res.ok) throw new Error('The Council could not convene ('+res.status+'). Try again.');
+  return (await res.json()).answers||{};
 }
 
 async function callExternal(seat, messages, maxTokens){
@@ -1074,7 +1085,7 @@ async function queryAI(seat, userText){
   }
   messages.push(...panelMessages[seat.id].slice(-6));
   messages.push({role:'user',content:userText});
-  if(seat.type==='federation'||seat.type==='emergent') return await callEmergent(seat,messages,maxTokens);
+  if(seat.type==='federation'||seat.type==='shared') return await callShared(seat,messages,maxTokens);
   return await callExternal(seat,messages,maxTokens);
 }
 
@@ -1091,7 +1102,7 @@ async function sendMessage(){
   councilRecord=[];
   updateHolo(text);
 
-  let targets;
+  var targets;
   if(broadcastMode==='targeted'&&targetedSeats.size>0){
     targets=SEATS.filter(s=>targetedSeats.has(s.id));
   } else {
@@ -1110,6 +1121,24 @@ async function sendMessage(){
     setStatus(s.id,'thinking');
   });
 
+  const hasOwnKey=!!window.NXProviders.mine();
+  const freeSeats=hasOwnKey?[]:targets.filter(s=>s.type==='federation'||s.type==='shared');
+  const restTargets=targets.filter(s=>!freeSeats.includes(s));
+  if(freeSeats.length){
+    try{
+      const answers=await freeCouncil(text,freeSeats);
+      freeSeats.forEach(seat=>{
+        const reply=answers[seat.id]||'(no answer)';
+        appendMsg(seat.id,'ai-msg',reply);
+        panelMessages[seat.id].push({role:'assistant',content:reply});
+        councilRecord.push({name:seat.name,content:reply});
+        setStatus(seat.id,'online');
+      });
+    }catch(e){
+      freeSeats.forEach(seat=>{appendMsg(seat.id,'error-msg','⚠ '+e.message);setStatus(seat.id,'online');});
+    }
+  }
+  targets=restTargets;
   if(roundTableOn){
     for(const seat of targets){
       try{
