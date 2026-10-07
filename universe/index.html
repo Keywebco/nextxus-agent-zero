@@ -381,6 +381,7 @@ footer{
 .ring6-src li{margin-bottom:8px}
 .ring6-src .meta,#ring6-truth .meta{font-size:.78rem;color:var(--text-dim)}
 #api-provider{width:100%;padding:10px;border-radius:8px;background:var(--bg);color:var(--text);border:1px solid var(--bg3)}
+.ring6-params{font-size:.82rem;color:var(--text-dim);margin:10px auto 0;max-width:640px;text-align:left;border-left:3px solid var(--gold-dim);padding-left:10px}
 .ring6-note{font-size:.82rem;color:var(--text-dim);margin-top:14px;text-align:center}
 .ring6-conflict{font-size:.85rem;color:var(--gold);margin-top:10px;text-align:center}
 
@@ -1279,13 +1280,18 @@ if(chatHistory.length>0)renderChat();
     el.textContent=q&&q.remaining>0?"Free: "+q.remaining+" of "+q.freeLimit+" questions left. Each check uses one. Then add your own key in API Settings above.":q?"Your free questions are used. Add your own key in API Settings above to keep going.":"Built-in lenses only (the free service is not reachable). Add your own key in API Settings above for the source check.";
   }
   mode();document.addEventListener("nx-settings-changed",mode);
+  function paramsLine(t){
+    var judge=t.scored?(window.NXProviders.mine()?window.NXProviders.PROVIDERS[window.NXProviders.load().provider].label+" (your key)":"the Federation's free model"):"no judge (not scored)";
+    var judged=t.supports+t.contradicts;
+    return "Within these parameters: sources searched = Wikipedia and Crossref scholarly papers; "+t.sources.length+" read, "+judged+" relevant; judged by "+judge+"; checked "+new Date().toISOString().slice(0,10)+". Best match from the sources checked. Not proof.";
+  }
   function renderTruth(t){
     var box=$("ring6-truth");box.style.display="block";
     var pct=t.percent==null?"--":t.percent+"%";
     var src=t.sources.map(function(x){
       var v=x.verdict||"";var c=v==="SUPPORTS"?"var(--green)":v==="CONTRADICTS"?"var(--red)":"var(--text-dim)";
       return '<li><span style="color:'+c+';font-weight:700">'+esc(v||"LISTED")+'</span> <a href="'+esc(x.url)+'" target="_blank" rel="noopener">'+esc(x.title)+'</a> <span class="meta">('+esc(x.source)+')</span>'+(x.why?'<div class="meta">'+esc(x.why)+'</div>':'')+'</li>';}).join("");
-    box.innerHTML='<div class="ring6-pct">'+pct+'<small> source agreement</small></div><div class="ring6-verdict below" style="margin-top:8px">'+esc(t.label)+'</div>'+(src?'<ol class="ring6-src">'+src+'</ol>':'')+(t.notes&&t.notes.length?'<div class="meta">'+esc(t.notes.join("; "))+'</div>':'');
+    box.innerHTML='<div class="ring6-pct">'+pct+'<small> source agreement</small></div><div class="ring6-verdict below" style="margin-top:8px">'+esc(t.label)+'</div>'+'<div class="ring6-params">'+esc(paramsLine(t))+'</div>'+(src?'<ol class="ring6-src">'+src+'</ol>':'')+(t.notes&&t.notes.length?'<div class="meta">'+esc(t.notes.join("; "))+'</div>':'');
   }
   $("ring6-form").addEventListener("submit",async function(ev){
     ev.preventDefault();
