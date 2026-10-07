@@ -385,6 +385,20 @@ footer{
 .ring6-note{font-size:.82rem;color:var(--text-dim);margin-top:14px;text-align:center}
 .ring6-conflict{font-size:.85rem;color:var(--gold);margin-top:10px;text-align:center}
 
+
+.nx-tiers{margin:28px auto}
+.nx-tiers h2{font-size:1.4rem;color:var(--text-bright);text-align:center;margin-bottom:6px}
+.nx-tiers .sub{text-align:center;color:var(--text-dim);font-size:.92rem;margin-bottom:16px}
+.nx-tier-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:14px}
+.nx-tier{background:var(--bg2);border:1px solid var(--bg3);border-top:3px solid var(--gold);border-radius:var(--radius);padding:18px;display:flex;flex-direction:column}
+.nx-tier h3{font-size:1.05rem;color:var(--text-bright);margin-bottom:4px}
+.nx-tier .price{font-size:1.6rem;font-weight:800;color:var(--gold);margin:6px 0}
+.nx-tier .price small{font-size:.8rem;color:var(--text-dim);font-weight:400}
+.nx-tier p{font-size:.88rem;color:var(--text);flex:1;margin-bottom:12px}
+.nx-tier a.buy{display:block;text-align:center;padding:11px;border-radius:8px;background:var(--gold);color:#000;font-weight:700;text-decoration:none}
+.nx-tier .seats{font-size:.78rem;color:var(--text-dim);margin-bottom:8px}
+.nx-tiers .fine{font-size:.8rem;color:var(--text-dim);text-align:center;margin-top:12px}
+
 </style>
 <script src="nx-providers.js"></script>
 <script src="truth-check.js"></script>
@@ -810,6 +824,19 @@ footer{
     <div class="ring6-lenses" id="ring6-lenses"></div>
     <p class="ring6-note">Honest limits: the top score is how well outside sources agree, not proof. Wikipedia and papers can be wrong or silent on a claim. The lens score below it reads how the text is written, not whether it is true, and the built-in engine is capped at 90%.</p>
   </div>
+</section>
+
+
+<!-- ============ MEMBERSHIP TIERS (prices and titles exactly as listed on Gumroad) ============ -->
+<section class="nx-tiers container" id="tiers" aria-label="Membership tiers">
+  <h2>NEED MORE THAN THREE QUESTIONS?</h2>
+  <p class="sub">The first 3 are free. Or bring your own key in API Settings, with no limit. Or subscribe.</p>
+  <div class="nx-tier-grid">
+    <article class="nx-tier"><h3>Federation Entry: The Inner Ring (Starter)</h3><div class="price">$10 <small>a month</small></div><p>2 daily inquiries to the Ring of Twelve, filtered through the 95% Truth Gate. 1 week free trial.</p><a class="buy" href="https://keywebster.gumroad.com/l/ophtywm" target="_blank" rel="noopener">Subscribe</a></article>
+    <article class="nx-tier"><h3>The Scholar&rsquo;s Ledger: Advanced Ring Access</h3><div class="price">$20 <small>a month</small></div><p>5 daily questions to the Full Council and 3 monthly extractions from the KEYS Living Library. 1 week free trial.</p><a class="buy" href="https://keywebster.gumroad.com/l/dqyabh" target="_blank" rel="noopener">Subscribe</a></article>
+    <article class="nx-tier"><h3>The Architect&rsquo;s Covenant: 200-Year Legacy Pass</h3><div class="price">$550 <small>every 6 months</small></div><div class="seats">Limited to 30 seats</div><p>15 daily inquiries, unlimited Library downloads, and a semi-annual 1-on-1 call with Roger Keyserling.</p><a class="buy" href="https://keywebster.gumroad.com/l/xctpus" target="_blank" rel="noopener">Subscribe</a></article>
+  </div>
+  <p class="fine">Payments and subscriptions are handled by Gumroad, with a 30-day money-back guarantee. After you subscribe, your access is set up by hand by the Federation; automatic recognition of subscribers is being built. Price and terms are always as shown on the Gumroad page.</p>
 </section>
 
 <!-- ============ FOOTER ============ -->
