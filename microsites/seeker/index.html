@@ -398,7 +398,7 @@ window.nxFree=async function(){
   var k=document.getElementById('apiKey');
   if(k&&k.value.trim()){el.textContent='Using your own key. No limit from us.';return;}
   var q=await window.NXProviders.quota();
-  el.textContent=q?(q.remaining>0?'Free questions left: '+q.remaining+' of '+q.freeLimit+'. After that, paste your own key above.':'Your free questions are used. Paste your own key above to continue.'):'';
+  el.textContent=q&&q.owner?'Owner: unlimited.':q?(q.remaining>0?'Free questions left: '+q.remaining+' of '+q.freeLimit+'. After that, paste your own key above.':'Your free questions are used. Paste your own key above to continue.'):'';
 };
 window.addEventListener('load',function(){nxFree();var k=document.getElementById('apiKey');if(k)k.addEventListener('input',nxFree);});
 </script>
