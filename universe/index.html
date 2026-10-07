@@ -791,6 +791,8 @@ footer{
       <input type="password" id="api-key" placeholder="paste your key" autocomplete="off">
       <label for="api-model">Model (leave blank for the default)</label>
       <input type="text" id="api-model" placeholder="default for the provider">
+      <label for="api-license">Subscriber license key (from your Gumroad receipt)</label>
+      <input type="text" id="api-license" placeholder="paste your Gumroad license key" autocomplete="off">
       <p id="api-free-left" style="font-size:.82rem;color:var(--gold);margin-top:10px"></p>
       <div style="margin-top:14px;display:flex;gap:8px">
         <button class="btn btn-gold btn-sm" id="save-settings-btn">Save Settings</button>
@@ -1085,20 +1087,23 @@ function loadSettings(){
   try{var d=window.NXProviders&&window.NXProviders.load();if(d)apiSettings={provider:d.provider,endpoint:window.NXProviders.PROVIDERS[d.provider].endpoint,key:d.key,model:d.model};}catch(e){}
   document.getElementById("api-provider").value=apiSettings.provider||"mimo";
   document.getElementById("api-key").value=apiSettings.key||"";
+  try{document.getElementById("api-license").value=window.NXProviders.getLicense();}catch(e){}
   document.getElementById("api-model").value=apiSettings.model&&apiSettings.model!==(window.NXProviders&&window.NXProviders.PROVIDERS[apiSettings.provider]||{}).model?apiSettings.model:"";
   updateModeBadge();refreshFree();
 }
 function saveSettings(){
+  try{window.NXProviders.setLicense(document.getElementById("api-license").value);}catch(e){}
   var prov=document.getElementById("api-provider").value;
   var key=document.getElementById("api-key").value.trim();
   var model=document.getElementById("api-model").value.trim();
-  if(!key){showNotice("Paste your key first.");return;}
+  if(!key){if(window.NXProviders.getLicense()){updateModeBadge();refreshFree();document.dispatchEvent(new CustomEvent("nx-settings-changed"));return;}showNotice("Paste your key or your subscriber license key first.");return;}
   var d=window.NXProviders.save(prov,key,model);
   apiSettings={provider:d.provider,endpoint:window.NXProviders.PROVIDERS[d.provider].endpoint,key:d.key,model:d.model};
   updateModeBadge();refreshFree();
   document.dispatchEvent(new CustomEvent("nx-settings-changed"));
 }
 function clearSettings(){
+  try{window.NXProviders.setLicense("");document.getElementById("api-license").value="";}catch(e){}
   apiSettings={provider:"mimo",endpoint:"",key:"",model:""};
   try{window.NXProviders.clear();}catch(e){}
   document.getElementById("api-key").value="";
@@ -1110,6 +1115,7 @@ async function refreshFree(){
   var el=document.getElementById("api-free-left");if(!el||!window.NXProviders)return;
   if(window.NXProviders.mine()){el.textContent="Using your own key. No limit from us.";return;}
   var q=await window.NXProviders.quota();
+  if(q&&q.member){el.textContent=q.member.error?q.member.error:"Member: "+q.member.tier+". "+q.member.remaining+" of "+q.member.daily+" questions left today.";return;}
   el.textContent=q&&q.owner?"Owner: unlimited.":q?(q.remaining>0?"Free questions left: "+q.remaining+" of "+q.freeLimit:"Your free questions are used. Add your own key to continue."):"";
 }
 function isApiMode(){return!!(apiSettings.key&&apiSettings.endpoint)}

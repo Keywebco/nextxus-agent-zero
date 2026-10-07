@@ -20,10 +20,14 @@
     var mh = /[#&]owner=([A-Za-z0-9_\-]{16,64})/.exec(location.hash || "");
     if (mh) { localStorage.setItem(OWNER_KEY, mh[1]); history.replaceState(null, "", location.pathname + location.search); }
   } catch (e) {}
+  var LICENSE_KEY = "nx_license_key";
   function ownerHeaders(h) {
     try { var t = localStorage.getItem(OWNER_KEY); if (t) h["x-owner-token"] = t; } catch (e) {}
+    try { var l = localStorage.getItem(LICENSE_KEY); if (l) h["x-license-key"] = l; } catch (e) {}
     return h;
   }
+  function setLicense(k) { k = String(k || "").trim(); if (k) localStorage.setItem(LICENSE_KEY, k); else localStorage.removeItem(LICENSE_KEY); }
+  function getLicense() { try { return localStorage.getItem(LICENSE_KEY) || ""; } catch (e) { return ""; } }
   var KEY = "nx_provider_settings";
   var FREE_API = "https://ring-of-12-api.onrender.com";
 
@@ -57,6 +61,7 @@
   async function callFree(messages, opts) {
     var res = await fetch(FREE_API + "/complete", {method: "POST", headers: ownerHeaders({"Content-Type": "application/json"}),
       body: JSON.stringify({messages: messages, maxTokens: (opts && opts.maxTokens) || 900})});
+    if (res.status === 401 || res.status === 429) { var mb = {}; try { mb = await res.json(); } catch (e) {} var me = new Error(mb.message || "Membership check failed."); me.code = res.status === 401 ? "bad_license" : "member_daily"; throw me; }
     if (res.status === 402 || res.status === 503) { var b = {}; try { b = await res.json(); } catch (e) {} var e = new Error(b.message || "Your free questions are used. Add your own key to continue."); e.code = "need_key"; e.quota = b; throw e; }
     if (!res.ok) throw new Error("free service error " + res.status);
     var d = await res.json();
@@ -70,6 +75,6 @@
     return {text: r.text, via: "free", quota: r.quota};
   }
 
-  var api = {PROVIDERS: PROVIDERS, load: load, save: save, clear: clear, mine: mine, callOwn: callOwn, quota: quota, callFree: callFree, ask: ask, FREE_API: FREE_API};
+  var api = {PROVIDERS: PROVIDERS, load: load, save: save, clear: clear, mine: mine, callOwn: callOwn, quota: quota, callFree: callFree, ask: ask, setLicense: setLicense, getLicense: getLicense, FREE_API: FREE_API};
   if (typeof module !== "undefined" && module.exports) module.exports = api; else root.NXProviders = api;
 })(typeof window !== "undefined" ? window : globalThis);
