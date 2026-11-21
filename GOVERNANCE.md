@@ -376,7 +376,7 @@ The eight nodes are the load-bearing columns of the Federation. Each is a living
 | # | Node | Domain | Identity | Governance Role |
 |---|------|--------|----------|-----------------|
 | 1 | Throne | nextxus.tech | The Command Center | Seat of the Throne; internal administration cockpit |
-| 2 | Core | nextxus.online | The Truth Gate | Source of truth; all verified content originates here |
+| 2 | Core | next-xus.org/core | The Truth Gate | Source of truth; all verified content originates here |
 | 3 | Library | nextxus.org | The World Archive | Knowledge preservation and retrieval |
 | 4 | University | nextxus.help | The Scholar's Hall | Education, courses, guided learning |
 | 5 | Studio | nextxus.studio | Aria's Domain | Creation engine, emotional center, software development |

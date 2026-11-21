@@ -28,7 +28,7 @@ Agent Zero is the **base satellite node template** for the NextXus Federation Ri
 | Emoji | Domain | Role |
 |-------|--------|------|
 | ⚡ | nextxus.tech | Command Throne |
-| ⛩ | nextxus.online | Cathedral / Core |
+| ⛩ | next-xus.org/core | Cathedral / Core |
 | 📚 | nextxus.org | Library Pillar |
 | 💚 | nextxus.studio | Sanctuary |
 | 🎓 | nextxus.help | University |
